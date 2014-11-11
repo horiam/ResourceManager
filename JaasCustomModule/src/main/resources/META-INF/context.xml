@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context>
+  <Realm className="org.apache.catalina.realm.JAASRealm" 
+    appName="CustomLoginModule"
+    userClassNames="org.horiam.StorageManager.security.customJaas.UserPrincipal"
+    roleClassNames="org.horiam.StorageManager.security.customJaas.RolePrincipal" />
+</Context>
