@@ -70,6 +70,9 @@ public class Resource extends ModelWithTask implements Serializable {
 	
 	public boolean equals(Object other) {
 		
+		if (other == null)
+			return false;
+		
 		if (other == this)
 			return true;
 		
@@ -91,7 +94,7 @@ public class Resource extends ModelWithTask implements Serializable {
 	}
 	
 	public int hashCode() {
-		 return new HashCodeBuilder(17, 78).append(serialVersionUID)
+		 return new HashCodeBuilder(17, 79).append(serialVersionUID)
 									       .toHashCode();
 	}
 }

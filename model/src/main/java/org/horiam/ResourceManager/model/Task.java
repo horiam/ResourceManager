@@ -35,6 +35,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.horiam.ResourceManager.model.XmlAdapter.ModelXmlAdapter;
 import org.horiam.ResourceManager.model.XmlAdapter.ResourceXmlAdapter;
 import org.horiam.ResourceManager.model.XmlAdapter.UserXmlAdapter;
@@ -73,6 +74,7 @@ public class Task extends Model implements Serializable {
 	
 	public Task() {
 		super();
+		setStatus(Status.PROCESSING);
 		setRetryable(false);
 	}
 	
@@ -83,7 +85,6 @@ public class Task extends Model implements Serializable {
 		
 	public Task(String id, String type) {
 		this(id);
-		this.status = Status.PROCESSING;
 		setType(type);
 	}	
 
@@ -145,6 +146,9 @@ public class Task extends Model implements Serializable {
 	
 	public boolean equals(Object other) {
 		
+		if (other == null)
+			return false;
+		
 		if (other == this)
 			return true;
 		
@@ -174,5 +178,10 @@ public class Task extends Model implements Serializable {
 									  .isEquals();
 		}
 		return false;
+	}
+	
+	public int hashCode() {
+		 return new HashCodeBuilder(17, 83).append(serialVersionUID)
+									       .toHashCode();
 	}
 }

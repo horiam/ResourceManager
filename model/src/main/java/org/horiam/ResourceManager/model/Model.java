@@ -34,7 +34,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 @MappedSuperclass
-public class Model {
+public abstract class Model {
 
 	@Id
 	private String id;
@@ -69,6 +69,9 @@ public class Model {
 	}
 	
 	public boolean equals(Object other) {
+		
+		if (other == null)
+			return false;
 		
 		if (other == this)
 			return true;

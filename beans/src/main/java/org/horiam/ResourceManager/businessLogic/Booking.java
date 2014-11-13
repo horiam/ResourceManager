@@ -63,7 +63,7 @@ public class Booking {
 	public String reserveOneAvailableResource(String taskId) throws RecoverableException, EntityNotFoundException {
 
 		Task task = tasks.get(taskId);				
-		List<Resource> freeResources = resources.getAllFree();
+		List<Resource> freeResources = resources.listFree();
 		
 		if (freeResources.size() == 0)
 			throw new RecoverableException("No free Resource found");

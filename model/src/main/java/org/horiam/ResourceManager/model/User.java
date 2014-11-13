@@ -79,6 +79,9 @@ public class User extends ModelWithTask implements Serializable {
 	
 	public boolean equals(Object other) {
 		
+		if (other == null)
+			return false;
+		
 		if (other == this)
 			return true;
 		
@@ -99,7 +102,7 @@ public class User extends ModelWithTask implements Serializable {
 	}
 	
 	public int hashCode() {
-		 return new HashCodeBuilder(17, 79).append(serialVersionUID)
+		 return new HashCodeBuilder(17, 81).append(serialVersionUID)
 									       .toHashCode();
 	}
 }

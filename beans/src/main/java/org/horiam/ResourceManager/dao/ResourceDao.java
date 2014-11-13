@@ -42,7 +42,7 @@ public class ResourceDao extends Dao<Resource> {
 
 
 	@SuppressWarnings("unchecked")
-	public List<Resource> getAllFree() {	
+	public List<Resource> listFree() {	
 		Query query = em.createQuery("SELECT a FROM " + entityClass.getSimpleName() + " a WHERE"
 									   + " a.user IS NULL AND a.booked = FALSE", entityClass);
 		return query.getResultList();

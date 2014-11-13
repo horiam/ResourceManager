@@ -4,7 +4,7 @@
   version="2.0" xmlns="http://java.sun.com/xml/ns/persistence">
   <persistence-unit name="StorageManagerStore">
   
-	<jta-data-source>java:openejb/Resource/myDatabase</jta-data-source>
+  	<jta-data-source>java:openejb/Resource/myDatabase</jta-data-source>
 	<non-jta-data-source>java:openejb/Resource/myDatabaseUnmanaged</non-jta-data-source>  
 	
 	<class>org.horiam.ResourceManager.model.Model</class>

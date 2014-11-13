@@ -37,7 +37,7 @@ import org.horiam.ResourceManager.model.XmlAdapter.TaskXmlAdapter;
 @MappedSuperclass
 @XmlRootElement(name="ModelWithTask")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ModelWithTask extends Model {
+public abstract class ModelWithTask extends Model {
 	
 	@XmlJavaTypeAdapter(TaskXmlAdapter.class)
 	@OneToOne
@@ -82,6 +82,9 @@ public class ModelWithTask extends Model {
 	}	
 	
 	public boolean equals(Object other) {
+		
+		if (other == null)
+			return false;
 		
 		if (other == this)
 			return true;

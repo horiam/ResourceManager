@@ -9,7 +9,6 @@
   </parent>
   <groupId>org.horiam.ResourceManager</groupId>
   <artifactId>Model</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
   <name>model</name>
   <url>http://maven.apache.org</url>
   <properties>
@@ -17,26 +16,26 @@
   </properties>
   <dependencies>
     <dependency>
-    	<groupId>javax.persistence</groupId>
-    	<artifactId>persistence-api</artifactId>
-    	<version>1.0.2</version>
+      <groupId>javax.persistence</groupId>
+      <artifactId>persistence-api</artifactId>
+      <version>1.0.2</version>
     </dependency>
     <dependency>
-    	<groupId>org.apache.commons</groupId>
-    	<artifactId>commons-lang3</artifactId>
-    	<version>3.3.2</version>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>3.3.2</version>
     </dependency>
     <dependency>
-    	<groupId>junit</groupId>
-    	<artifactId>junit</artifactId>
-    	<version>4.11</version>
-    	<scope>test</scope>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.11</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
-    	<groupId>org.apache.commons</groupId>
-    	<artifactId>commons-vfs2</artifactId>
-    	<version>2.0</version>
-    	<scope>test</scope>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-vfs2</artifactId>
+      <version>2.0</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>
