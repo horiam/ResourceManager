@@ -21,11 +21,8 @@ package org.horiam.ResourceManager.security.customJaas;
 
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.security.Principal;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -107,9 +104,10 @@ public class CustomLoginModule implements LoginModule {
 		
 		System.out.println("loadLocalLogins " + filename);
 		
+		BufferedReader br = null;
 		try {
 			
-			BufferedReader br = new BufferedReader(new FileReader(filename));
+			br = new BufferedReader(new FileReader(filename));
 			String line;
 			
 			while ((line = br.readLine()) != null) {
@@ -124,6 +122,12 @@ public class CustomLoginModule implements LoginModule {
 			
 		} catch (IOException e) {
 			e.printStackTrace(); // TODO trace
+		} finally {
+			try {
+				br.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	

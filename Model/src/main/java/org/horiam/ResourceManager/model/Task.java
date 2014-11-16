@@ -36,7 +36,6 @@ import javax.persistence.Table;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.horiam.ResourceManager.model.XmlAdapter.ModelXmlAdapter;
 import org.horiam.ResourceManager.model.XmlAdapter.ResourceXmlAdapter;
 import org.horiam.ResourceManager.model.XmlAdapter.UserXmlAdapter;
 

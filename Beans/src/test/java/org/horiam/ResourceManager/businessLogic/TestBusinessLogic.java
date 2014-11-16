@@ -25,11 +25,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Properties;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
 import javax.naming.NamingException;
 
 import org.horiam.ResourceManager.businessLogic.exceptions.RecoverableException;
@@ -42,7 +37,6 @@ import org.horiam.ResourceManager.dao.UserDao;
 import org.horiam.ResourceManager.model.EntityNotFoundException;
 import org.horiam.ResourceManager.model.Resource;
 import org.horiam.ResourceManager.model.Task;
-import org.horiam.ResourceManager.model.Task.Status;
 import org.horiam.ResourceManager.model.User;
 import org.horiam.ResourceManager.test.ContainerWrapper;
 import org.junit.After;
