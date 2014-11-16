@@ -94,7 +94,7 @@ public class ResourceService {
 		Task task = taskHelper.createTask(TaskType.removeResource);
 		taskHelper.setResource(task.getId(), id);
 
-		Future<Boolean> future = async.executeTask(task.getId());
+		Future<Void> future = async.executeTask(task.getId());
 		return task;
 	}
 

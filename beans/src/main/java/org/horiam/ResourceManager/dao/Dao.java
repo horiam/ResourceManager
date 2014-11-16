@@ -85,5 +85,11 @@ public abstract class Dao<E> {
 		E entity =  em.find(entityClass, id);
 		if (entity != null)
 			em.remove(entity);
-	}	
+	}
+	
+	public void clear() {
+		
+		for (E entity : list())
+			em.remove(entity);
+	}
 }

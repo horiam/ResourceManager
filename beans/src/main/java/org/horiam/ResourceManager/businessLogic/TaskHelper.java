@@ -34,6 +34,7 @@ import org.horiam.ResourceManager.dao.UserDao;
 import org.horiam.ResourceManager.model.EntityNotFoundException;
 import org.horiam.ResourceManager.model.Resource;
 import org.horiam.ResourceManager.model.Task;
+import org.horiam.ResourceManager.model.Task.Status;
 import org.horiam.ResourceManager.model.User;
 
 @Stateless
@@ -48,12 +49,12 @@ public class TaskHelper {
 	
 	
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void setUser(String id, String userId) throws EntityNotFoundException {
-		Task task = tasks.getLock(id);		
+	public Task setUser(String id, String userId) throws EntityNotFoundException {
+		Task task = tasks.get(id);		
 		try {
 			User user = users.get(userId);
 			task.setUser(user);
-			tasks.update(task);
+			return tasks.update(task);
 		} catch (EntityNotFoundException e) {
 			failed(task, e.getMessage(), false);
 			throw e;
@@ -61,12 +62,12 @@ public class TaskHelper {
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void setResource(String id, String resourceId) throws EntityNotFoundException {
+	public Task setResource(String id, String resourceId) throws EntityNotFoundException {
 		Task task = tasks.get(id);
 		try {
 			Resource resource = resources.get(resourceId);
 			task.setResource(resource);
-			tasks.update(task);
+			return tasks.update(task);
 		} catch (EntityNotFoundException e) {
 			failed(task, e.getMessage(), false);
 			throw e;
@@ -81,17 +82,17 @@ public class TaskHelper {
 		return task;
 	}
 
-	public void succeeded(String id, String message) throws EntityNotFoundException {
+	public Task succeeded(String id, String message) throws EntityNotFoundException {
 		Task task = tasks.getLock(id);
 		task.setMessage(message);
 		task.succeeded();
-		task = tasks.update(task);
+		return  tasks.update(task);
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void failed(String id, String message, boolean retryable) throws EntityNotFoundException {
+	public Task failed(String id, String message, boolean retryable) throws EntityNotFoundException {
 		Task task = tasks.getLock(id);
-		failed(task, message, retryable);
+		return failed(task, message, retryable);
 	}
 	
 	private Task failed(Task task, String message, boolean retryable) {
@@ -101,9 +102,9 @@ public class TaskHelper {
 		return tasks.update(task);
 	}
 	
-	public boolean isProcessing(String id) throws EntityNotFoundException {
+	public Status getStatus(String id) throws EntityNotFoundException {
 		Task task = tasks.get(id);
-		return (task.getStatus() == Task.Status.PROCESSING); 
+		return task.getStatus();
 	}
 	
 	public TaskType getType(String id) throws EntityNotFoundException {

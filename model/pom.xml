@@ -9,7 +9,7 @@
   </parent>
   <groupId>org.horiam.ResourceManager</groupId>
   <artifactId>Model</artifactId>
-  <name>model</name>
+  <name>Model</name>
   <url>http://maven.apache.org</url>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

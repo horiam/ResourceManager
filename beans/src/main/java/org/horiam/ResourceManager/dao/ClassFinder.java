@@ -52,7 +52,7 @@ public class ClassFinder {
 		return userClass;
 	}
 
-	private void setUserClass(Class<? extends User> userClass) {
+	public void setUserClass(Class<? extends User> userClass) {
 		this.userClass = userClass;
 	}
 
@@ -60,7 +60,7 @@ public class ClassFinder {
 		return resourceClass;
 	}
 
-	private void setResourceClass(Class<? extends Resource> resourceClass) {
+	public void setResourceClass(Class<? extends Resource> resourceClass) {
 		this.resourceClass = resourceClass;
 	}
 
@@ -68,7 +68,7 @@ public class ClassFinder {
 		return allocatorDriverClass;
 	}
 
-	private void setAllocatorDriverClass(Class<? extends AlloctionDriver> allocatorDriverClass) {
+	public void setAllocatorDriverClass(Class<? extends AlloctionDriver> allocatorDriverClass) {
 		this.allocatorDriverClass = allocatorDriverClass;
 	}	
 	

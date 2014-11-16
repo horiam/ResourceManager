@@ -46,18 +46,25 @@ public class Booking {
 	private UserDao users;
 	@EJB
 	private ResourceDao resources;
+	@EJB
+	private TaskHelper taskHelper;
 	
 	
-	public void reserveUser(String taskId, String userId) throws RecoverableException, EntityNotFoundException {
+	public User reserveUser(String taskId) throws RecoverableException, EntityNotFoundException {
 					
 		Task task = tasks.get(taskId);
+		String userId = task.getUser().getId(); // TODO throws ex
 		User user = users.getLock(userId);
+		
+		if (task.equals(user.getTask()))
+			return user;
 
 		if (user.isBooked())
 			throw new RecoverableException("user " + user.getId() + " is booked with task " 
 											+ user.getTask().getId());
+		user.setBooked(true);
 		user.setTask(task);
-		users.update(user);			    
+		return users.update(user);			    
 	}	
 
 	public String reserveOneAvailableResource(String taskId) throws RecoverableException, EntityNotFoundException {
@@ -73,49 +80,55 @@ public class Booking {
 		
 		Resource resource = freeResources.get(next);
 
+		resource.setBooked(true);
 		resource.setTask(task);
 		resource = resources.update(resource);
 
 		return resource.getId();
 	}
 
-	public void reserveResource(String taskId, String resourceId) throws RecoverableException, EntityNotFoundException {
+	public Resource reserveResource(String taskId) throws RecoverableException, EntityNotFoundException {
 
 		Task task = tasks.get(taskId);
+		String resourceId = task.getResource().getId(); // TODO throws ex
 		Resource resource = resources.getLock(resourceId);
+		
+		if (task.equals(resource.getTask()))
+			return resource;
 
 		if (resource.isBooked())
 			throw new RecoverableException("Resource " + resource.getId() + " is booked");
 
+		resource.setBooked(true);
 		resource.setTask(task);
-		resources.update(resource);
+		return resources.update(resource);
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
-	public void freeUserWithTask(String taskId) throws EntityNotFoundException { 
+	public User freeUserWithTask(String taskId) throws EntityNotFoundException { 
 		
 		String userId = tasks.get(taskId).getUser().getId();
-		freeUser(userId);
+		return freeUser(userId);
 	}
 		
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
-	public void freeResourceWithTask(String taskId) throws EntityNotFoundException { 
+	public Resource freeResourceWithTask(String taskId) throws EntityNotFoundException { 
 		
 		String resourceId = tasks.get(taskId).getResource().getId();
-		freeResource(resourceId);
+		return freeResource(resourceId);
 	}	
 	
-	public void freeUser(String userId) throws EntityNotFoundException {
+	public User freeUser(String userId) throws EntityNotFoundException {
 
 		User user = users.get(userId);
-		user.removeTask();
-		users.update(user);	
+		user.setBooked(false);
+		return  users.update(user);	
 	}
 
-	public void freeResource(String resourceId) throws EntityNotFoundException {
+	public Resource freeResource(String resourceId) throws EntityNotFoundException {
 
 		Resource resource = resources.get(resourceId);
-		resource.removeTask();
-		resources.update(resource);
+		resource.setBooked(false);
+		return resources.update(resource);
 	}
 }

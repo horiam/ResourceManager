@@ -111,7 +111,7 @@ public class UserService {
 			Task task = taskHelper.createTask(TaskType.allocateResourceForUser);
 			taskHelper.setUser(task.getId(), id);
 									
-			Future<Boolean> future = async.executeTask(task.getId());				
+			Future<Void> future = async.executeTask(task.getId());				
 			return task; 
 		} 
 		
@@ -128,7 +128,7 @@ public class UserService {
 			Task task = taskHelper.createTask(TaskType.deallocateUser);
 			taskHelper.setUser(task.getId(), id);
 			
-			Future<Boolean> future = async.executeTask(task.getId());				
+			Future<Void> future = async.executeTask(task.getId());				
 			return task; 
 		} 
 		
@@ -145,7 +145,7 @@ public class UserService {
 			Task task = taskHelper.createTask(TaskType.removeUser);
 			taskHelper.setUser(task.getId(), id);
 					
-			Future<Boolean> future = async.executeTask(task.getId());
+			Future<Void> future = async.executeTask(task.getId());
 			return task;  
 		} 
 		

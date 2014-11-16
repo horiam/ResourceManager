@@ -43,6 +43,7 @@ import org.horiam.ResourceManager.dao.ResourceDao;
 import org.horiam.ResourceManager.dao.TaskDao;
 import org.horiam.ResourceManager.dao.UserDao;
 import org.horiam.ResourceManager.model.EntityNotFoundException;
+import org.horiam.ResourceManager.model.Task.Status;
 import org.horiam.ResourceManager.model.User;
 import org.horiam.ResourceManager.model.Resource;
 
@@ -68,14 +69,22 @@ public class TaskExecutor {
 	
 	////////////////////////////////////////////////////////////////////////////
 	
-	@SuppressWarnings("finally")
 	@Asynchronous
-	public Future<Boolean> executeTask(String taskId) {
+	public Future<Void> executeTask(String taskId) {
 		
 		try {						
 			try {
-				TaskType type = taskHelper.getType(taskId);
-				switch (type) {
+				
+				switch (taskHelper.getStatus(taskId)) {
+					
+					case SUCCEEDED : return new AsyncResult<Void>(null);
+					
+					case FAILED : return new AsyncResult<Void>(null);
+					
+					case PROCESSING : // we accept				
+				}
+					
+				switch (taskHelper.getType(taskId)) {
 				
 					case allocateResourceForUser  :  attachUser(taskId);
 					break;
@@ -92,7 +101,7 @@ public class TaskExecutor {
 					default  :  throw new UnrecoverableException("Unknown type of Task for " + taskId);				
 				}
 							
-				return new AsyncResult<Boolean>(true);
+				return new AsyncResult<Void>(null);
 												
 			} catch (InterruptedException ie) {
 				
@@ -122,7 +131,7 @@ public class TaskExecutor {
 				failed(taskId, false, re.getLocalizedMessage());			
 				
 			} finally {
-				if (taskHelper.isProcessing(taskId)) { // unhandeld exceptions
+				if (taskHelper.getStatus(taskId) == Status.PROCESSING) { // unhandled exceptions
 					failed(taskId, false, "something went wrong with the execution");
 				}
 			}
@@ -130,7 +139,7 @@ public class TaskExecutor {
 		} catch  (EntityNotFoundException e) { // for the catches
 			e.printStackTrace();
 		}
-		return new AsyncResult<Boolean>(false);
+		return new AsyncResult<Void>(null);
 	}
 	
 	////////////////////////////////////////////////////////////////////////////
@@ -147,7 +156,7 @@ public class TaskExecutor {
 			
 			String userId = taskHelper.getUserId(taskId);
 						
-			bookingService.reserveUser(taskId, userId);
+			bookingService.reserveUser(taskId);
 								
 			User user = users.get(userId);
 			
@@ -155,8 +164,7 @@ public class TaskExecutor {
 									
 			if (user.getResource() == null) {									
 				
-				String resourceId = bookingService.reserveOneAvailableResource(taskId);			
-				
+				String resourceId = bookingService.reserveOneAvailableResource(taskId);						
 				taskHelper.setResource(taskId, resourceId);
 				
 				transaction.commit(); 
@@ -209,7 +217,7 @@ public class TaskExecutor {
 			
 			String userId = taskHelper.getUserId(taskId);
 			
-			bookingService.reserveUser(taskId, userId);
+			bookingService.reserveUser(taskId);
 						
 			User user = users.get(userId);
 			
@@ -219,8 +227,8 @@ public class TaskExecutor {
 			
 			if ( resource != null ) {
 
-				bookingService.reserveResource(taskId, resource.getId());				
 				taskHelper.setResource(taskId, resource.getId());
+				bookingService.reserveResource(taskId);				
 				
 				transaction.commit();
 				
@@ -256,7 +264,7 @@ public class TaskExecutor {
 			
 			String userId = taskHelper.getUserId(taskId);
 			
-			bookingService.reserveUser(taskId, userId);
+			bookingService.reserveUser(taskId);
 									
 			User user = users.get(userId);
 			
@@ -266,8 +274,8 @@ public class TaskExecutor {
 			
 			if ( Resource != null ) {
 				
-				bookingService.reserveResource(taskId, Resource.getId());
 				taskHelper.setResource(taskId, Resource.getId());
+				bookingService.reserveResource(taskId);				
 				
 				transaction.commit();
 				
@@ -303,7 +311,7 @@ public class TaskExecutor {
 			
 			String resourceId = taskHelper.getResourceId(taskId);
 					
-			bookingService.reserveResource(taskId, resourceId);
+			bookingService.reserveResource(taskId);
 			
 			Resource Resource = resources.get(resourceId);
 			User user = Resource.getUser();
@@ -312,8 +320,8 @@ public class TaskExecutor {
 			
 			if ( user != null ) {
 				
-				bookingService.reserveUser(taskId, user.getId());
 				taskHelper.setUser(taskId, user.getId());
+				bookingService.reserveUser(taskId);				
 				
 				transaction.commit();
 				
