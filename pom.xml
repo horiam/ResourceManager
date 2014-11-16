@@ -7,8 +7,8 @@
   <packaging>pom</packaging>
   <name>ResourceManager</name>
   <modules>
-    <module>model</module>
-    <module>beans</module>
+    <module>Model</module>
+    <module>Beans</module>
     <module>restful</module>
     <module>jerseyRestClient</module>
     <module>JaasCustomModule</module>
