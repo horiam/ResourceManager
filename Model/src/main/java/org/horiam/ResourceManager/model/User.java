@@ -49,7 +49,7 @@ public class User extends ModelWithTask implements Serializable {
 	private static final long serialVersionUID = -2049975291403443474L;
 	
 	@XmlJavaTypeAdapter(ResourceXmlAdapter.class)
-	@OneToOne(cascade=CascadeType.ALL)
+	@OneToOne
 	private Resource resource;
 	@XmlTransient
 	@Version

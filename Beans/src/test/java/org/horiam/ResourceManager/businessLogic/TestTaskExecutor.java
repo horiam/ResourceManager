@@ -82,14 +82,14 @@ public class TestTaskExecutor extends ContainerWrapper {
 	
 	
 	@Test
-	public void dTest() throws NamingException, EntityNotFoundException, 
+	public void test() throws NamingException, EntityNotFoundException, 
 								InterruptedException, ExecutionException, TimeoutException {		
 		System.out.println("\nTest TaskExecutor EJB : allocate and deallocate ...\n");	
 		
 		TaskExecutor executor = (TaskExecutor) lookup("java:global/Beans/TaskExecutor");
 		
 		Task task1 = taskHelper.createTask(TaskType.allocateResourceForUser);
-		taskHelper.setUser(task1.getId(), userId);
+		task1 = taskHelper.setUser(task1.getId(), userId);
 		
 		Future<Void> future = executor.executeTask(task1.getId());
 		future.get();
@@ -109,7 +109,7 @@ public class TestTaskExecutor extends ContainerWrapper {
 		User user2 = new User("user2");
 		userDao.create(user2);	
 		Task task2 = taskHelper.createTask(TaskType.allocateResourceForUser);
-		taskHelper.setUser(task2.getId(), user2.getId());
+		task2 = taskHelper.setUser(task2.getId(), user2.getId());
 		
 		// allocateResourceForUser must fail
 		future = executor.executeTask(task2.getId());
@@ -122,7 +122,7 @@ public class TestTaskExecutor extends ContainerWrapper {
 		assertFalse("User must not be booked", user2.isBooked());
 		assertFalse("Resource must not be booked", resource1.isBooked());
 		assertTrue("Resource must still have old task", task1.equals(resource1.getTask()));
-		assertNull("New user must have no resource", task2.getResource());
+		assertNull("New user must have no resource", user2.getResource());
 		assertTrue("Resource must have old user", resource1.getUser().equals(user1));
 		
 		
@@ -136,7 +136,7 @@ public class TestTaskExecutor extends ContainerWrapper {
 		task1 = taskDao.get(task1.getId());
 		user1 = userDao.get(userId);
 		resource1 = resourceDao.get(resourceId);
-		// must be untouched
+		// everything must be untouched
 		assertTrue("Task must be succedeed", (task1.getStatus() == Task.Status.SUCCEEDED));
 		assertFalse("User must not be booked", user1.isBooked());
 		assertTrue("User must still have the task", task1.equals(user1.getTask()));		
@@ -144,7 +144,109 @@ public class TestTaskExecutor extends ContainerWrapper {
 		assertTrue("Resource must still have the task", task1.equals(resource1.getTask()));
 		assertTrue("User must have this resource", user1.getResource().equals(resource1));
 		assertTrue("Resource must have this user", resource1.getUser().equals(user1));
+		
+		// allocate user2 
+		Task task3 = taskHelper.createTask(TaskType.allocateResourceForUser);
+		taskHelper.setUser(task3.getId(), user2.getId());
+
+		executor.executeTask(task3.getId()).get();
+		
+		task3 = taskDao.get(task3.getId());
+		user2 = userDao.get(user2.getId());
+		resource2 = resourceDao.get(resource2.getId());
+		assertTrue("Task must be succedeed", (task3.getStatus() == Task.Status.SUCCEEDED));
+		assertFalse("User must not be booked", user2.isBooked());
+		assertTrue("User must still have the task", task3.equals(user2.getTask()));		
+		assertFalse("Resource must not be booked", resource2.isBooked());
+		assertTrue("Resource must still have the task", task3.equals(resource2.getTask()));
+		assertTrue("User must have this resource", user2.getResource().equals(resource2));
+		assertTrue("Resource must have this user", resource2.getUser().equals(user2));;
+		
+		
+		// deallocate
+		Task task4 = taskHelper.createTask(TaskType.deallocateUser);
+		task4 = taskHelper.setUser(task4.getId(), userId);
+		executor.executeTask(task4.getId()).get();
+		
+		task4 = taskDao.get(task4.getId());
+		user1 = userDao.get(userId);
+		resource1 = resourceDao.get(resourceId);
+		assertTrue("Task must be succedeed", (task4.getStatus() == Task.Status.SUCCEEDED));
+		assertFalse("User must not be booked", user1.isBooked());
+		assertTrue("User must still have the task", task4.equals(user1.getTask()));	
+		assertFalse("Resource must not be booked", resource1.isBooked());
+		assertTrue("Resource must still have the task", task4.equals(resource1.getTask()));
+		assertNull("User must have no resource", user1.getResource());
+		assertNull("Resource must have no user", resource1.getUser());
+		
+		// try to deallocate again
+		Task task5 = taskHelper.createTask(TaskType.deallocateUser);
+		task5 = taskHelper.setUser(task5.getId(), userId);
+		executor.executeTask(task5.getId()).get();
+		
+		task5 = taskDao.get(task5.getId());
+		user1 = userDao.get(userId);
+		resource1 = resourceDao.get(resourceId);
+		assertTrue("Task must be succedeed", (task5.getStatus() == Task.Status.SUCCEEDED));
+		assertFalse("User must not be booked", user1.isBooked());
+		assertTrue("User must still have the task", task5.equals(user1.getTask()));	
+		assertFalse("Resource must not be booked", resource1.isBooked());
+		assertTrue("Resource must still have the old task", task4.equals(resource1.getTask()));
+		assertNull("User must have no resource", user1.getResource());
+		assertNull("Resource must have no user", resource1.getUser());
+		
+		// remove resource1
+		Task task6 = taskHelper.createTask(TaskType.removeResource);
+		task6 = taskHelper.setResource(task6.getId(), resourceId);
+		executor.executeTask(task6.getId()).get();
+		
+		task6 = taskDao.get(task6.getId());
+		assertTrue("Task must be succedeed", (task6.getStatus() == Task.Status.SUCCEEDED));
+		assertFalse("Resource must be deleted", userDao.exists(resourceId));
 				
+		// remove user2
+		Task task7 = taskHelper.createTask(TaskType.removeUser);
+		task7 = taskHelper.setUser(task7.getId(), user2.getId());
+		executor.executeTask(task7.getId()).get();
+		
+		task7 = taskDao.get(task7.getId());
+		assertTrue("Task must be succedeed", (task7.getStatus() == Task.Status.SUCCEEDED));
+		assertFalse("User must be deleted", userDao.exists(user2.getId()));
+		resource2 = resourceDao.get(resource2.getId());
+		assertFalse("Resource must not be booked", resource2.isBooked());
+		assertTrue("Resource must still have the task", task7.equals(resource2.getTask()));
+		assertNull("Resource must have no user", resource2.getUser());
+		
+		// recreate user2
+		user2 = new User("user2");
+		userDao.create(user2);	
+		// remove it again
+		Task task8 = taskHelper.createTask(TaskType.removeUser);
+		task8 = taskHelper.setUser(task8.getId(), user2.getId());
+		executor.executeTask(task8.getId()).get();
+		
+		task8 = taskDao.get(task8.getId());
+		assertTrue("Task must be succedeed", (task8.getStatus() == Task.Status.SUCCEEDED));
+		assertFalse("User must be deleted", userDao.exists(user2.getId()));
+		
+		// allocate resource2 to user1
+		Task task9 = taskHelper.createTask(TaskType.allocateResourceForUser);
+		task9 = taskHelper.setUser(task9.getId(), userId);
+		executor.executeTask(task9.getId()).get();
+		task9 = taskDao.get(task9.getId());
+		assertTrue("Task must be succedeed", task9.getStatus() == Task.Status.SUCCEEDED);
+		// remove resource2
+		Task task10 = taskHelper.createTask(TaskType.removeResource);
+		task10 = taskHelper.setResource(task10.getId(), resource2.getId());
+		user1 = userDao.get(userId);
+		executor.executeTask(task10.getId()).get();
+		task10 = taskDao.get(task10.getId());
+		assertTrue("Task must be succedeed", (task10.getStatus() == Task.Status.SUCCEEDED));
+		assertFalse("Resource must be deleted", userDao.exists(resource2.getId()));
+		user1 = userDao.get(userId);
+		assertTrue("User must still have the task", task10.equals(user1.getTask()));
+		assertNull("User must have no resource", user1.getResource());
+		assertFalse("User must not be booked", user1.isBooked());
 	}
 
 }

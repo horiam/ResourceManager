@@ -173,19 +173,19 @@ public class TestBusinessLogic extends ContainerWrapper {
 		Task task = taskHelper.setUser(taskId, userId);
 		assertFalse("User must not be booked", user.isBooked());
 		
-		user = booking.reserveUser(taskId);
+		user = booking.reserveUser(taskId, userId);
 		task = taskDao.get(taskId);
 		user = userDao.get(userId);
 		assertTrue("User must be booked", user.isBooked());
 		assertTrue("User must have this task", task.equals(user.getTask()));
-		
-		booking.reserveUser(taskId);
+		// again
+		booking.reserveUser(taskId, userId);
 		
 		Task task2 = taskHelper.createTask(TaskType.allocateResourceForUser);
 		task2 = taskHelper.setUser(task2.getId(), userId);
 		boolean hasException = false;
 		try {
-			booking.reserveUser(task2.getId());
+			booking.reserveUser(task2.getId(), userId);
 		} catch (RecoverableException re) {
 			hasException = true;
 		}
@@ -196,18 +196,18 @@ public class TestBusinessLogic extends ContainerWrapper {
 		task = taskHelper.setResource(taskId, resourceId);
 		assertFalse("Resource must not be booked", resource.isBooked());
 		
-		resource = booking.reserveResource(taskId);
+		resource = booking.reserveResource(taskId, resourceId);
 		task = taskDao.get(taskId);
 		resource = resourceDao.get(resourceId);
 		assertTrue("Resource must be booked", resource.isBooked());
 		assertTrue("Resource must have this task", task.equals(resource.getTask()));
 		
-		resource = booking.reserveResource(taskId);
+		resource = booking.reserveResource(taskId, resourceId);
 		
 		task2 = taskHelper.setResource(task2.getId(), resourceId);
 		hasException = false;
 		try {
-			booking.reserveResource(task2.getId());
+			booking.reserveResource(task2.getId(), resourceId);
 		} catch (RecoverableException re) {
 			hasException = true;
 		}	

@@ -50,10 +50,10 @@ public class Booking {
 	private TaskHelper taskHelper;
 	
 	
-	public User reserveUser(String taskId) throws RecoverableException, EntityNotFoundException {
+	public User reserveUser(String taskId, String userId) throws RecoverableException, EntityNotFoundException {
 					
 		Task task = tasks.get(taskId);
-		String userId = task.getUser().getId(); // TODO throws ex
+		//String userId = task.getUser().getId(); // TODO throws ex
 		User user = users.getLock(userId);
 		
 		if (task.equals(user.getTask()))
@@ -87,10 +87,10 @@ public class Booking {
 		return resource.getId();
 	}
 
-	public Resource reserveResource(String taskId) throws RecoverableException, EntityNotFoundException {
+	public Resource reserveResource(String taskId, String resourceId) throws RecoverableException, EntityNotFoundException {
 
 		Task task = tasks.get(taskId);
-		String resourceId = task.getResource().getId(); // TODO throws ex
+		//String resourceId = task.getResource().getId(); // TODO throws ex
 		Resource resource = resources.getLock(resourceId);
 		
 		if (task.equals(resource.getTask()))

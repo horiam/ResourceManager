@@ -156,7 +156,7 @@ public class TaskExecutor {
 			
 			String userId = taskHelper.getUserId(taskId);
 						
-			bookingService.reserveUser(taskId);
+			bookingService.reserveUser(taskId, userId);
 								
 			User user = users.get(userId);
 			
@@ -217,7 +217,7 @@ public class TaskExecutor {
 			
 			String userId = taskHelper.getUserId(taskId);
 			
-			bookingService.reserveUser(taskId);
+			bookingService.reserveUser(taskId, userId);
 						
 			User user = users.get(userId);
 			
@@ -228,7 +228,7 @@ public class TaskExecutor {
 			if ( resource != null ) {
 
 				taskHelper.setResource(taskId, resource.getId());
-				bookingService.reserveResource(taskId);				
+				bookingService.reserveResource(taskId, resource.getId());				
 				
 				transaction.commit();
 				
@@ -264,18 +264,18 @@ public class TaskExecutor {
 			
 			String userId = taskHelper.getUserId(taskId);
 			
-			bookingService.reserveUser(taskId);
+			bookingService.reserveUser(taskId, userId);
 									
 			User user = users.get(userId);
 			
-			Resource Resource = user.getResource();
+			Resource resource = user.getResource();
 			
 			String message = "done";
 			
-			if ( Resource != null ) {
+			if ( resource != null ) {
 				
-				taskHelper.setResource(taskId, Resource.getId());
-				bookingService.reserveResource(taskId);				
+				taskHelper.setResource(taskId, resource.getId());
+				bookingService.reserveResource(taskId, resource.getId());				
 				
 				transaction.commit();
 				
@@ -284,7 +284,7 @@ public class TaskExecutor {
 				
 				attachService.detachUser(userId);	
 				
-				bookingService.freeResource(Resource.getId());
+				bookingService.freeResource(resource.getId());
 				
 			} else {
 				
@@ -311,7 +311,7 @@ public class TaskExecutor {
 			
 			String resourceId = taskHelper.getResourceId(taskId);
 					
-			bookingService.reserveResource(taskId);
+			bookingService.reserveResource(taskId, resourceId);
 			
 			Resource Resource = resources.get(resourceId);
 			User user = Resource.getUser();
@@ -321,7 +321,7 @@ public class TaskExecutor {
 			if ( user != null ) {
 				
 				taskHelper.setUser(taskId, user.getId());
-				bookingService.reserveUser(taskId);				
+				bookingService.reserveUser(taskId, user.getId());				
 				
 				transaction.commit();
 				
