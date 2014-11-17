@@ -48,7 +48,7 @@ public class TestClassFinder extends ContainerWrapper {
 	@Test
 	public void testClassFinder() throws Exception {
 		System.out.println("\nTest ClassFinder EJB...\n");
-		ClassFinder classFinder = (ClassFinder) lookup("java:global/Beans/ClassFinder");
+		ClassFinder classFinder = (ClassFinder) lookup("java:global/Beans/ClassFinder!" + ClassFinder.class.getName());
 		
 		assertTrue("Should return a subclass", User.class.isAssignableFrom(classFinder.getUserClass()));
 		assertTrue("Should return a subclass", Resource.class.isAssignableFrom(classFinder.getResourceClass()));

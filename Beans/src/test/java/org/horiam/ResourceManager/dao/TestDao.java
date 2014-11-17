@@ -24,6 +24,9 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 import java.util.Properties;
 
+import javax.ejb.EJB;
+import javax.ejb.EJBs;
+import javax.ejb.embeddable.EJBContainer;
 import javax.naming.NamingException;
 
 import org.horiam.ResourceManager.model.EntityNotFoundException;
@@ -32,6 +35,7 @@ import org.horiam.ResourceManager.model.Task;
 import org.horiam.ResourceManager.model.User;
 import org.horiam.ResourceManager.test.ContainerWrapper;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Rule;
@@ -40,17 +44,25 @@ import org.junit.rules.ExpectedException;
 import org.junit.runners.MethodSorters;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class TestDao extends ContainerWrapper {
+public class TestDao  {
+	
+	@EJB
+	protected UserDao userDao;
+	@EJB
+	protected ResourceDao resourceDao;
+	@EJB
+	protected TaskDao taskDao; 
 	
 	@Rule
 	public ExpectedException exception = ExpectedException.none();
 	
+	/*
 	@BeforeClass
 	public static void setup() {
 		Properties properties = new Properties();
 		properties.put("myDatabase", "new://Resource?type=DataSource");
 		properties.put("myDatabase.JdbcDriver", "org.h2.Driver");
-		properties.put("myDatabase.JdbcUrl", "jdbc:h2:mem:StorageManagerStore");
+		properties.put("myDatabase.JdbcUrl", "jdbc:h2:mem:StorageManagerStore");		
 		setupContainer(properties);
 	}
 	
@@ -58,12 +70,23 @@ public class TestDao extends ContainerWrapper {
 	public static void stop() {
 		closeContainer();
 	}
+	*/
+	
+	@Before
+	public void setup() throws NamingException {
+		Properties properties = new Properties();
+		properties.put("myDatabase", "new://Resource?type=DataSource");
+		properties.put("myDatabase.JdbcDriver", "org.h2.Driver");
+		properties.put("myDatabase.JdbcUrl", "jdbc:h2:mem:StorageManagerStore");
+		EJBContainer.createEJBContainer(properties).getContext().bind("inject", this);
+	}
+	
 	
 	@Test
 	public void aTest() throws NamingException, EntityNotFoundException {
 		System.out.println("\nTest UserDao EJB...\n");
 		
-		UserDao userDao = (UserDao) lookup("java:global/Beans/UserDao");
+		//UserDao userDao = (UserDao) lookup("java:global/Beans/UserDao!" + UserDao.class.getName());
 		User userA = new User("userA");
 		
 		userDao.create(userA);
@@ -90,7 +113,7 @@ public class TestDao extends ContainerWrapper {
 	public void bTest() throws NamingException, EntityNotFoundException {
 		System.out.println("\nTest ResourceDao EJB...\n");
 		
-		ResourceDao resourceDao = (ResourceDao) lookup("java:global/Beans/ResourceDao");
+		//ResourceDao resourceDao = (ResourceDao) lookup("java:global/Beans/ResourceDao!" + ResourceDao.class.getName());
 		Resource resource1 = new Resource("resource1");
 		
 		resourceDao.create(resource1);
@@ -125,7 +148,7 @@ public class TestDao extends ContainerWrapper {
 	public void cTest() throws NamingException, EntityNotFoundException {
 		System.out.println("\nTest UserDao EJB...\n");
 		
-		TaskDao taskDao = (TaskDao) lookup("java:global/Beans/TaskDao");
+		//TaskDao taskDao = (TaskDao) lookup("java:global/Beans/TaskDao!" + TaskDao.class.getName());
 		Task taskX = new Task("taskX");
 		
 		taskDao.create(taskX);

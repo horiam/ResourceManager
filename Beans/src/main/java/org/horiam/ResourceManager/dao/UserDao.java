@@ -27,6 +27,7 @@ import org.horiam.ResourceManager.model.EntityNotFoundException;
 import org.horiam.ResourceManager.model.Resource;
 import org.horiam.ResourceManager.model.User;
 
+
 @Stateless
 public class UserDao extends Dao<User> {
 	

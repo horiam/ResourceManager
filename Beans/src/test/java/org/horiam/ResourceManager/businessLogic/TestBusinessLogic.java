@@ -25,6 +25,9 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Properties;
+
+import javax.ejb.EJB;
+import javax.ejb.embeddable.EJBContainer;
 import javax.naming.NamingException;
 
 import org.horiam.ResourceManager.businessLogic.exceptions.RecoverableException;
@@ -53,16 +56,24 @@ public class TestBusinessLogic extends ContainerWrapper {
 	@Rule
 	public ExpectedException exception = ExpectedException.none();
 	
-	private String userId = "userA";
+	private String userId     = "userA";
 	private String resourceId = "resource1";
-	private String taskId = "taskX";
+	private String taskId     = "taskX";
 	
-	private static UserDao userDao;
-	private static ResourceDao resourceDao;
-	private static TaskDao taskDao;
-	private static TaskHelper taskHelper;
+	@EJB
+	protected UserDao userDao;
+	@EJB
+	protected ResourceDao resourceDao;
+	@EJB
+	protected TaskDao taskDao;
+	@EJB
+	protected TaskHelper taskHelper;	
+	@EJB
+	protected Allocator allocator;
+	@EJB
+	protected Booking booking;
 	
-	
+	/*
 	@BeforeClass
 	public static void setup() throws NamingException {
 		
@@ -72,18 +83,24 @@ public class TestBusinessLogic extends ContainerWrapper {
 		properties.put("myDatabase.JdbcUrl", "jdbc:h2:mem:StorageManagerStore");
 		setupContainer(properties);
 		
-		userDao = (UserDao) lookup("java:global/Beans/UserDao");
-		resourceDao = (ResourceDao) lookup("java:global/Beans/ResourceDao");
-		taskDao = (TaskDao) lookup("java:global/Beans/TaskDao");
+		userDao = (UserDao) lookup("java:global/Beans/UserDao!" + UserDao.class.getName());
+		resourceDao = (ResourceDao) lookup("java:global/Beans/ResourceDao!" + ResourceDao.class.getName());
+		taskDao = (TaskDao) lookup("java:global/Beans/TaskDao!" + TaskDao.class.getName());		
 	}
 	
 	@AfterClass
 	public static void stop() {
 		closeContainer();
 	}
-	
+	*/
 	@Before
-	public void before() {
+	public void setup() throws NamingException {
+		
+		Properties properties = new Properties();
+		properties.put("myDatabase", "new://Resource?type=DataSource");
+		properties.put("myDatabase.JdbcDriver", "org.h2.Driver");
+		properties.put("myDatabase.JdbcUrl", "jdbc:h2:mem:StorageManagerStore");
+		EJBContainer.createEJBContainer(properties).getContext().bind("inject", this);
 		
 		User user = new User(userId);		
 		Resource resource = new Resource(resourceId);		
@@ -95,7 +112,7 @@ public class TestBusinessLogic extends ContainerWrapper {
 	}
 	
 	@After
-	public void after() {
+	public void tearDown() {
 		
 		userDao.clear();
 		resourceDao.clear();
@@ -107,7 +124,7 @@ public class TestBusinessLogic extends ContainerWrapper {
 			ResourceUnrecoverableException, UserUnrecoverableException, EntityNotFoundException {		
 		System.out.println("\nTest Allocator EJB...\n");
 		
-		Allocator allocator = (Allocator) lookup("java:global/Beans/Allocator");
+		//Allocator allocator = (Allocator) lookup("java:global/Beans/Allocator!" + Allocator.class.getName());
 		
 		allocator.attachUser(userId, resourceId);
 		
@@ -130,7 +147,7 @@ public class TestBusinessLogic extends ContainerWrapper {
 	public void bTest() throws NamingException, EntityNotFoundException {		
 		System.out.println("\nTest TaskHelper EJB...\n");
 		
-		taskHelper = (TaskHelper) lookup("java:global/Beans/TaskHelper");
+		//taskHelper = (TaskHelper) lookup("java:global/Beans/TaskHelper!" + TaskHelper.class.getName());
 		
 		Task task = taskHelper.createTask(TaskType.allocateResourceForUser);		
 		assertTrue("Tasks must be in the DAO", task.equals(taskDao.get(task.getId())));
@@ -166,7 +183,7 @@ public class TestBusinessLogic extends ContainerWrapper {
 	public void cTest() throws NamingException, EntityNotFoundException, RecoverableException {		
 		System.out.println("\nTest Booking EJB...\n");		
 		
-		Booking booking = (Booking) lookup("java:global/Beans/Booking");
+		//Booking booking = (Booking) lookup("java:global/Beans/Booking!" + Booking.class.getName());
 		
 		User user = userDao.get(userId);
 		assertNull("User must not have any task", user.getTask());

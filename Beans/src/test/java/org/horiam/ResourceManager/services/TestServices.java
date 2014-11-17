@@ -43,9 +43,9 @@ public class TestServices  extends ContainerWrapper {
 
 		setupContainer(properties);
 		
-		userDao = (UserDao) lookup("java:global/Beans/UserDao");
-		resourceDao = (ResourceDao) lookup("java:global/Beans/ResourceDao");
-		taskDao = (TaskDao) lookup("java:global/Beans/TaskDao");
+		userDao = (UserDao) lookup("java:global/Beans/UserDao!" + UserDao.class.getName());
+		resourceDao = (ResourceDao) lookup("java:global/Beans/ResourceDao!" + ResourceDao.class.getName());
+		taskDao = (TaskDao) lookup("java:global/Beans/TaskDao!" + TaskDao.class.getName());		
 
 	}
 	
@@ -78,18 +78,18 @@ public class TestServices  extends ContainerWrapper {
 	public void testUserServiceAsAdmin() throws NamingException {
 		System.out.println("\nTest UserService EJB as Admin...\n");	
 		
-		UserService userService = (UserService) lookup("java:global/Beans/UserService");
+		UserService userService = (UserService) lookup("java:global/Beans/UserService!" + UserService.class.getName());
 				
         Properties properties = new Properties();
         properties.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
         properties.put(Context.SECURITY_PRINCIPAL, "admin");
         properties.put(Context.SECURITY_CREDENTIALS, "super");
 
-        InitialContext context = new InitialContext(properties);
+        //InitialContext context = new InitialContext(properties);
         
         try {
         	
-        	List<User> users = (List<User>) userService.list();
+        	//List<User> users = (List<User>) userService.list();
         	
         } finally {
             context.close();

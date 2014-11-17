@@ -10,6 +10,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeoutException;
 
+import javax.ejb.EJB;
+import javax.ejb.embeddable.EJBContainer;
 import javax.naming.NamingException;
 
 import org.horiam.ResourceManager.dao.ResourceDao;
@@ -26,18 +28,26 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+@javax.annotation.ManagedBean
 public class TestTaskExecutor extends ContainerWrapper {
 	
 	
-	private String userId = "userA";
+	private String userId     = "userA";
 	private String resourceId = "resource1";
-	private String taskId = "taskX";
+	private String taskId     = "taskX";
 	
-	private static UserDao userDao;
-	private static ResourceDao resourceDao;
-	private static TaskDao taskDao;
-	private static TaskHelper taskHelper;
+	@EJB
+	protected UserDao userDao;
+	@EJB
+	protected ResourceDao resourceDao;
+	@EJB
+	protected TaskDao taskDao;
+	@EJB
+	protected TaskHelper taskHelper;
+	@EJB
+	protected TaskExecutor executor;
 	
+	/*
 	@BeforeClass
 	public static void setup() throws NamingException {
 		
@@ -49,19 +59,26 @@ public class TestTaskExecutor extends ContainerWrapper {
 
 		setupContainer(properties);
 		
-		userDao = (UserDao) lookup("java:global/Beans/UserDao");
-		resourceDao = (ResourceDao) lookup("java:global/Beans/ResourceDao");
-		taskDao = (TaskDao) lookup("java:global/Beans/TaskDao");
-		taskHelper = (TaskHelper) lookup("java:global/Beans/TaskHelper");
+		userDao = (UserDao) lookup("java:global/Beans/UserDao!" + UserDao.class.getName());
+		resourceDao = (ResourceDao) lookup("java:global/Beans/ResourceDao!" + ResourceDao.class.getName());
+		taskDao = (TaskDao) lookup("java:global/Beans/TaskDao!" + TaskDao.class.getName());
+		taskHelper = (TaskHelper) lookup("java:global/Beans/TaskHelper!" + TaskHelper.class.getName());
 	}
 	
 	@AfterClass
 	public static void stop() {
 		closeContainer();
 	}
+	*/
 	
 	@Before
-	public void before() {
+	public void setup() throws NamingException {
+		
+		Properties properties = new Properties();
+		properties.put("myDatabase", "new://Resource?type=DataSource");
+		properties.put("myDatabase.JdbcDriver", "org.h2.Driver");
+		properties.put("myDatabase.JdbcUrl", "jdbc:h2:mem:StorageManagerStore");
+		EJBContainer.createEJBContainer(properties).getContext().bind("inject", this);
 		
 		User user = new User(userId);		
 		Resource resource = new Resource(resourceId);		
@@ -73,7 +90,7 @@ public class TestTaskExecutor extends ContainerWrapper {
 	}
 	
 	@After
-	public void after() {
+	public void tearDown() {
 		
 		userDao.clear();
 		resourceDao.clear();
@@ -86,7 +103,7 @@ public class TestTaskExecutor extends ContainerWrapper {
 								InterruptedException, ExecutionException, TimeoutException {		
 		System.out.println("\nTest TaskExecutor EJB : allocate and deallocate ...\n");	
 		
-		TaskExecutor executor = (TaskExecutor) lookup("java:global/Beans/TaskExecutor");
+		//TaskExecutor executor = (TaskExecutor) lookup("java:global/Beans/TaskExecutor!" + TaskExecutor.class.getName());
 		
 		Task task1 = taskHelper.createTask(TaskType.allocateResourceForUser);
 		task1 = taskHelper.setUser(task1.getId(), userId);
