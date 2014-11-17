@@ -28,6 +28,7 @@ import java.util.Properties;
 
 import javax.ejb.EJB;
 import javax.ejb.embeddable.EJBContainer;
+import javax.naming.Context;
 import javax.naming.NamingException;
 
 import org.horiam.ResourceManager.businessLogic.exceptions.RecoverableException;
@@ -51,7 +52,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 
-public class TestBusinessLogic extends ContainerWrapper {
+public class TestBusinessLogic  {
 	
 	@Rule
 	public ExpectedException exception = ExpectedException.none();
@@ -93,6 +94,9 @@ public class TestBusinessLogic extends ContainerWrapper {
 		closeContainer();
 	}
 	*/
+	
+	protected Context context;
+	
 	@Before
 	public void setup() throws NamingException {
 		
@@ -100,7 +104,8 @@ public class TestBusinessLogic extends ContainerWrapper {
 		properties.put("myDatabase", "new://Resource?type=DataSource");
 		properties.put("myDatabase.JdbcDriver", "org.h2.Driver");
 		properties.put("myDatabase.JdbcUrl", "jdbc:h2:mem:StorageManagerStore");
-		EJBContainer.createEJBContainer(properties).getContext().bind("inject", this);
+		context = EJBContainer.createEJBContainer(properties).getContext();
+		context.bind("inject", this);
 		
 		User user = new User(userId);		
 		Resource resource = new Resource(resourceId);		
@@ -112,11 +117,13 @@ public class TestBusinessLogic extends ContainerWrapper {
 	}
 	
 	@After
-	public void tearDown() {
+	public void tearDown() throws NamingException {
 		
 		userDao.clear();
 		resourceDao.clear();
 		taskDao.clear();
+		
+		context.close();
 	}	
 	
 	@Test

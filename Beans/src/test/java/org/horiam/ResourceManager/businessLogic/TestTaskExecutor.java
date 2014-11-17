@@ -12,6 +12,7 @@ import java.util.concurrent.TimeoutException;
 
 import javax.ejb.EJB;
 import javax.ejb.embeddable.EJBContainer;
+import javax.naming.Context;
 import javax.naming.NamingException;
 
 import org.horiam.ResourceManager.dao.ResourceDao;
@@ -28,8 +29,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-@javax.annotation.ManagedBean
-public class TestTaskExecutor extends ContainerWrapper {
+@javax.annotation.ManagedBean 
+public class TestTaskExecutor  {
 	
 	
 	private String userId     = "userA";
@@ -71,6 +72,8 @@ public class TestTaskExecutor extends ContainerWrapper {
 	}
 	*/
 	
+	protected Context context;
+	
 	@Before
 	public void setup() throws NamingException {
 		
@@ -78,7 +81,8 @@ public class TestTaskExecutor extends ContainerWrapper {
 		properties.put("myDatabase", "new://Resource?type=DataSource");
 		properties.put("myDatabase.JdbcDriver", "org.h2.Driver");
 		properties.put("myDatabase.JdbcUrl", "jdbc:h2:mem:StorageManagerStore");
-		EJBContainer.createEJBContainer(properties).getContext().bind("inject", this);
+		context = EJBContainer.createEJBContainer(properties).getContext();
+		context.bind("inject", this);
 		
 		User user = new User(userId);		
 		Resource resource = new Resource(resourceId);		
@@ -90,11 +94,13 @@ public class TestTaskExecutor extends ContainerWrapper {
 	}
 	
 	@After
-	public void tearDown() {
+	public void tearDown() throws NamingException {
 		
 		userDao.clear();
 		resourceDao.clear();
 		taskDao.clear();
+		
+		context.close();
 	}
 	
 	

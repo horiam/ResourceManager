@@ -23,17 +23,30 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Properties;
 
+import javax.ejb.EJB;
+import javax.ejb.embeddable.EJBContainer;
+import javax.naming.Context;
+import javax.naming.NamingException;
+
 import org.horiam.ResourceManager.businessLogic.AlloctionDriver;
 import org.horiam.ResourceManager.model.Resource;
+import org.horiam.ResourceManager.model.Task;
 import org.horiam.ResourceManager.model.User;
 import org.horiam.ResourceManager.test.ContainerWrapper;
+import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 
 public class TestClassFinder extends ContainerWrapper {
-
+	
+	@EJB
+	protected ClassFinder classFinder;
+	
+	protected Context context;
+/*
 	@BeforeClass
 	public static void setup() {
 		Properties properties = new Properties();
@@ -44,11 +57,24 @@ public class TestClassFinder extends ContainerWrapper {
 	public static void stop() {
 		closeContainer();
 	}
+*/
+	@Before
+	public void setup() throws NamingException {
+		
+		context = EJBContainer.createEJBContainer().getContext();
+		context.bind("inject", this);				
+	}
+	
+	@After
+	public void tearDown() throws NamingException {
+		
+		context.close();
+	}
 	
 	@Test
 	public void testClassFinder() throws Exception {
 		System.out.println("\nTest ClassFinder EJB...\n");
-		ClassFinder classFinder = (ClassFinder) lookup("java:global/Beans/ClassFinder!" + ClassFinder.class.getName());
+		//ClassFinder classFinder = (ClassFinder) lookup("java:global/Beans/ClassFinder!" + ClassFinder.class.getName());
 		
 		assertTrue("Should return a subclass", User.class.isAssignableFrom(classFinder.getUserClass()));
 		assertTrue("Should return a subclass", Resource.class.isAssignableFrom(classFinder.getResourceClass()));

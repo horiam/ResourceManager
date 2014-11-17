@@ -27,6 +27,7 @@ import java.util.Properties;
 import javax.ejb.EJB;
 import javax.ejb.EJBs;
 import javax.ejb.embeddable.EJBContainer;
+import javax.naming.Context;
 import javax.naming.NamingException;
 
 import org.horiam.ResourceManager.model.EntityNotFoundException;
@@ -34,6 +35,7 @@ import org.horiam.ResourceManager.model.Resource;
 import org.horiam.ResourceManager.model.Task;
 import org.horiam.ResourceManager.model.User;
 import org.horiam.ResourceManager.test.ContainerWrapper;
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -55,6 +57,9 @@ public class TestDao  {
 	
 	@Rule
 	public ExpectedException exception = ExpectedException.none();
+	
+	
+	protected Context context;
 	
 	/*
 	@BeforeClass
@@ -78,9 +83,19 @@ public class TestDao  {
 		properties.put("myDatabase", "new://Resource?type=DataSource");
 		properties.put("myDatabase.JdbcDriver", "org.h2.Driver");
 		properties.put("myDatabase.JdbcUrl", "jdbc:h2:mem:StorageManagerStore");
-		EJBContainer.createEJBContainer(properties).getContext().bind("inject", this);
+		context = EJBContainer.createEJBContainer(properties).getContext();
+		context.bind("inject", this);
 	}
 	
+	@After
+	public void tearDown() throws NamingException {
+		
+		userDao.clear();
+		resourceDao.clear();
+		taskDao.clear();
+		
+		context.close();
+	}
 	
 	@Test
 	public void aTest() throws NamingException, EntityNotFoundException {
