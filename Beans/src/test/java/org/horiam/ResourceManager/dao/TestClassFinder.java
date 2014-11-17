@@ -40,35 +40,24 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 
-public class TestClassFinder extends ContainerWrapper {
+public class TestClassFinder {
 	
 	@EJB
 	protected ClassFinder classFinder;
 	
-	protected Context context;
-/*
-	@BeforeClass
-	public static void setup() {
-		Properties properties = new Properties();
-		setupContainer(properties);
-	}
+	protected EJBContainer container;
 	
-	@AfterClass
-	public static void stop() {
-		closeContainer();
-	}
-*/
 	@Before
 	public void setup() throws NamingException {
-		
-		context = EJBContainer.createEJBContainer().getContext();
-		context.bind("inject", this);				
+
+		container = EJBContainer.createEJBContainer();
+		container.getContext().bind("inject", this);
 	}
 	
 	@After
-	public void tearDown() throws NamingException {
+	public void tearDown() {
 		
-		context.close();
+		container.close();
 	}
 	
 	@Test

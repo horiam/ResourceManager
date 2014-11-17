@@ -59,23 +59,9 @@ public class TestDao  {
 	public ExpectedException exception = ExpectedException.none();
 	
 	
-	protected Context context;
+	protected EJBContainer container;
 	
-	/*
-	@BeforeClass
-	public static void setup() {
-		Properties properties = new Properties();
-		properties.put("myDatabase", "new://Resource?type=DataSource");
-		properties.put("myDatabase.JdbcDriver", "org.h2.Driver");
-		properties.put("myDatabase.JdbcUrl", "jdbc:h2:mem:StorageManagerStore");		
-		setupContainer(properties);
-	}
-	
-	@AfterClass
-	public static void stop() {
-		closeContainer();
-	}
-	*/
+
 	
 	@Before
 	public void setup() throws NamingException {
@@ -83,18 +69,18 @@ public class TestDao  {
 		properties.put("myDatabase", "new://Resource?type=DataSource");
 		properties.put("myDatabase.JdbcDriver", "org.h2.Driver");
 		properties.put("myDatabase.JdbcUrl", "jdbc:h2:mem:StorageManagerStore");
-		context = EJBContainer.createEJBContainer(properties).getContext();
-		context.bind("inject", this);
+		container = EJBContainer.createEJBContainer(properties);
+		container.getContext().bind("inject", this);
 	}
 	
 	@After
-	public void tearDown() throws NamingException {
+	public void tearDown() {
 		
 		userDao.clear();
 		resourceDao.clear();
 		taskDao.clear();
 		
-		context.close();
+		container.close();
 	}
 	
 	@Test

@@ -94,37 +94,31 @@ public class TestBusinessLogic  {
 		closeContainer();
 	}
 	*/
-	
-	protected Context context;
+	protected EJBContainer container;
 	
 	@Before
 	public void setup() throws NamingException {
-		
 		Properties properties = new Properties();
 		properties.put("myDatabase", "new://Resource?type=DataSource");
 		properties.put("myDatabase.JdbcDriver", "org.h2.Driver");
 		properties.put("myDatabase.JdbcUrl", "jdbc:h2:mem:StorageManagerStore");
-		context = EJBContainer.createEJBContainer(properties).getContext();
-		context.bind("inject", this);
+		container = EJBContainer.createEJBContainer(properties);
+		container.getContext().bind("inject", this);
 		
-		User user = new User(userId);		
-		Resource resource = new Resource(resourceId);		
-		Task task = new Task(taskId);
-		
-		userDao.create(user);
-		resourceDao.create(resource);	
-		taskDao.create(task);				
+		userDao.create(new User(userId));
+		resourceDao.create(new Resource(resourceId));
+		taskDao.create(new Task(taskId));
 	}
 	
 	@After
-	public void tearDown() throws NamingException {
+	public void tearDown() {
 		
 		userDao.clear();
 		resourceDao.clear();
 		taskDao.clear();
 		
-		context.close();
-	}	
+		container.close();
+	}
 	
 	@Test
 	public void aTest() throws NamingException, InterruptedException, UnrecoverableException, 
