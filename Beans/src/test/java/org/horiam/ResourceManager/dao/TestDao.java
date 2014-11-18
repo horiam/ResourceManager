@@ -19,6 +19,7 @@
 
 package org.horiam.ResourceManager.dao;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -74,8 +75,7 @@ public class TestDao  {
 	}
 	
 	@After
-	public void tearDown() {
-		
+	public void tearDown() {		
 		userDao.clear();
 		resourceDao.clear();
 		taskDao.clear();
@@ -147,9 +147,23 @@ public class TestDao  {
 	
 	@Test
 	public void cTest() throws NamingException, EntityNotFoundException {
-		System.out.println("\nTest UserDao EJB...\n");
+		System.out.println("\nTest UserDao EJB setResource ...\n");
 		
-		//TaskDao taskDao = (TaskDao) lookup("java:global/Beans/TaskDao!" + TaskDao.class.getName());
+		User userA = new User("userA");		
+		userDao.create(userA);
+		
+		Resource resource1 = new Resource("resource1");	
+		resourceDao.create(resource1);
+		
+		userDao.setResource("userA", "resource1");
+		assertNotNull("User must have a Resource", userDao.get("userA").getResource());
+		assertNotNull("Resource must have a User", resourceDao.get("resource1").getUser());
+	}
+	
+	@Test
+	public void dTest() throws NamingException, EntityNotFoundException {
+		System.out.println("\nTest TaskDao EJB...\n");
+		
 		Task taskX = new Task("taskX");
 		
 		taskDao.create(taskX);

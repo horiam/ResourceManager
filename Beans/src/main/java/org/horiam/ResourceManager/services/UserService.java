@@ -71,7 +71,7 @@ public class UserService {
 	public void createOrUpdate(String id, User user) {
 		
 		if (isUserAuthorised(id) && isUserAuthorised(user.getId())) {
-		
+			// clean input User
 			user.removeResource();
 			user.removeTask();
 				

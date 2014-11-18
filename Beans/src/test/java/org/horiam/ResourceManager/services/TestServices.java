@@ -94,11 +94,18 @@ public class TestServices {
 		System.out.println("\nTest UserService EJB as Admin...\n");	
 		
 		Callable<Void> callable = new Callable<Void>() {
-
 			@Override
 			public Void call() throws Exception {
 				List<? extends User> users = userService.list();
 				assertTrue("Must contain one User", users.size() == 1);
+				assertTrue("Must the same", users.get(0).equals(userDao.get(userId)));
+				
+				String user2Id = "user2";
+				userService.createOrUpdate(user2Id, new User(user2Id));
+				users = userService.list();
+				assertTrue("Must contain one User", users.size() == 2);
+				
+				
 				return null;
 			}			
 		};
@@ -111,7 +118,6 @@ public class TestServices {
 		System.out.println("\nTest UserService EJB as User...\n");	
 		
 		Callable<Void> callable = new Callable<Void>() {
-
 			@Override
 			public Void call() throws Exception {
 				boolean hasException = false;
