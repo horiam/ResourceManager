@@ -2,11 +2,12 @@ package org.horiam.ResourceManager.services;
 
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.Callable;
 
+import javax.annotation.security.RunAs;
 import javax.ejb.EJB;
+import javax.ejb.Stateless;
 import javax.ejb.embeddable.EJBContainer;
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import org.horiam.ResourceManager.dao.ResourceDao;
@@ -15,19 +16,18 @@ import org.horiam.ResourceManager.dao.UserDao;
 import org.horiam.ResourceManager.model.Resource;
 import org.horiam.ResourceManager.model.Task;
 import org.horiam.ResourceManager.model.User;
-import org.horiam.ResourceManager.test.ContainerWrapper;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
+
+import static org.junit.Assert.assertTrue;
 
 
 public class TestServices {
 	
-	private String userId = "userA";
+	private String userId     = "userA";
 	private String resourceId = "resource1";
-	private String taskId = "taskX";
+	private String taskId     = "taskX";
 	
 	@EJB
 	private UserDao userDao;
@@ -35,8 +35,14 @@ public class TestServices {
 	private ResourceDao resourceDao;
 	@EJB
 	private TaskDao taskDao;
+	// Beans to test
 	@EJB
 	private UserService userService;
+	// Callers
+	@EJB
+	private AdminCaller adminCaller;
+	@EJB
+	private UserCaller userCaller;
 	
 
 	protected EJBContainer container;
@@ -56,35 +62,70 @@ public class TestServices {
 	}
 	
 	@After
-	public void tearDown() {
-		
+	public void tearDown() {		
 		userDao.clear();
 		resourceDao.clear();
-		taskDao.clear();
-		
+		taskDao.clear();		
 		container.close();
 	}
 	
+	///////////////////////////////////////////////////////////////
+	
+	@Stateless
+	@RunAs("Admin")
+	public static class AdminCaller {
+		public Void call(Callable<Void> callable) throws Exception {
+			return callable.call();
+		}
+	}
+	
+	@Stateless
+	@RunAs("User")
+	public static class UserCaller {
+		public Void call(Callable<Void> callable) throws Exception {
+			return callable.call();
+		}
+	}
+	
+	///////////////////////////////////////////////////////////////
+	
 	@Test
-	public void testUserServiceAsAdmin() throws NamingException {
+	public void testUserServiceAsAdmin() throws Exception {
 		System.out.println("\nTest UserService EJB as Admin...\n");	
 		
-		//UserService userService = (UserService) lookup("java:global/Beans/UserService!" + UserService.class.getName());
-				
-        Properties properties = new Properties();
-        properties.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
-        properties.put(Context.SECURITY_PRINCIPAL, "admin");
-        properties.put(Context.SECURITY_CREDENTIALS, "super");
+		Callable<Void> callable = new Callable<Void>() {
 
-        //InitialContext context = new InitialContext(properties);
-        
-        try {
-        	
-        	//List<User> users = (List<User>) userService.list();
-        	
-        } finally {
-            //context.close();
-        }
+			@Override
+			public Void call() throws Exception {
+				List<? extends User> users = userService.list();
+				assertTrue("Must contain one User", users.size() == 1);
+				return null;
+			}			
+		};
+		
+		adminCaller.call(callable);
+	}
+	
+	@Test
+	public void testUserServiceAsUser() throws Exception {
+		System.out.println("\nTest UserService EJB as User...\n");	
+		
+		Callable<Void> callable = new Callable<Void>() {
+
+			@Override
+			public Void call() throws Exception {
+				boolean hasException = false;
+				try {
+					 userService.list();
+				} catch (Exception ex) {
+					hasException = true;
+				}
+				assertTrue("Has Exception", hasException);
+				return null;
+			}			
+		};
+		
+		userCaller.call(callable);
 	}
 	
 }

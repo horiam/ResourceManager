@@ -34,7 +34,7 @@ import org.horiam.ResourceManager.model.Task;
 
 
 
-@DeclareRoles(value = { "admin-role", "user-role" })
+@DeclareRoles(value = { "Admin", "User" })
 @Stateless
 public class TaskService {
 	
@@ -48,17 +48,17 @@ public class TaskService {
 	private UserService userService;
 	
 
-	@RolesAllowed(value = { "admin-role" })
+	@RolesAllowed(value = { "Admin" })
 	public List<Task> list() {
 		return tasks.list();
 	}
 	
-	@RolesAllowed(value = { "admin-role", "user-role" })
+	@RolesAllowed(value = { "Admin", "User" })
 	public boolean exists(String id) {
 		return tasks.exists(id);
 	}
 	
-	@RolesAllowed(value = { "admin-role", "user-role" })
+	@RolesAllowed(value = { "Admin", "User" })
 	public Task get(String id) throws EntityNotFoundException {
 
 		Task task = tasks.get(id);		
@@ -68,7 +68,7 @@ public class TaskService {
 		return null;
 	}
 	
-	@RolesAllowed(value = { "admin-role" })
+	@RolesAllowed(value = { "Admin" })
 	public void delete(String id) {
 		tasks.remove(id);
 	}

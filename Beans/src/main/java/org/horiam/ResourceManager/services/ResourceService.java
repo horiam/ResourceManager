@@ -36,7 +36,7 @@ import org.horiam.ResourceManager.model.Task;
 import org.horiam.ResourceManager.model.Resource;
 
 
-@DeclareRoles(value = { "admin-role", "user-role" })
+@DeclareRoles(value = { "Admin", "User" })
 @Stateless
 public class ResourceService {
 
@@ -50,12 +50,12 @@ public class ResourceService {
 	private UserService userService;
 
 	
-	@RolesAllowed(value = { "admin-role", "user-role" })
+	@RolesAllowed(value = { "Admin", "User" })
 	public boolean exists(String id) {
 		return resources.exists(id);
 	}
 	
-	@RolesAllowed(value = { "admin-role", "user-role" })
+	@RolesAllowed(value = { "Admin", "User" })
 	public Resource get(String id) throws EntityNotFoundException {
 
 		Resource resource = resources.get(id);
@@ -66,7 +66,7 @@ public class ResourceService {
 		return null;
 	}
 
-	@RolesAllowed(value = { "admin-role" })
+	@RolesAllowed(value = { "Admin" })
 	public void createOrUpdate(String id, Resource resource) {
 
 		resource.removeTask();
@@ -78,17 +78,17 @@ public class ResourceService {
 			resources.create(resource);
 	}
 
-	@RolesAllowed(value = { "admin-role" })
+	@RolesAllowed(value = { "Admin" })
 	public List<Resource> list() {
 		return resources.list();
 	}
 	
-	@RolesAllowed(value = { "admin-role" })
+	@RolesAllowed(value = { "Admin" })
 	public void delete(String id) {
 		resources.remove(id);
 	}
 
-	@RolesAllowed(value = { "admin-role" })
+	@RolesAllowed(value = { "Admin" })
 	public Task removeResource(String id) throws EntityNotFoundException {
 
 		Task task = taskHelper.createTask(TaskType.removeResource);

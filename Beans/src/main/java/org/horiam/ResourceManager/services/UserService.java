@@ -39,7 +39,7 @@ import org.horiam.ResourceManager.model.Task;
 import org.horiam.ResourceManager.model.User;
 
 
-@DeclareRoles(value = {"admin-role", "user-role"})
+@DeclareRoles(value = {"Admin", "User"})
 @Stateless
 public class UserService {
 	
@@ -53,21 +53,21 @@ public class UserService {
 	private TaskExecutor async;
 	
 	
-	@RolesAllowed(value = {"admin-role"})
+	@RolesAllowed(value = {"Admin"})
 	public List<? extends User> list() {
 		return users.list();
 	}
 	
 	////////////////////////////////////////////////////////////////////////////
 	
-	@RolesAllowed(value = {"admin-role", "user-role"})	
+	@RolesAllowed(value = {"Admin", "User"})	
 	public boolean exists(String id) {
 		return users.exists(id);
 	}
 
 	////////////////////////////////////////////////////////////////////////////
 
-	@RolesAllowed(value = {"admin-role", "user-role"})	
+	@RolesAllowed(value = {"Admin", "User"})	
 	public void createOrUpdate(String id, User user) {
 		
 		if (isUserAuthorised(id) && isUserAuthorised(user.getId())) {
@@ -84,7 +84,7 @@ public class UserService {
 
 	////////////////////////////////////////////////////////////////////////////
 
-	@RolesAllowed(value = {"admin-role", "user-role"})		
+	@RolesAllowed(value = {"Admin", "User"})		
 	public User get(String id) throws EntityNotFoundException {
 		
 		if (isUserAuthorised(id))
@@ -95,7 +95,7 @@ public class UserService {
 
 	////////////////////////////////////////////////////////////////////////////
 
-	@RolesAllowed(value = {"admin-role"})
+	@RolesAllowed(value = {"Admin"})
 	public void delete(String id) {
 		
 		users.remove(id);
@@ -103,7 +103,7 @@ public class UserService {
 		
 	////////////////////////////////////////////////////////////////////////////
 	
-	@RolesAllowed(value = {"admin-role", "user-role"})
+	@RolesAllowed(value = {"Admin", "User"})
 	public Task allocateUser(String id) throws EntityNotFoundException {
 		
 		if (isUserAuthorised(id)) {
@@ -120,7 +120,7 @@ public class UserService {
 		
 	////////////////////////////////////////////////////////////////////////////
 	
-	@RolesAllowed(value = {"admin-role", "user-role"})
+	@RolesAllowed(value = {"Admin", "User"})
 	public Task deallocateUser(String id) throws EntityNotFoundException {
 		
 		if (isUserAuthorised(id)) {
@@ -137,7 +137,7 @@ public class UserService {
 		
 	////////////////////////////////////////////////////////////////////////////
 	
-	@RolesAllowed(value = {"admin-role", "user-role"})
+	@RolesAllowed(value = {"Admin", "User"})
 	public Task removeUser(String id) throws EntityNotFoundException {
 		
 		if (isUserAuthorised(id)) {
@@ -156,7 +156,7 @@ public class UserService {
 	
 	public boolean isUserAuthorised(String id) {
 		
-		if (context.isCallerInRole("admin-role"))
+		if (context.isCallerInRole("Admin"))
 			return true;
 		
 		String callerUsername = context.getCallerPrincipal().getName();
@@ -169,7 +169,7 @@ public class UserService {
 	
 	public boolean isUserAuthorised(User user) {
 		
-		if (context.isCallerInRole("admin-role"))
+		if (context.isCallerInRole("Admin"))
 			return true;
 		
 		String callerUsername = context.getCallerPrincipal().getName();
