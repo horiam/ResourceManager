@@ -1,5 +1,6 @@
 package org.horiam.ResourceManager.authorisation;
 
+import javax.ejb.EJBAccessException;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.InvocationContext;
 
@@ -16,7 +17,7 @@ public class ActionOnUserAuthorisationInterceptor extends UserAuthorisation {
 			return invocationCxt.proceed();	
 		}
 			
-		throw new SecurityException("User is not authorised to access this object");					
+		throw new EJBAccessException("User is not authorised to access this object");					
 	}
 	
 }
