@@ -29,7 +29,11 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.interceptor.Interceptors;
 
+import org.horiam.ResourceManager.authorisation.ActionOnUserAuthorisationInterceptor;
 import org.horiam.ResourceManager.businessLogic.TaskExecutor;
 import org.horiam.ResourceManager.businessLogic.TaskHelper;
 import org.horiam.ResourceManager.businessLogic.TaskType;
@@ -59,18 +63,18 @@ public class UserService {
 	}
 	
 	////////////////////////////////////////////////////////////////////////////
-	
+	@Interceptors(ActionOnUserAuthorisationInterceptor.class)
 	@RolesAllowed(value = {"Admin", "User"})	
 	public boolean exists(String id) {
 		return users.exists(id);
 	}
 
 	////////////////////////////////////////////////////////////////////////////
-
+	@Interceptors(ActionOnUserAuthorisationInterceptor.class)
 	@RolesAllowed(value = {"Admin", "User"})	
-	public void createOrUpdate(String id, User user) {
-		
-		if (isUserAuthorised(id) && isUserAuthorised(user.getId())) {
+	public void createOrUpdate(String id, User user) {		
+		//if (isUserAuthorised(id) && isUserAuthorised(user.getId())) {
+		if (id.equals(user.getId())) {
 			// clean input User
 			user.removeResource();
 			user.removeTask();
@@ -83,14 +87,14 @@ public class UserService {
 	}
 
 	////////////////////////////////////////////////////////////////////////////
-
+	@Interceptors(ActionOnUserAuthorisationInterceptor.class)
 	@RolesAllowed(value = {"Admin", "User"})		
 	public User get(String id) throws EntityNotFoundException {
 		
-		if (isUserAuthorised(id))
+		//if (isUserAuthorised(id))
 			return users.get(id);
 		
-		return null;
+		//return null;
 	}
 
 	////////////////////////////////////////////////////////////////////////////
@@ -102,58 +106,55 @@ public class UserService {
 	}
 		
 	////////////////////////////////////////////////////////////////////////////
-	
+	@Interceptors(ActionOnUserAuthorisationInterceptor.class)
 	@RolesAllowed(value = {"Admin", "User"})
 	public Task allocateUser(String id) throws EntityNotFoundException {
 		
-		if (isUserAuthorised(id)) {
+		//if (isUserAuthorised(id)) {
 		
 			Task task = taskHelper.createTask(TaskType.allocateResourceForUser);
 			taskHelper.setUser(task.getId(), id);
 									
 			Future<Void> future = async.executeTask(task.getId());				
 			return task; 
-		} 
-		
-		return null;
+		//} 		
+		//return null;
 	}
 		
 	////////////////////////////////////////////////////////////////////////////
-	
+	@Interceptors(ActionOnUserAuthorisationInterceptor.class)
 	@RolesAllowed(value = {"Admin", "User"})
 	public Task deallocateUser(String id) throws EntityNotFoundException {
 		
-		if (isUserAuthorised(id)) {
+		//if (isUserAuthorised(id)) {
 			
 			Task task = taskHelper.createTask(TaskType.deallocateUser);
 			taskHelper.setUser(task.getId(), id);
 			
 			Future<Void> future = async.executeTask(task.getId());				
 			return task; 
-		} 
-		
-		return null;
+		//} 		
+		//return null;
 	}
 		
 	////////////////////////////////////////////////////////////////////////////
-	
+	@Interceptors(ActionOnUserAuthorisationInterceptor.class)
 	@RolesAllowed(value = {"Admin", "User"})
 	public Task removeUser(String id) throws EntityNotFoundException {
 		
-		if (isUserAuthorised(id)) {
+		//if (isUserAuthorised(id)) {
 		
 			Task task = taskHelper.createTask(TaskType.removeUser);
 			taskHelper.setUser(task.getId(), id);
 					
 			Future<Void> future = async.executeTask(task.getId());
 			return task;  
-		} 
-		
-		return null;
+		//} 		
+		//return null;
 	}
 	
 	////////////////////////////////////////////////////////////////////////////
-	
+/*	
 	public boolean isUserAuthorised(String id) {
 		
 		if (context.isCallerInRole("Admin"))
@@ -179,6 +180,6 @@ public class UserService {
 		
 		return false;
 	}
-
+*/
 			
 }

@@ -29,7 +29,7 @@ import org.horiam.ResourceManager.model.XmlAdapter.UserXmlAdapter;
 })
 @XmlRootElement(name="Resource")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Resource extends ModelWithTask implements Serializable {
+public class Resource extends ModelWithTask implements UserHolder, Serializable {
 	
 	private static final long serialVersionUID = 2306626348101072900L;
 	
@@ -48,22 +48,19 @@ public class Resource extends ModelWithTask implements Serializable {
 		this();
 		setId(id);
 	}	
-	
+	@Override
 	public User getUser() {
 		return user;
 	}
-
+	@Override
 	public void setUser(User user) {
 		this.user = user;
 	}
-	
-	public boolean hasUsers() {
-		if (user != null)
-			return true;
-		
-		return false;
+	@Override
+	public boolean hasUser() {
+		return (user != null);
 	}
-
+	@Override
 	public void removeUser() {		
 		user = null;
 	}

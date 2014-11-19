@@ -80,6 +80,7 @@ public abstract class Dao<E> {
 	}
 
 	public void remove(String id) {	
+
 		E entity =  em.find(entityClass, id);
 		if (entity != null)
 			em.remove(entity);

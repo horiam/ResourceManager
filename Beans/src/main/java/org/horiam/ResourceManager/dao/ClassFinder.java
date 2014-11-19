@@ -43,6 +43,8 @@ public class ClassFinder {
 	@PostConstruct
 	protected void postConstruct() {
 		// TODO scan and load here
+		// java.util.ServiceLoader
+		// https://github.com/apache/tomee/blob/6def611d7eacb58f0b6d322bd4e18f8a1bdee949/container/openejb-core/src/main/java/org/apache/openejb/core/security/jaas/ServiceProviderLoginModule.java
 		setUserClass(User.class);
 		setResourceClass(Resource.class);
 		setAllocatorDriverClass(AlloctionDriver.class);

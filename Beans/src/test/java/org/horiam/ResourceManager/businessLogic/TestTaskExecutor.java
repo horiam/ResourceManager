@@ -103,7 +103,8 @@ public class TestTaskExecutor  {
 								InterruptedException, ExecutionException, TimeoutException {		
 		System.out.println("\nTest TaskExecutor EJB : allocate and deallocate ...\n");	
 		
-		//TaskExecutor executor = (TaskExecutor) lookup("java:global/Beans/TaskExecutor!" + TaskExecutor.class.getName());
+		// Test -> BMT TaskExecutor
+		// Test -> CMT *Dao
 		
 		Task task1 = taskHelper.createTask(TaskType.allocateResourceForUser);
 		task1 = taskHelper.setUser(task1.getId(), userId);

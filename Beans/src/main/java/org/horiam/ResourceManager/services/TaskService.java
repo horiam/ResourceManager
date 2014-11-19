@@ -25,7 +25,11 @@ import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.interceptor.Interceptors;
 
+import org.horiam.ResourceManager.authorisation.UserHolderAuthorisationInterceptor;
 import org.horiam.ResourceManager.dao.ResourceDao;
 import org.horiam.ResourceManager.dao.TaskDao;
 import org.horiam.ResourceManager.dao.UserDao;
@@ -58,19 +62,18 @@ public class TaskService {
 		return tasks.exists(id);
 	}
 	
+	@Interceptors(UserHolderAuthorisationInterceptor.class)
 	@RolesAllowed(value = { "Admin", "User" })
 	public Task get(String id) throws EntityNotFoundException {
 
 		Task task = tasks.get(id);		
-		if (userService.isUserAuthorised(task.getUser()))
-			return task;
-		
-		return null;
+		//if (userService.isUserAuthorised(task.getUser()))
+			return task;		
+		//return null;
 	}
 	
 	@RolesAllowed(value = { "Admin" })
 	public void delete(String id) {
 		tasks.remove(id);
-	}
-	
+	}	
 }

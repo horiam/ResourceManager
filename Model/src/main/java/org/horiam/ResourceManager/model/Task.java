@@ -48,7 +48,7 @@ import org.horiam.ResourceManager.model.XmlAdapter.UserXmlAdapter;
 @NamedQuery(name = "Task.deleteOlderThan", query = "DELETE FROM Task a WHERE a.date < :since")
 })
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Task extends Model implements Serializable {
+public class Task extends Model implements UserHolder, Serializable {
 	
 	private static final long serialVersionUID = 4893437168564164967L;
 
@@ -98,13 +98,21 @@ public class Task extends Model implements Serializable {
 	public void setResource(Resource resource) {
 		this.resource = resource;
 	}
-
+	@Override
 	public User getUser() {
 		return user;
 	}
-
+	@Override
 	public void setUser(User user) {
 		this.user = user;
+	}
+	@Override
+	public boolean hasUser() {
+		return (user != null);
+	}
+	@Override
+	public void removeUser() {
+		user = null;		
 	}
 
 	public Resource getResource() {
