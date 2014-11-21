@@ -10,43 +10,30 @@
   <groupId>org.horiam.ResourceManager.webapp</groupId>
   <artifactId>Restful</artifactId>
   <packaging>war</packaging>
-  <name>restful Maven Webapp</name>
-  <url>http://maven.apache.org</url>
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <openejb.version>5.0.0-SNAPSHOT</openejb.version>
-  </properties>
-  <repositories>
-    <repository>
-      <id>apache-m2-snapshot</id>
-      <name>Apache Snapshot Repository</name>
-      <url>https://repository.apache.org/content/groups/snapshots</url>
-    </repository>
-  </repositories>
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.17</version>
-        <configuration>
-          <!-- beceause the entities are not enhanced and are in a dependency jar(model)-->
-          <argLine>"-javaagent:${settings.localRepository}/org/apache/openejb/openejb-javaagent/${openejb.version}/openejb-javaagent-${openejb.version}.jar"</argLine>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-  <dependencies>
-  	<dependency>
-		<groupId>com.h2database</groupId>
-		<artifactId>h2</artifactId>
-		<version>1.4.182</version>
-    <scope>test</scope>
-	</dependency>
+ 
+   <dependencies>
     <dependency>
       <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-cxf-rs</artifactId>
-      <version>${openejb.version}</version>
+      <artifactId>javaee-api</artifactId>
+      <version>${openejb.javaee.api}</version>
+      <scope>provided</scope>
+    </dependency>
+     <!-- dependency>
+      <groupId>javax</groupId>
+      <artifactId>javaee-api</artifactId>
+      <version>7.0</version>
+      <scope>provided</scope>
+    </dependency-->
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>arquillian-tomee-embedded</artifactId>
+      <version>${tomee.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>tomee-jaxrs</artifactId>
+      <version>${tomee.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -56,14 +43,39 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-    	<groupId>javax</groupId>
-    	<artifactId>javaee-web-api</artifactId>
-    	<version>7.0</version>
-    </dependency>
-    <dependency>
     	<groupId>org.horiam.ResourceManager</groupId>
     	<artifactId>Beans</artifactId>
     	<version>0.0.1-SNAPSHOT</version>
     </dependency>
-  </dependencies>
+    <dependency>
+    	<groupId>org.glassfish.jersey.core</groupId>
+    	<artifactId>jersey-client</artifactId>
+    	<version>2.13</version>
+    	<scope>test</scope>
+    </dependency>
+   </dependencies>
+  
+   <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.openejb.maven</groupId>
+        <artifactId>tomee-maven-plugin</artifactId>
+        <version>${tomee.version}</version>
+        <configuration>
+          <tomeeVersion>${tomee.version}</tomeeVersion>
+          <tomeeClassifier>jaxrs</tomeeClassifier>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <properties>
+    <tomee.version>1.7.1</tomee.version>
+    <openejb.javaee.api>6.0-6</openejb.javaee.api>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <failOnMissingWebXml>false</failOnMissingWebXml>
+    <maven.compiler.target>1.7</maven.compiler.target>
+    <maven.compiler.source>1.7</maven.compiler.source>
+  </properties>
+  
 </project>

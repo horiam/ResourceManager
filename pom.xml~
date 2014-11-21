@@ -12,6 +12,7 @@
     <module>restful</module>    
     <module>soapful</module>  
     <module>soapSEI</module>  
+	<module>tomee-rest-arquillian</module>
   </modules>
   <profiles>
     <profile>

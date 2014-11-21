@@ -39,6 +39,7 @@ import javax.ws.rs.core.UriInfo;
 import javax.xml.bind.JAXBElement;
 
 import org.horiam.ResourceManager.services.UserService;
+import org.horiam.ResourceManager.authorisation.AuthorisationException;
 import org.horiam.ResourceManager.model.EntityNotFoundException;
 import org.horiam.ResourceManager.model.User;
 
@@ -94,6 +95,9 @@ public class UsersResource {
 			return Response.ok(userService.get(id)).build();
 		} catch (EntityNotFoundException ex) {
 			return Response.status(404).build();
+		} catch (AuthorisationException e) {
+			System.out.println("Exception Caught");
+			return Response.status(401).build();
 		}
 	}	
 	

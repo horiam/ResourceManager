@@ -1,41 +1,51 @@
-import java.util.Properties;
+import java.net.URISyntaxException;
+import java.net.URL;
 
-import javax.ejb.embeddable.EJBContainer;
-import javax.naming.NamingException;
+import javax.enterprise.inject.Model;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
+import org.horiam.ResourceManager.model.EntityNotFoundException;
+import org.horiam.ResourceManager.model.ModelWithTask;
+import org.horiam.ResourceManager.model.User;
+import org.horiam.ResourceManager.webapp.restful.UsersResource;
 import org.junit.Test;
-import org.apache.openejb.OpenEjbContainer;
-import org.apache.cxf.jaxrs.client.WebClient;
+import org.junit.runner.RunWith;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 
+import javax.ws.rs.client.*;;
+
+
+
+@RunWith(Arquillian.class)
 public class TestUsersResource {
+	
+    @ArquillianResource
+    private URL deployUrl;
 
-	private static EJBContainer container;
-
-    @BeforeClass
-    public static void start() throws NamingException {
-		Properties properties = new Properties();
-		properties.put("myDatabase", "new://Resource?type=DataSource");
-		properties.put("myDatabase.JdbcDriver", "org.h2.Driver");
-		properties.put("myDatabase.JdbcUrl", "jdbc:h2:mem:StorageManagerStore");
-		properties.setProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true");
-		container = EJBContainer.createEJBContainer(properties);
+    @Deployment
+    public static WebArchive createDeployment() {
+        return ShrinkWrap.create(WebArchive.class).addClasses(UsersResource.class, UsersMockService.class, 
+        		User.class, ModelWithTask.class, Model.class, EntityNotFoundException.class);
     }
-
-    @AfterClass
-    public static void stop() {
-        if (container != null) {
-            container.close();
-        }
-    }
-    
+   
     @Test
-    public void testUserService() {
-    	String message = WebClient.create("http://localhost:4204").path("/ResourceManager/rest/users")
-                					.accept(MediaType.APPLICATION_XML_TYPE)
-                					.get(String.class);
-    	System.out.println("message="+message);
+    public void testUserService() throws URISyntaxException {
+    	System.out.println("Webapp URL="+deployUrl.toString());
+    	
+    	Client client = ClientBuilder.newClient();
+    	HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic("admin", "super");
+    	client.register(feature);
+    	WebTarget service = client.target(deployUrl.toURI());
+    	Response resp = service.path("/users/").path("toto").request().get();
+    	String message = resp.toString();
+    	System.out.println("message="+message);  
     }
 }
