@@ -32,7 +32,7 @@ import org.horiam.ResourceManager.businessLogic.AlloctionDriver;
 import org.horiam.ResourceManager.model.Resource;
 import org.horiam.ResourceManager.model.Task;
 import org.horiam.ResourceManager.model.User;
-import org.horiam.ResourceManager.test.ContainerWrapper;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

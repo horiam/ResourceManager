@@ -27,11 +27,12 @@ import javax.jws.WebService;
 import org.horiam.ResourceManager.services.ResourceService;
 import org.horiam.ResourceManager.services.TaskService;
 import org.horiam.ResourceManager.services.UserService;
-import org.horiam.ResourceManager.model.EntityNotFoundException;
+import org.horiam.ResourceManager.exceptions.AuthorisationException;
+import org.horiam.ResourceManager.exceptions.RecordNotFoundException;
 import org.horiam.ResourceManager.model.Resource;
 import org.horiam.ResourceManager.model.Task;
 import org.horiam.ResourceManager.model.User;
-import org.horiam.ResourceManager.soapSEI.ResourceManagerSEI;
+import org.horiam.ResourceManager.soap.ResourceManagerSEI;
 
 
 @WebService(serviceName = "ResourceManagerWS",		
@@ -63,7 +64,7 @@ public class ResourceManagerWS implements ResourceManagerSEI {
 	}
 
 	@Override
-	public User getUser(String id) throws EntityNotFoundException {
+	public User getUser(String id) throws RecordNotFoundException, AuthorisationException {
 		return userService.get(id);
 	}
 
@@ -73,17 +74,17 @@ public class ResourceManagerWS implements ResourceManagerSEI {
 	}
 
 	@Override
-	public Task attachUser(String id) throws EntityNotFoundException {
+	public Task attachUser(String id) throws RecordNotFoundException {
 		return userService.allocateUser(id);
 	}
 
 	@Override
-	public Task detachUser(String id) throws EntityNotFoundException {	
+	public Task detachUser(String id) throws RecordNotFoundException {	
 		return userService.deallocateUser(id);
 	}
 
 	@Override
-	public Task removeUser(String id) throws EntityNotFoundException {
+	public Task removeUser(String id) throws RecordNotFoundException {
 		return userService.removeUser(id);
 	}
 
@@ -93,7 +94,7 @@ public class ResourceManagerWS implements ResourceManagerSEI {
 	}
 
 	@Override
-	public Resource getResource(String id) throws EntityNotFoundException {
+	public Resource getResource(String id) throws RecordNotFoundException {
 		return resourceService.get(id);
 	}
 
@@ -113,7 +114,7 @@ public class ResourceManagerWS implements ResourceManagerSEI {
 	}
 
 	@Override
-	public Task removeResource(String id) throws EntityNotFoundException {		
+	public Task removeResource(String id) throws RecordNotFoundException {		
 		return resourceService.removeResource(id);
 	}
 
@@ -128,7 +129,7 @@ public class ResourceManagerWS implements ResourceManagerSEI {
 	}
 
 	@Override
-	public Task getTask(String id) throws EntityNotFoundException {
+	public Task getTask(String id) throws RecordNotFoundException {
 		return taskService.get(id);
 	}
 

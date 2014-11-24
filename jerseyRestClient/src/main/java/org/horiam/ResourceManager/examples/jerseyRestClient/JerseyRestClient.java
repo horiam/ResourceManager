@@ -43,6 +43,7 @@ import org.horiam.ResourceManager.model.User;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.GenericType;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
@@ -53,10 +54,12 @@ import com.sun.jersey.client.urlconnection.HTTPSProperties;
 public class JerseyRestClient {
 	
 	static boolean https = false;
+	static boolean auth  = false;
 	
 	private static URI getBaseURI() {
 
-		return UriBuilder.fromUri("http://localhost:8080/ResourceManager/rest").build();
+		//return UriBuilder.fromUri("http://localhost:8080/ResourceManager/rest").build();
+		return UriBuilder.fromUri("http://localhost:51280/07dcbba9-298e-4b18-8f8f-fc1e9cea3de1/").build();
 	}
 
 	public static void main(String[] args) throws KeyStoreException, NoSuchAlgorithmException, 
@@ -80,15 +83,20 @@ public class JerseyRestClient {
 		}
 		
 		Client client = Client.create(config);
-		client.addFilter(new com.sun.jersey.api.client.filter.HTTPBasicAuthFilter("admin", "super"));
+		if (auth)
+			client.addFilter(new com.sun.jersey.api.client.filter.HTTPBasicAuthFilter("admin", "super"));
 		
 		WebResource service = client.resource(getBaseURI());	
 		
 		////////////////////////////////////////////////////////////////////////////
 		
 		System.out.println("GET all Resources :");
-		ClientResponse response = service.path("resources").accept(MediaType.APPLICATION_XML).get(ClientResponse.class);
+		//ClientResponse response = service.path("resources").accept(MediaType.APPLICATION_XML).get(ClientResponse.class);
+		ClientResponse response = service.path("users").accept(MediaType.APPLICATION_XML).get(ClientResponse.class);
 		System.out.println(response.getStatus());
+		List<User> userList = response.getEntity(new GenericType<List<User>>(){});
+		User userRet = userList.get(0);
+		
 
 		////////////////////////////////////////////////////////////////////////////
 		

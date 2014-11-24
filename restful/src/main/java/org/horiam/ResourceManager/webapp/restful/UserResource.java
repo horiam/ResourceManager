@@ -27,7 +27,7 @@ public class UserResource {
 	public Response getMyUser() {
 		
 		String myUsername = getMyUsername();
-		return users.getUserXML(myUsername);
+		return users.getUser(myUsername);
 	}
 
 	@Path("/resource")
@@ -36,7 +36,7 @@ public class UserResource {
 	public Response getMyRequest() {
 		
 		String myResource = getMyResourceId();
-		return resources.getResourceXML(myResource);
+		return resources.getResource(myResource);
 	}
 	
 	@Path("/task")
@@ -45,7 +45,7 @@ public class UserResource {
 	public Response getMyTask() {
 		
 		String myTask = getMyTaskId();
-		return tasks.getTaskXML(myTask);
+		return tasks.getTask(myTask);
 	}	
 	
 	private String getMyUsername() {

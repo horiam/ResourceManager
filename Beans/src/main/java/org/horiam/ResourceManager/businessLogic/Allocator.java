@@ -29,7 +29,7 @@ import org.horiam.ResourceManager.businessLogic.exceptions.UserUnrecoverableExce
 import org.horiam.ResourceManager.dao.ClassFinder;
 import org.horiam.ResourceManager.dao.ResourceDao;
 import org.horiam.ResourceManager.dao.UserDao;
-import org.horiam.ResourceManager.model.EntityNotFoundException;
+import org.horiam.ResourceManager.exceptions.RecordNotFoundException;
 import org.horiam.ResourceManager.model.User;
 import org.horiam.ResourceManager.model.Resource;
 
@@ -54,7 +54,7 @@ public class Allocator {
 	public void attachUser(String userId, String resourceId) 
 			throws InterruptedException, UnrecoverableException, 
 			ResourceUnrecoverableException, UserUnrecoverableException, 
-			EntityNotFoundException {
+			RecordNotFoundException {
 		
 		User user = users.getLock(userId);
 		Resource resource = resources.get(resourceId);
@@ -69,7 +69,7 @@ public class Allocator {
 	public void detachUser(String userId) 
 			throws InterruptedException, UnrecoverableException, 
 			ResourceUnrecoverableException, UserUnrecoverableException, 
-			EntityNotFoundException {
+			RecordNotFoundException {
 		
 		User user = users.getLock(userId);	
 		Resource resource = user.getResource();

@@ -25,6 +25,7 @@ import java.util.List;
 import javax.ejb.EJB;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -39,8 +40,8 @@ import javax.ws.rs.core.UriInfo;
 import javax.xml.bind.JAXBElement;
 
 import org.horiam.ResourceManager.services.UserService;
-import org.horiam.ResourceManager.authorisation.AuthorisationException;
-import org.horiam.ResourceManager.model.EntityNotFoundException;
+import org.horiam.ResourceManager.exceptions.AuthorisationException;
+import org.horiam.ResourceManager.exceptions.RecordNotFoundException;
 import org.horiam.ResourceManager.model.User;
 
 @Path("users")
@@ -52,20 +53,19 @@ public class UsersResource {
 	
 	@GET
 	@Produces({ MediaType.TEXT_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public List<? extends User> getUsers() {
-		
+	public List<User> getUsers() {
 		return userService.list();
 	}
 		
 	@Path("{id}")
 	@PUT
 	@Consumes(MediaType.APPLICATION_XML)
-	public Response putUserXML(@Context UriInfo uriInfo, 
+	public Response putUser(@Context UriInfo uriInfo, 
 							   @PathParam("id") String id, JAXBElement<? extends User> xml) {
-		
+		System.out.print("Before PUT");		
 		User user = xml.getValue();
 		userService.createOrUpdate(id, user);
-		
+		System.out.print("After PUT");	
 		return  Response.created(uriInfo.getAbsolutePath()).build();
 	}
 	
@@ -75,13 +75,16 @@ public class UsersResource {
 	public Response postUserAction(@PathParam("id") String id, @QueryParam("action") String action) {
 		
 		try {
-			switch (action) {				
-				case "attach" : return Response.ok(userService.allocateUser(id)).build();		
-				case "detach" : return Response.ok(userService.deallocateUser(id)).build();	
-				case "remove" : return Response.ok(userService.removeUser(id)).build();	
-				default : return Response.status(400).build();			
+			if (action != null) {
+				switch (action) {				
+					case "allocate" : return Response.ok(userService.allocateUser(id)).build();		
+					case "deallocate" : return Response.ok(userService.deallocateUser(id)).build();	
+					case "remove" : return Response.ok(userService.removeUser(id)).build();	
+					default : 
+				}								
 			}
-		} catch (EntityNotFoundException ex) {
+			return Response.status(400).build();
+		} catch (RecordNotFoundException ex) {
 			return Response.status(404).build();
 		}
 	}
@@ -89,14 +92,13 @@ public class UsersResource {
 	@Path("{id}")
 	@GET
 	@Produces({ MediaType.TEXT_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response getUserXML(@PathParam("id") String id) {
+	public Response getUser(@PathParam("id") String id) {
 		
 		try {
 			return Response.ok(userService.get(id)).build();
-		} catch (EntityNotFoundException ex) {
+		} catch (RecordNotFoundException ex) {
 			return Response.status(404).build();
-		} catch (AuthorisationException e) {
-			System.out.println("Exception Caught");
+		} catch (AuthorisationException e) {			
 			return Response.status(401).build();
 		}
 	}	

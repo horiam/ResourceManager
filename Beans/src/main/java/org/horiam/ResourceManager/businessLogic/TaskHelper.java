@@ -31,7 +31,7 @@ import org.horiam.ResourceManager.businessLogic.exceptions.UnrecoverableExceptio
 import org.horiam.ResourceManager.dao.ResourceDao;
 import org.horiam.ResourceManager.dao.TaskDao;
 import org.horiam.ResourceManager.dao.UserDao;
-import org.horiam.ResourceManager.model.EntityNotFoundException;
+import org.horiam.ResourceManager.exceptions.RecordNotFoundException;
 import org.horiam.ResourceManager.model.Resource;
 import org.horiam.ResourceManager.model.Task;
 import org.horiam.ResourceManager.model.Task.Status;
@@ -49,26 +49,26 @@ public class TaskHelper {
 	
 	
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public Task setUser(String id, String userId) throws EntityNotFoundException {
+	public Task setUser(String id, String userId) throws RecordNotFoundException {
 		Task task = tasks.get(id);		
 		try {
 			User user = users.get(userId);
 			task.setUser(user);
 			return tasks.update(task);
-		} catch (EntityNotFoundException e) {
+		} catch (RecordNotFoundException e) {
 			failed(task, e.getMessage(), false);
 			throw e;
 		}
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public Task setResource(String id, String resourceId) throws EntityNotFoundException {
+	public Task setResource(String id, String resourceId) throws RecordNotFoundException {
 		Task task = tasks.get(id);
 		try {
 			Resource resource = resources.get(resourceId);
 			task.setResource(resource);
 			return tasks.update(task);
-		} catch (EntityNotFoundException e) {
+		} catch (RecordNotFoundException e) {
 			failed(task, e.getMessage(), false);
 			throw e;
 		}			
@@ -82,7 +82,7 @@ public class TaskHelper {
 		return task;
 	}
 
-	public Task succeeded(String id, String message) throws EntityNotFoundException {
+	public Task succeeded(String id, String message) throws RecordNotFoundException {
 		Task task = tasks.getLock(id);
 		task.setMessage(message);
 		task.succeeded();
@@ -90,7 +90,7 @@ public class TaskHelper {
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public Task failed(String id, String message, boolean retryable) throws EntityNotFoundException {
+	public Task failed(String id, String message, boolean retryable) throws RecordNotFoundException {
 		Task task = tasks.getLock(id);
 		return failed(task, message, retryable);
 	}
@@ -102,23 +102,23 @@ public class TaskHelper {
 		return tasks.update(task);
 	}
 	
-	public Status getStatus(String id) throws EntityNotFoundException {
+	public Status getStatus(String id) throws RecordNotFoundException {
 		Task task = tasks.get(id);
 		return task.getStatus();
 	}
 	
-	public TaskType getType(String id) throws EntityNotFoundException {
+	public TaskType getType(String id) throws RecordNotFoundException {
 		Task task = tasks.get(id);
 		return TaskType.valueOf(task.getType());
 	}
 	
-	public String getUserId(String taskId) throws EntityNotFoundException {
+	public String getUserId(String taskId) throws RecordNotFoundException {
 		Task task = tasks.get(taskId);		
 		User user = task.getUser();
 		return user.getId();			
 	}
 	
-	public String getResourceId(String taskId) throws EntityNotFoundException {
+	public String getResourceId(String taskId) throws RecordNotFoundException {
 		Task task = tasks.get(taskId);
 		Resource resource = task.getResource();
 		return resource.getId();

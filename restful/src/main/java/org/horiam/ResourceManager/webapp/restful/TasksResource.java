@@ -32,7 +32,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.horiam.ResourceManager.services.TaskService;
-import org.horiam.ResourceManager.model.EntityNotFoundException;
+import org.horiam.ResourceManager.exceptions.RecordNotFoundException;
 import org.horiam.ResourceManager.model.Task;
 
 
@@ -53,11 +53,11 @@ public class TasksResource {
 	@Path("{id}")
 	@GET
 	@Produces({ MediaType.TEXT_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response getTaskXML(@PathParam("id") String id) {
+	public Response getTask(@PathParam("id") String id) {
 		
 		try {	
 			return Response.ok(taskService.get(id)).build();			
-		} catch (EntityNotFoundException ex) {
+		} catch (RecordNotFoundException ex) {
 			return Response.status(404).build();
 		}
 	}	

@@ -42,7 +42,7 @@ import org.horiam.ResourceManager.businessLogic.exceptions.UserUnrecoverableExce
 import org.horiam.ResourceManager.dao.ResourceDao;
 import org.horiam.ResourceManager.dao.TaskDao;
 import org.horiam.ResourceManager.dao.UserDao;
-import org.horiam.ResourceManager.model.EntityNotFoundException;
+import org.horiam.ResourceManager.exceptions.RecordNotFoundException;
 import org.horiam.ResourceManager.model.Task.Status;
 import org.horiam.ResourceManager.model.User;
 import org.horiam.ResourceManager.model.Resource;
@@ -125,7 +125,7 @@ public class TaskExecutor {
 	
 			} catch (HeuristicMixedException | NotSupportedException | SystemException 
 					| IllegalStateException | SecurityException | UnrecoverableException 
-					| EntityNotFoundException re) {
+					| RecordNotFoundException re) {
 				
 				re.printStackTrace();
 				failed(taskId, false, re.getLocalizedMessage());			
@@ -136,7 +136,7 @@ public class TaskExecutor {
 				}
 			}
 		
-		} catch  (EntityNotFoundException e) { // for the catches
+		} catch  (RecordNotFoundException e) { // for the catches
 			e.printStackTrace();
 		}
 		return new AsyncResult<Void>(null);
@@ -149,7 +149,7 @@ public class TaskExecutor {
 			IllegalStateException, SecurityException, HeuristicMixedException, 
 			HeuristicRollbackException, RollbackException, InterruptedException, 
 			UnrecoverableException, ResourceUnrecoverableException, UserUnrecoverableException, 
-			EntityNotFoundException {
+			RecordNotFoundException {
 								
 			/* 1st transaction */				
 			transaction.begin();
@@ -198,7 +198,7 @@ public class TaskExecutor {
 			transaction.rollback();
 		} catch (IllegalStateException | SecurityException | SystemException e) {
 			e.printStackTrace();
-		} catch (EntityNotFoundException e) {
+		} catch (RecordNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
@@ -210,7 +210,7 @@ public class TaskExecutor {
 			IllegalStateException, SecurityException, HeuristicMixedException, 
 			HeuristicRollbackException, RollbackException, InterruptedException, 
 			UnrecoverableException, ResourceUnrecoverableException, UserUnrecoverableException, 
-			EntityNotFoundException {
+			RecordNotFoundException {
 
 			/* 1st transaction */			
 			transaction.begin();
@@ -257,7 +257,7 @@ public class TaskExecutor {
 			IllegalStateException, SecurityException, HeuristicMixedException, 
 			HeuristicRollbackException, RollbackException, InterruptedException, 
 			UnrecoverableException, ResourceUnrecoverableException, UserUnrecoverableException, 
-			EntityNotFoundException {
+			RecordNotFoundException {
 
 			/* 1st transaction */				
 			transaction.begin();
@@ -304,7 +304,7 @@ public class TaskExecutor {
 			IllegalStateException, SecurityException, HeuristicMixedException, 
 			HeuristicRollbackException, RollbackException, InterruptedException, 
 			UnrecoverableException, ResourceUnrecoverableException, UserUnrecoverableException, 
-			EntityNotFoundException {		
+			RecordNotFoundException {		
 
 			/* 1st transaction */				
 			transaction.begin();

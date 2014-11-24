@@ -18,11 +18,10 @@ import javax.naming.NamingException;
 import org.horiam.ResourceManager.dao.ResourceDao;
 import org.horiam.ResourceManager.dao.TaskDao;
 import org.horiam.ResourceManager.dao.UserDao;
-import org.horiam.ResourceManager.model.EntityNotFoundException;
+import org.horiam.ResourceManager.exceptions.RecordNotFoundException;
 import org.horiam.ResourceManager.model.Resource;
 import org.horiam.ResourceManager.model.Task;
 import org.horiam.ResourceManager.model.User;
-import org.horiam.ResourceManager.test.ContainerWrapper;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -99,7 +98,7 @@ public class TestTaskExecutor  {
 	
 	
 	@Test
-	public void test() throws NamingException, EntityNotFoundException, 
+	public void test() throws NamingException, RecordNotFoundException, 
 								InterruptedException, ExecutionException, TimeoutException {		
 		System.out.println("\nTest TaskExecutor EJB : allocate and deallocate ...\n");	
 		

@@ -138,7 +138,7 @@ public class TestObjectToXmlToObject {
     	
     	for (FileObject file : xmls.values())
     		file.close();
-    }
+    } 
 
     @Test
 	public void aTest() throws JAXBException, IOException {

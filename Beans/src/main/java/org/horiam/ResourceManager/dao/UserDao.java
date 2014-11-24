@@ -23,7 +23,7 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
-import org.horiam.ResourceManager.model.EntityNotFoundException;
+import org.horiam.ResourceManager.exceptions.RecordNotFoundException;
 import org.horiam.ResourceManager.model.Resource;
 import org.horiam.ResourceManager.model.User;
 
@@ -40,7 +40,7 @@ public class UserDao extends Dao<User> {
 		setEntityClass(classFinder.getUserClass());
 	}	
 
-	public User setResource(String userId, String resourceId) throws EntityNotFoundException {
+	public User setResource(String userId, String resourceId) throws RecordNotFoundException {
 		
 		User user = get(userId);		
 		Resource storage = em.find(classFinder.getResourceClass(), resourceId);

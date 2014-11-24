@@ -32,7 +32,7 @@ import javax.xml.ws.Service;
 import org.horiam.ResourceManager.model.Resource;
 import org.horiam.ResourceManager.model.Task;
 import org.horiam.ResourceManager.model.User;
-import org.horiam.ResourceManager.soapSEI.ResourceManagerSEI;
+import org.horiam.ResourceManager.soap.ResourceManagerSEI;
 
 
 public class SoapClient {

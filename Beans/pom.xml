@@ -41,7 +41,7 @@
 		<groupId>com.h2database</groupId>
 		<artifactId>h2</artifactId>
 		<version>1.4.182</version>
-    <scope>test</scope>
+    	<scope>test</scope>
 	</dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
@@ -68,7 +68,7 @@
     </dependency>
     <dependency>
       <groupId>org.horiam.ResourceManager</groupId>
-      <artifactId>Model</artifactId>
+      <artifactId>Services</artifactId>
       <version>0.0.1-SNAPSHOT</version>
     </dependency>
   </dependencies>

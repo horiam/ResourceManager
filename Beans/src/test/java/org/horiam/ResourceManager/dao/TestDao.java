@@ -31,11 +31,10 @@ import javax.ejb.embeddable.EJBContainer;
 import javax.naming.Context;
 import javax.naming.NamingException;
 
-import org.horiam.ResourceManager.model.EntityNotFoundException;
+import org.horiam.ResourceManager.exceptions.RecordNotFoundException;
 import org.horiam.ResourceManager.model.Resource;
 import org.horiam.ResourceManager.model.Task;
 import org.horiam.ResourceManager.model.User;
-import org.horiam.ResourceManager.test.ContainerWrapper;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -84,7 +83,7 @@ public class TestDao  {
 	}
 	
 	@Test
-	public void aTest() throws NamingException, EntityNotFoundException {
+	public void aTest() throws NamingException, RecordNotFoundException {
 		System.out.println("\nTest UserDao EJB...\n");
 		
 		//UserDao userDao = (UserDao) lookup("java:global/Beans/UserDao!" + UserDao.class.getName());
@@ -106,12 +105,12 @@ public class TestDao  {
 		users = userDao.list();
 		assertTrue("List size should be 0", (users.size() == 0));
 		
-		exception.expect(EntityNotFoundException.class);
+		exception.expect(RecordNotFoundException.class);
 		userDao.get(userA.getId());	
 	}
 	
 	@Test
-	public void bTest() throws NamingException, EntityNotFoundException {
+	public void bTest() throws NamingException, RecordNotFoundException {
 		System.out.println("\nTest ResourceDao EJB...\n");
 		
 		//ResourceDao resourceDao = (ResourceDao) lookup("java:global/Beans/ResourceDao!" + ResourceDao.class.getName());
@@ -141,12 +140,12 @@ public class TestDao  {
 		resources = resourceDao.list();
 		assertTrue("List size should be 0", (resources.size() == 0));
 		
-		exception.expect(EntityNotFoundException.class);
+		exception.expect(RecordNotFoundException.class);
 		resourceDao.get(resource1.getId());
 	}	
 	
 	@Test
-	public void cTest() throws NamingException, EntityNotFoundException {
+	public void cTest() throws NamingException, RecordNotFoundException {
 		System.out.println("\nTest UserDao EJB setResource ...\n");
 		
 		User userA = new User("userA");		
@@ -161,7 +160,7 @@ public class TestDao  {
 	}
 	
 	@Test
-	public void dTest() throws NamingException, EntityNotFoundException {
+	public void dTest() throws NamingException, RecordNotFoundException {
 		System.out.println("\nTest TaskDao EJB...\n");
 		
 		Task taskX = new Task("taskX");
@@ -182,7 +181,7 @@ public class TestDao  {
 		tasks = taskDao.list();
 		assertTrue("List size should be 0", (tasks.size() == 0));
 		
-		exception.expect(EntityNotFoundException.class);
+		exception.expect(RecordNotFoundException.class);
 		taskDao.get(taskX.getId());	
 	}
 }

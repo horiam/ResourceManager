@@ -3,6 +3,8 @@ package org.horiam.ResourceManager.authorisation;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.InvocationContext;
 
+import org.horiam.ResourceManager.exceptions.AuthorisationException;
+
 public class ActionOnUserAuthorisationInterceptor extends UserAuthorisation {
 	
 	@AroundInvoke

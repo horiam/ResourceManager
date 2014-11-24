@@ -18,7 +18,9 @@ import org.apache.openejb.core.security.jaas.LoginProvider;
 import org.horiam.ResourceManager.dao.ResourceDao;
 import org.horiam.ResourceManager.dao.TaskDao;
 import org.horiam.ResourceManager.dao.UserDao;
+import org.horiam.ResourceManager.exceptions.RecordNotFoundException;
 import org.horiam.ResourceManager.model.Resource;
+import org.horiam.ResourceManager.model.Task;
 import org.horiam.ResourceManager.model.User;
 import org.junit.After;
 import org.junit.Before;
@@ -29,6 +31,7 @@ public class TestServicesAuth {
 	
 	private String userId     = "userA";
 	private String resourceId = "resource1";
+	private String taskId     = "taskX";
 	
 	@EJB
 	private UserDao userDao;
@@ -58,6 +61,7 @@ public class TestServicesAuth {
 		
 		userDao.create(new User(userId));
 		resourceDao.create(new Resource(resourceId));
+		taskDao.create(new Task(taskId));
 	}
 	
 	@After
@@ -80,10 +84,11 @@ public class TestServicesAuth {
     public void testAsAdmin() throws Exception {
     	System.out.println("\nTest call as Admin...\n");	
         final Context context = getContext("admin", "super");        
-        try {
-        	
+        try {       	
         	userService.get(userId);
-        	
+        	resourceService.get(resourceId);
+        	taskService.get(taskId);
+       	
         } finally {
         	context.close();
         }
@@ -91,32 +96,63 @@ public class TestServicesAuth {
     
     @Test
     public void testAsUserA() throws Exception {
-    	System.out.println("\nTest call as userA...\n");	
+    	System.out.println("\nTest call as userA...\n");
+    	setUserForResource();
         final Context context = getContext(userId, userId);        
-        try {
-        	
+        try {       	
         	userService.get(userId);
+        	resourceService.get(resourceId);	
         	
         } finally {
         	context.close();
         }
     }
     
+    private void setUserForResource() throws RecordNotFoundException {
+    	Resource resource = resourceDao.get(resourceId);
+    	User user = userDao.get(userId);
+    	resource.setUser(user);
+    	user.setResource(resource);
+    	resourceDao.update(resource);
+    	userDao.update(user);
+    }
+    
     @Test
     public void testAsUserB() throws Exception {
-    	System.out.println("\nTest call as userB...\n");	  	
-        final Context context = getContext("userB", "userB");      
-        boolean hasException = false;
+    	System.out.println("\nTest call as userB...\n");
+    	setUserForResource();
+        final Context context = getContext("userB", "userB");    
         try {
-        	
-        	userService.get(userId);
-        } catch (Exception e) {
-        	hasException = true;
+	        boolean hasException = false;
+	        try {	        	
+	        	userService.get(userId);
+	        	
+	        } catch (Exception e) {
+	        	hasException = true;
+	        }       
+	        assertTrue("UserB must have exception", hasException);
+	        
+	        hasException = false;
+	        try {	        	
+	        	resourceService.get(resourceId);
+	        	
+	        } catch (Exception e) {
+	        	hasException = true;
+	        }       
+	        assertTrue("UserB must have exception", hasException);
+	        
+	        hasException = false;
+	        try {	        	
+	        	taskService.get(taskId);
+	        	
+	        } catch (Exception e) {
+	        	hasException = true;
+	        }       
+	        assertTrue("UserB must have exception", hasException);
+	        
         } finally {
         	context.close();
         }
-        
-        assertTrue("UserB must have exception", hasException);
     }
     
     

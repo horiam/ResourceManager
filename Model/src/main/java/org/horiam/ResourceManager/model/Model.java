@@ -34,7 +34,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 @MappedSuperclass
-public abstract class Model {
+public abstract class Model { // TODO rename it RecordModel
 
 	@Id
 	private String id;

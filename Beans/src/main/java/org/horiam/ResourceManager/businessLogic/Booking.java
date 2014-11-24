@@ -31,7 +31,7 @@ import org.horiam.ResourceManager.businessLogic.exceptions.RecoverableException;
 import org.horiam.ResourceManager.dao.ResourceDao;
 import org.horiam.ResourceManager.dao.TaskDao;
 import org.horiam.ResourceManager.dao.UserDao;
-import org.horiam.ResourceManager.model.EntityNotFoundException;
+import org.horiam.ResourceManager.exceptions.RecordNotFoundException;
 import org.horiam.ResourceManager.model.Task;
 import org.horiam.ResourceManager.model.User;
 import org.horiam.ResourceManager.model.Resource;
@@ -50,7 +50,7 @@ public class Booking {
 	private TaskHelper taskHelper;
 	
 	
-	public User reserveUser(String taskId, String userId) throws RecoverableException, EntityNotFoundException {
+	public User reserveUser(String taskId, String userId) throws RecoverableException, RecordNotFoundException {
 					
 		Task task = tasks.get(taskId);
 		//String userId = task.getUser().getId(); // TODO throws ex
@@ -67,7 +67,7 @@ public class Booking {
 		return users.update(user);			    
 	}	
 
-	public String reserveOneAvailableResource(String taskId) throws RecoverableException, EntityNotFoundException {
+	public String reserveOneAvailableResource(String taskId) throws RecoverableException, RecordNotFoundException {
 
 		Task task = tasks.get(taskId);				
 		List<Resource> freeResources = resources.listFree();
@@ -87,7 +87,7 @@ public class Booking {
 		return resource.getId();
 	}
 
-	public Resource reserveResource(String taskId, String resourceId) throws RecoverableException, EntityNotFoundException {
+	public Resource reserveResource(String taskId, String resourceId) throws RecoverableException, RecordNotFoundException {
 
 		Task task = tasks.get(taskId);
 		//String resourceId = task.getResource().getId(); // TODO throws ex
@@ -105,27 +105,27 @@ public class Booking {
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
-	public User freeUserWithTask(String taskId) throws EntityNotFoundException { 
+	public User freeUserWithTask(String taskId) throws RecordNotFoundException { 
 		
 		String userId = tasks.get(taskId).getUser().getId();
 		return freeUser(userId);
 	}
 		
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
-	public Resource freeResourceWithTask(String taskId) throws EntityNotFoundException { 
+	public Resource freeResourceWithTask(String taskId) throws RecordNotFoundException { 
 		
 		String resourceId = tasks.get(taskId).getResource().getId();
 		return freeResource(resourceId);
 	}	
 	
-	public User freeUser(String userId) throws EntityNotFoundException {
+	public User freeUser(String userId) throws RecordNotFoundException {
 
 		User user = users.get(userId);
 		user.setBooked(false);
 		return  users.update(user);	
 	}
 
-	public Resource freeResource(String resourceId) throws EntityNotFoundException {
+	public Resource freeResource(String resourceId) throws RecordNotFoundException {
 
 		Resource resource = resources.get(resourceId);
 		resource.setBooked(false);

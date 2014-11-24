@@ -38,7 +38,7 @@ import org.horiam.ResourceManager.businessLogic.TaskExecutor;
 import org.horiam.ResourceManager.businessLogic.TaskHelper;
 import org.horiam.ResourceManager.businessLogic.TaskType;
 import org.horiam.ResourceManager.dao.UserDao;
-import org.horiam.ResourceManager.model.EntityNotFoundException;
+import org.horiam.ResourceManager.exceptions.RecordNotFoundException;
 import org.horiam.ResourceManager.model.Task;
 import org.horiam.ResourceManager.model.User;
 
@@ -62,7 +62,7 @@ public class UserServiceBean implements UserService {
 	 */
 	@Override
 	@RolesAllowed(value = {"Admin"})
-	public List<? extends User> list() {
+	public List<User> list() {
 		return users.list();
 	}
 	
@@ -105,7 +105,7 @@ public class UserServiceBean implements UserService {
 	@Override
 	@Interceptors(ActionOnUserAuthorisationInterceptor.class)
 	@RolesAllowed(value = {"Admin", "User"})		
-	public User get(String id) throws EntityNotFoundException {
+	public User get(String id) throws RecordNotFoundException {
 		
 		//if (isUserAuthorised(id))
 			return users.get(id);
@@ -132,7 +132,7 @@ public class UserServiceBean implements UserService {
 	@Override
 	@Interceptors(ActionOnUserAuthorisationInterceptor.class)
 	@RolesAllowed(value = {"Admin", "User"})
-	public Task allocateUser(String id) throws EntityNotFoundException {
+	public Task allocateUser(String id) throws RecordNotFoundException {
 		
 		//if (isUserAuthorised(id)) {
 		
@@ -152,7 +152,7 @@ public class UserServiceBean implements UserService {
 	@Override
 	@Interceptors(ActionOnUserAuthorisationInterceptor.class)
 	@RolesAllowed(value = {"Admin", "User"})
-	public Task deallocateUser(String id) throws EntityNotFoundException {
+	public Task deallocateUser(String id) throws RecordNotFoundException {
 		
 		//if (isUserAuthorised(id)) {
 			
@@ -172,7 +172,7 @@ public class UserServiceBean implements UserService {
 	@Override
 	@Interceptors(ActionOnUserAuthorisationInterceptor.class)
 	@RolesAllowed(value = {"Admin", "User"})
-	public Task removeUser(String id) throws EntityNotFoundException {
+	public Task removeUser(String id) throws RecordNotFoundException {
 		
 		//if (isUserAuthorised(id)) {
 		

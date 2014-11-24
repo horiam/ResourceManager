@@ -38,11 +38,10 @@ import org.horiam.ResourceManager.businessLogic.exceptions.UserUnrecoverableExce
 import org.horiam.ResourceManager.dao.ResourceDao;
 import org.horiam.ResourceManager.dao.TaskDao;
 import org.horiam.ResourceManager.dao.UserDao;
-import org.horiam.ResourceManager.model.EntityNotFoundException;
+import org.horiam.ResourceManager.exceptions.RecordNotFoundException;
 import org.horiam.ResourceManager.model.Resource;
 import org.horiam.ResourceManager.model.Task;
 import org.horiam.ResourceManager.model.User;
-import org.horiam.ResourceManager.test.ContainerWrapper;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -122,7 +121,7 @@ public class TestBusinessLogic  {
 	
 	@Test
 	public void aTest() throws NamingException, InterruptedException, UnrecoverableException, 
-			ResourceUnrecoverableException, UserUnrecoverableException, EntityNotFoundException {		
+			ResourceUnrecoverableException, UserUnrecoverableException, RecordNotFoundException {		
 		System.out.println("\nTest Allocator EJB...\n");
 		
 		//Allocator allocator = (Allocator) lookup("java:global/Beans/Allocator!" + Allocator.class.getName());
@@ -145,7 +144,7 @@ public class TestBusinessLogic  {
 	}
 	
 	@Test
-	public void bTest() throws NamingException, EntityNotFoundException {		
+	public void bTest() throws NamingException, RecordNotFoundException {		
 		System.out.println("\nTest TaskHelper EJB...\n");
 		
 		//taskHelper = (TaskHelper) lookup("java:global/Beans/TaskHelper!" + TaskHelper.class.getName());
@@ -181,7 +180,7 @@ public class TestBusinessLogic  {
 	}
 	
 	@Test
-	public void cTest() throws NamingException, EntityNotFoundException, RecoverableException {		
+	public void cTest() throws NamingException, RecordNotFoundException, RecoverableException {		
 		System.out.println("\nTest Booking EJB...\n");		
 		
 		//Booking booking = (Booking) lookup("java:global/Beans/Booking!" + Booking.class.getName());

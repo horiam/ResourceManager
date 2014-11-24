@@ -39,7 +39,7 @@ import javax.ws.rs.core.UriInfo;
 import javax.xml.bind.JAXBElement;
 
 import org.horiam.ResourceManager.services.ResourceService;
-import org.horiam.ResourceManager.model.EntityNotFoundException;
+import org.horiam.ResourceManager.exceptions.RecordNotFoundException;
 import org.horiam.ResourceManager.model.Resource;
 
 
@@ -61,7 +61,7 @@ public class ResourcesResource {
 	@PUT
 	@Consumes(MediaType.APPLICATION_XML)
 	@Produces({ MediaType.TEXT_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Resource putStoragXML(@Context UriInfo uriInfo, 
+	public Resource putResource(@Context UriInfo uriInfo, 
 					   			 @PathParam("id") String id, JAXBElement<? extends Resource> xml) {
 		
 		Resource resource = xml.getValue();
@@ -72,11 +72,11 @@ public class ResourcesResource {
 	@Path("{id}")
 	@GET
 	@Produces({ MediaType.TEXT_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response getResourceXML(@PathParam("id") String id) {
+	public Response getResource(@PathParam("id") String id) {
 			
 		try {		
 			return Response.ok(resourceService.get(id)).build();
-		} catch (EntityNotFoundException ex) {
+		} catch (RecordNotFoundException ex) {
 			return Response.status(404).build();
 		}
 	}	
@@ -95,11 +95,14 @@ public class ResourcesResource {
 	public Response postResourceAction(@PathParam("id") String id, @QueryParam("action") String action) {
 		
 		try {
-			switch (action) {			
-				case "remove" : return Response.ok(resourceService.removeResource(id)).build();	
-				default : return Response.status(400).build();			
+			if (action != null) {
+				switch (action) {			
+					case "remove" : return Response.ok(resourceService.removeResource(id)).build();	
+					default : 			
+				}
 			}
-		} catch (EntityNotFoundException ex) {
+			return Response.status(400).build();
+		} catch (RecordNotFoundException ex) {
 			return Response.status(404).build();
 		}		
 	}	

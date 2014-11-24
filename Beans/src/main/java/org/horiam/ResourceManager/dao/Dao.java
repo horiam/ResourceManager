@@ -26,7 +26,7 @@ import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import org.horiam.ResourceManager.model.EntityNotFoundException;
+import org.horiam.ResourceManager.exceptions.RecordNotFoundException;
 
 
 public abstract class Dao<E> {
@@ -53,18 +53,18 @@ public abstract class Dao<E> {
 		return false;
 	}
 
-	public E get(String id) throws EntityNotFoundException {
+	public E get(String id) throws RecordNotFoundException {
 		E entity = em.find(entityClass, id);
 		if (entity == null)
-			throw new EntityNotFoundException(entityClass.getSimpleName() + " " + id + " was not found");
+			throw new RecordNotFoundException(entityClass.getSimpleName() + " " + id + " was not found");
 		
 		return entity;
 	}
 
-	public E getLock(String id) throws EntityNotFoundException {		
+	public E getLock(String id) throws RecordNotFoundException {		
 		E entity = em.find(entityClass, id, LockModeType.OPTIMISTIC);
 		if (entity == null)
-			throw new EntityNotFoundException(entityClass.getSimpleName() + " " + id + " was not found");
+			throw new RecordNotFoundException(entityClass.getSimpleName() + " " + id + " was not found");
 		
 		return entity;
 	}
