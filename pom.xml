@@ -13,7 +13,9 @@
     <module>Beans</module>
     <module>restful</module>    
     <module>soapful</module>  
-    <module>MockServices</module>  
+    <module>MockServices</module>
+    <module>JPA</module>
+    <module>JMS</module>
   </modules>
   <profiles>
     <profile>

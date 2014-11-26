@@ -54,24 +54,24 @@ public class TestResources {
     	Response resp404 = webClient.path("UnknownUser").get();
     	assertEquals("Must be", resp404.getStatus(), 404); 
     	
-    	webClient.replacePath(UserMockService.userIds[0]);    	
+    	webClient.replacePath(UserMockService.initialUserIds[0]);    	
     	User user = webClient.get(User.class);
-    	assertTrue("Must be eaual", UserMockService.users[0].equals(user)); 
+    	assertTrue("Must be eaual", UserMockService.initialUsers[0].equals(user)); 
     	
     	webClient.replacePath("");   	   	
     	Collection<? extends User> userList = webClient.getCollection(User.class);    	
-    	assertEquals("Must this length", userList.size(), UserMockService.users.length); 
+    	assertEquals("Must this length", userList.size(), UserMockService.initialUsers.length); 
     	for (User userIt : userList)
     		assertTrue("Must be a User", userIt instanceof User); 
     	   	    	
     	Response resp201 = webClient.path("newUser").put(new User("newUser"));
     	assertEquals("Must be", resp201.getStatus(), 201); 
     	    	
-    	webClient.replacePath(UserMockService.userIds[1]);   	
+    	webClient.replacePath(UserMockService.initialUserIds[1]);   	
     	Response resp200 = webClient.delete();
     	assertEquals("Must be", resp200.getStatus(), 200);
     	
-    	webClient.replacePath(UserMockService.userIds[0]);
+    	webClient.replacePath(UserMockService.initialUserIds[0]);
     	Task taskAllocate = webClient.query("action", "allocate").post(null, Task.class);
     	assertEquals("Must be type", taskAllocate.getType(), "allocateResourceForUser");
     	
@@ -80,7 +80,7 @@ public class TestResources {
     	assertEquals("Must be type", taskDeallocate.getType(), "deallocateUser");
     	
     	webClient.replaceQueryParam("action", "UnknownAction");
-    	Response resp400= webClient.post(null);
+    	Response resp400 = webClient.post(null);
     	assertEquals("Must be", resp400.getStatus(), 400);    	
     	
     	webClient.replaceQueryParam("action", "remove");
@@ -107,21 +107,25 @@ public class TestResources {
     	Response resp404 = webClient.path("UnknownResource").get();
     	assertEquals("Must be", resp404.getStatus(), 404); 
     	
-    	webClient.replacePath(ResourceMockService.resourceIds[0]);  
+    	webClient.replacePath(ResourceMockService.initialResourceIds[0]);  
     	
     	Resource resource = webClient.get(Resource.class);
-    	assertTrue("Must be eaual", ResourceMockService.resources[0].equals(resource)); 
+    	assertTrue("Must be eaual", ResourceMockService.initialResources[0].equals(resource)); 
     	
     	webClient.replacePath(""); 
     	Collection<? extends Resource> resourceList = webClient.getCollection(Resource.class);    	
-    	assertEquals("Must this length", resourceList.size(), ResourceMockService.resources.length); 
+    	assertEquals("Must this length", resourceList.size(), ResourceMockService.initialResources.length); 
     	for (Resource resourceIt : resourceList)
     		assertTrue("Must be a Resource", resourceIt instanceof Resource);
     	
-  	
-    	Response resp200 = webClient.path(ResourceMockService.resourceIds[0]).delete();
+    	Response resp201 = webClient.path("newResource").put(new Resource("newResource"));
+    	assertEquals("Must be", resp201.getStatus(), 201); 
+    	
+    	webClient.replacePath(ResourceMockService.initialResourceIds[1]); 
+    	Response resp200 = webClient.delete();
     	assertEquals("Must be", resp200.getStatus(), 200);
     	
+    	webClient.replacePath(ResourceMockService.initialResourceIds[0]); 
     	webClient.replaceQueryParam("action", "remove");
     	Task taskRemove = webClient.post(null, Task.class);
     	assertEquals("Must be type", taskRemove.getType(), "removeResource"); 
@@ -150,19 +154,19 @@ public class TestResources {
     	Response resp404 = webClient.path("UnknownTask").get();
     	assertEquals("Must be", resp404.getStatus(), 404); 
     	
-    	webClient.replacePath(TaskMockService.taskIds[0]);  
+    	webClient.replacePath(TaskMockService.initialTaskIds[0]);  
     	
     	Task task = webClient.get(Task.class);
-    	assertTrue("Must be eaual", TaskMockService.tasks[0].equals(task)); 
+    	assertTrue("Must be eaual", TaskMockService.initialTasks[0].equals(task)); 
     	
     	webClient.replacePath(""); 
     	Collection<? extends Task> resourceList = webClient.getCollection(Task.class);    	
-    	assertEquals("Must this length", resourceList.size(), TaskMockService.tasks.length); 
+    	assertEquals("Must this length", resourceList.size(), TaskMockService.initialTasks.length); 
     	for (Task taskIt : resourceList)
     		assertTrue("Must be a Task", taskIt instanceof Task);
     	
   	
-    	Response resp200 = webClient.path(TaskMockService.taskIds[0]).delete();
+    	Response resp200 = webClient.path(TaskMockService.initialTaskIds[1]).delete();
     	assertEquals("Must be", resp200.getStatus(), 200);
     }
 }

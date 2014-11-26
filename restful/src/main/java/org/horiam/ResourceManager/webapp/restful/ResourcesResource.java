@@ -61,12 +61,12 @@ public class ResourcesResource {
 	@PUT
 	@Consumes(MediaType.APPLICATION_XML)
 	@Produces({ MediaType.TEXT_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Resource putResource(@Context UriInfo uriInfo, 
+	public Response putResource(@Context UriInfo uriInfo, 
 					   			 @PathParam("id") String id, JAXBElement<? extends Resource> xml) {
 		
 		Resource resource = xml.getValue();
 		resourceService.createOrUpdate(id, resource);		
-		return  resource;
+		return  Response.created(uriInfo.getAbsolutePath()).build();
 	}
 	
 	@Path("{id}")

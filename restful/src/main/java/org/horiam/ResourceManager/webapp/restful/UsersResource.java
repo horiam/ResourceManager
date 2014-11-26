@@ -62,10 +62,9 @@ public class UsersResource {
 	@Consumes(MediaType.APPLICATION_XML)
 	public Response putUser(@Context UriInfo uriInfo, 
 							   @PathParam("id") String id, JAXBElement<? extends User> xml) {
-		System.out.print("Before PUT");		
+	
 		User user = xml.getValue();
 		userService.createOrUpdate(id, user);
-		System.out.print("After PUT");	
 		return  Response.created(uriInfo.getAbsolutePath()).build();
 	}
 	

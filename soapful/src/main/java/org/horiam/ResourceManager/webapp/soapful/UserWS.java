@@ -11,12 +11,14 @@ import org.horiam.ResourceManager.exceptions.RecordNotFoundException;
 import org.horiam.ResourceManager.model.Task;
 import org.horiam.ResourceManager.model.User;
 import org.horiam.ResourceManager.services.UserService;
+import org.horiam.ResourceManager.soap.MessageHolderBean;
+import org.horiam.ResourceManager.soap.ResourceManagerFault;
 import org.horiam.ResourceManager.soap.UserSEI;
 
+@Stateless // TODO
 @WebService(serviceName = "UserWS",		
 targetNamespace = "http://ResourceManager/wsdl",
 endpointInterface = "org.horiam.ResourceManager.soap.UserSEI")
-@Stateless
 public class UserWS implements UserSEI  {
 	
 	@EJB
@@ -51,9 +53,12 @@ public class UserWS implements UserSEI  {
 	 * @see org.horiam.ResourceManager.webapp.soapful.UserSEI#get(java.lang.String)
 	 */
 	@Override
-	public User get(String id) throws AuthorisationException,
-			RecordNotFoundException {
-		return userService.get(id);
+	public User get(String id) throws ResourceManagerFault {
+		try {
+			return userService.get(id);
+		} catch (AuthorisationException | RecordNotFoundException e) {
+			throw new ResourceManagerFault(e.getMessage(), new MessageHolderBean());
+		}
 	}
 
 	/* (non-Javadoc)
@@ -68,23 +73,35 @@ public class UserWS implements UserSEI  {
 	 * @see org.horiam.ResourceManager.webapp.soapful.UserSEI#allocateUser(java.lang.String)
 	 */
 	@Override
-	public Task allocateUser(String id) throws RecordNotFoundException {
-		return userService.allocateUser(id);
+	public Task allocateUser(String id) throws ResourceManagerFault {
+		try {
+			return userService.allocateUser(id);
+		} catch (RecordNotFoundException e) {
+			throw new ResourceManagerFault(e.getMessage(), new MessageHolderBean());
+		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.horiam.ResourceManager.webapp.soapful.UserSEI#deallocateUser(java.lang.String)
 	 */
 	@Override
-	public Task deallocateUser(String id) throws RecordNotFoundException {
-		return userService.deallocateUser(id);
+	public Task deallocateUser(String id) throws ResourceManagerFault {
+		try {
+			return userService.deallocateUser(id);
+		} catch (RecordNotFoundException e) {
+			throw new ResourceManagerFault(e.getMessage(), new MessageHolderBean());
+		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.horiam.ResourceManager.webapp.soapful.UserSEI#removeUser(java.lang.String)
 	 */
 	@Override
-	public Task removeUser(String id) throws RecordNotFoundException {
-		return userService.removeUser(id);
+	public Task removeUser(String id) throws ResourceManagerFault {
+		try {
+			return userService.removeUser(id);
+		} catch (RecordNotFoundException e) {
+			throw new ResourceManagerFault(e.getMessage(), new MessageHolderBean());
+		}
 	}	
 }

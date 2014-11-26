@@ -6,15 +6,10 @@
     <version>0.0.1-SNAPSHOT</version>
   </parent>
   <groupId>org.horiam.ResourceManager</groupId>
-  <artifactId>BaseAdditions</artifactId>
-  <name>BaseAdditions</name>
-  <packaging>jar</packaging>
+  <artifactId>JMS</artifactId>
+  <packaging>war</packaging>
+  <name>JMS</name>
   <dependencies>
-  	<dependency>
-  		<groupId>org.horiam.ResourceManager</groupId>
-  		<artifactId>Model</artifactId>
-  		<version>0.0.1-SNAPSHOT</version>
-  	</dependency>
   	<dependency>
   		<groupId>javax</groupId>
   		<artifactId>javaee-api</artifactId>

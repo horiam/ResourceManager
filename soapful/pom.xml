@@ -72,12 +72,6 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>tomee-jaxrs</artifactId>
-      <version>${tomee.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
     	<groupId>org.horiam.ResourceManager</groupId>
     	<artifactId>MockServices</artifactId>
     	<version>0.0.1-SNAPSHOT</version>
@@ -93,10 +87,10 @@
     	<artifactId>Beans</artifactId>
     	<version>0.0.1-SNAPSHOT</version>
     </dependency>
-    <dependency>
-    	<groupId>org.horiam.ResourceManager</groupId>
-    	<artifactId>SoapSEI</artifactId>
-    	<version>0.0.1-SNAPSHOT</version>
-    </dependency>
+	<dependency>
+  		<groupId>org.apache.openejb</groupId>
+  		<artifactId>tomee-webservices</artifactId>
+  		<version>1.7.1</version>
+	</dependency>
   </dependencies>
 </project>

@@ -18,16 +18,15 @@ public interface UserSEI {
 
 	public abstract void createOrUpdate(String id, User user);
 
-	public abstract User get(String id) throws AuthorisationException,
-			RecordNotFoundException;
+	public abstract User get(String id) throws ResourceManagerFault;
 
 	public abstract void delete(String id);
 
-	public abstract Task allocateUser(String id) throws RecordNotFoundException;
+	public abstract Task allocateUser(String id) throws ResourceManagerFault;
 
 	public abstract Task deallocateUser(String id)
-			throws RecordNotFoundException;
+			throws ResourceManagerFault;
 
-	public abstract Task removeUser(String id) throws RecordNotFoundException;
+	public abstract Task removeUser(String id) throws ResourceManagerFault;
 
 }
