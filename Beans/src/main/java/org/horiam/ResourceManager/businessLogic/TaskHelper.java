@@ -21,10 +21,13 @@ package org.horiam.ResourceManager.businessLogic;
 
 import java.util.UUID;
 
+import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
 
 import org.horiam.ResourceManager.businessLogic.TaskType;
 import org.horiam.ResourceManager.businessLogic.exceptions.UnrecoverableException;
@@ -45,7 +48,9 @@ public class TaskHelper {
 	@EJB
 	private UserDao users;
 	@EJB
-	private ResourceDao resources;
+	private ResourceDao resources;	
+	@Inject 
+	Event<Task> event;
 	
 	
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -122,5 +127,15 @@ public class TaskHelper {
 		Task task = tasks.get(taskId);
 		Resource resource = task.getResource();
 		return resource.getId();
+	}
+	
+	@Asynchronous
+	public void fireEvent(String taskId) {
+		try {
+			Task task = tasks.get(taskId);
+			event.fire(task);
+		} catch (RecordNotFoundException e) {
+			// TODO log
+		}		
 	}
 }

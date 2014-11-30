@@ -14,8 +14,8 @@
     <module>restful</module>    
     <module>soapful</module>  
     <module>MockServices</module>
-    <module>JPA</module>
     <module>JMS</module>
+    <module>JMSClient</module>
   </modules>
   <profiles>
     <profile>

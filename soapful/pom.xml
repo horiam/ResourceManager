@@ -40,7 +40,7 @@
         <version>${tomee.version}</version>
         <configuration>
           <tomeeVersion>${tomee.version}</tomeeVersion>
-          <tomeeClassifier>jaxrs</tomeeClassifier>
+          <tomeeClassifier>webprofile</tomeeClassifier>
         </configuration>
       </plugin>
     </plugins>
@@ -51,14 +51,14 @@
       <groupId>org.apache.openejb</groupId>
       <artifactId>javaee-api</artifactId>
       <version>${openejb.javaee.api}</version>
-      <scope>provided</scope>
+      <scope>test</scope>
     </dependency>
-    <!-- dependency>
+    <dependency>
     	<groupId>javax</groupId>
     	<artifactId>javaee-web-api</artifactId>
     	<version>7.0</version>
     	<scope>provided</scope>
-    </dependency-->
+    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -71,6 +71,12 @@
       <version>${tomee.version}</version>
       <scope>test</scope>
     </dependency>
+	<!-- dependency>
+		<groupId>org.apache.openejb</groupId>
+		<artifactId>tomee-embedded</artifactId>
+		<version>${tomee.version}</version>
+		<scope>test</scope>
+	</dependency-->
     <dependency>
     	<groupId>org.horiam.ResourceManager</groupId>
     	<artifactId>MockServices</artifactId>
@@ -91,6 +97,7 @@
   		<groupId>org.apache.openejb</groupId>
   		<artifactId>tomee-webservices</artifactId>
   		<version>1.7.1</version>
+  		<scope>test</scope>
 	</dependency>
   </dependencies>
 </project>

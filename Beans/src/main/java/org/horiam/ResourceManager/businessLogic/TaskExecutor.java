@@ -134,6 +134,8 @@ public class TaskExecutor {
 				if (taskHelper.getStatus(taskId) == Status.PROCESSING) { // unhandled exceptions
 					failed(taskId, false, "something went wrong with the execution");
 				}
+				
+				taskHelper.fireEvent(taskId);
 			}
 		
 		} catch  (RecordNotFoundException e) { // for the catches

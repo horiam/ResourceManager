@@ -7,14 +7,83 @@
   </parent>
   <groupId>org.horiam.ResourceManager</groupId>
   <artifactId>JMS</artifactId>
-  <packaging>war</packaging>
+  <packaging>jar</packaging>
   <name>JMS</name>
+  
+   <build>
+    <!-- defaultGoal>install</defaultGoal-->
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.1</version>
+        <configuration>
+          <source>1.7</source>
+          <target>1.7</target>
+        </configuration>
+      </plugin>
+       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.17</version>
+        <configuration>
+          <!--we don't need Beans to run tests -->
+          <classpathDependencyExcludes>
+            <classpathDependencyExclude>org.horiam.ResourceManager:Beans</classpathDependencyExclude>
+          </classpathDependencyExcludes>
+        </configuration>
+      </plugin>
+ 
+    </plugins>
+  </build>
+  
+  <repositories>
+    <repository>
+      <id>apache-m2-snapshot</id>
+      <name>Apache Snapshot Repository</name>
+      <url>https://repository.apache.org/content/groups/snapshots</url>
+    </repository>
+  </repositories>
   <dependencies>
-  	<dependency>
-  		<groupId>javax</groupId>
-  		<artifactId>javaee-api</artifactId>
-  		<version>7.0</version>
-  		<scope>provided</scope>
-  	</dependency>
-  </dependencies>
-</project>
+    <dependency>
+    	<groupId>org.horiam.ResourceManager</groupId>
+    	<artifactId>MockServices</artifactId>
+    	<version>0.0.1-SNAPSHOT</version>
+    	<scope>test</scope>
+    </dependency>
+    <dependency>
+    	<groupId>org.horiam.ResourceManager</groupId>
+    	<artifactId>Services</artifactId>
+    	<version>0.0.1-SNAPSHOT</version>
+    </dependency> 
+    <dependency>
+    	<groupId>org.horiam.ResourceManager</groupId>
+    	<artifactId>Beans</artifactId>
+    	<version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+    	<groupId>javax</groupId>
+    	<artifactId>javaee-web-api</artifactId>
+    	<version>7.0</version>
+    	<scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>javaee-api</artifactId>
+      <version>7.0-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.11</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>openejb-core</artifactId>
+      <version>5.0.0-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies> 
+  </project>
