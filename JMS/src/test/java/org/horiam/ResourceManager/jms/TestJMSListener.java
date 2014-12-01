@@ -21,7 +21,6 @@ import org.junit.Test;
 
 public class TestJMSListener {
 
-    
     @Resource
     private ConnectionFactory connectionFactory;
     @Resource(name ="jms/TestQueue")

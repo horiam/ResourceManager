@@ -1,6 +1,8 @@
 package org.horiam.ResourceManager.jms;
 
 
+import java.util.UUID;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
@@ -8,22 +10,25 @@ import javax.ejb.Stateless;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.DeliveryMode;
+import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
+import javax.jms.MessageConsumer;
 import javax.jms.MessageProducer;
 import javax.jms.Queue;
 import javax.jms.Session;
 import javax.jms.Topic;
 
 
-public abstract class SimpleJMSClient<T> {
+public abstract class SimpleJMSClient {
 	
 	@Resource
 	private ConnectionFactory connectionFactory;
 	private Connection connection;
-	private Session session;
-	private MessageProducer requestProducer;
+	protected Session session;
+	protected MessageProducer requestProducer;
 	private Queue myQueue;
+	private MessageConsumer responseConsumer;
 
 
 	@PostConstruct
@@ -34,6 +39,8 @@ public abstract class SimpleJMSClient<T> {
 		session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 		requestProducer = session.createProducer(null);
 		requestProducer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);					
+		myQueue = session.createTemporaryQueue();
+		responseConsumer = session.createConsumer(myQueue);
 	}
 	
 	@PreDestroy 
@@ -44,7 +51,13 @@ public abstract class SimpleJMSClient<T> {
         	connection.close();
 	}
 	
-	public abstract void sendMessage(Message message);
+	protected void sendMessage(Destination destination, Message message) throws JMSException {
+		message.setJMSReplyTo(myQueue);
+        message.setJMSCorrelationID(UUID.randomUUID().toString());
+        requestProducer.send(destination, message);
+	}
 	
-	public abstract T receiveMessage();
+	protected Message receiveMessage() throws JMSException {
+		return responseConsumer.receive(1000); //TODO 
+	}
 }
