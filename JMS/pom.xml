@@ -85,5 +85,10 @@
       <version>5.0.0-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+    	<groupId>org.horiam.ResourceManager</groupId>
+    	<artifactId>JMSClient</artifactId>
+    	<version>0.0.1-SNAPSHOT</version>
+    </dependency>
   </dependencies> 
   </project>

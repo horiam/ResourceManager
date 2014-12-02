@@ -16,6 +16,8 @@ import javax.jms.Session;
 import javax.jms.TextMessage;
 import javax.naming.NamingException;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 
@@ -26,12 +28,24 @@ public class TestJMSListener {
     @Resource(name ="jms/TestQueue")
     private Queue usersQueue;
     
+    private EJBContainer container;
+    
+    @Before
+    public void before() throws NamingException {
+    	container = EJBContainer.createEJBContainer();
+    	container.getContext().bind("inject", this);
+    }
+    
+    @After 
+    public void after() {
+    	container.close();
+    }
+    
+    
     @Test
-    public void testUsersWS() throws JMSException, NamingException  {    	
+    public void testUsersWS() throws  JMSException  {    	
     	System.out.println("\nTest JMS Listener...\n");
-
-    	EJBContainer.createEJBContainer().getContext().bind("inject", this);
-    	
+        	
     	Connection connection = connectionFactory.createConnection();
 
         connection.start();
