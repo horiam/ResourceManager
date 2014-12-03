@@ -24,7 +24,7 @@ import javax.jms.TextMessage;
                 				 propertyValue = "javax.jms.Queue"),                 
         @ActivationConfigProperty(propertyName = "destination",  
                 				 propertyValue = "jms/TestQueue")})
-public class MessageDrivenBean implements MessageListener {
+public class Mdb4Tests implements MessageListener {
 
 	@Resource
     private ConnectionFactory connectionFactory;

@@ -20,6 +20,8 @@
 package org.horiam.ResourceManager.model;
 
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToOne;
@@ -37,7 +39,9 @@ import org.horiam.ResourceManager.model.XmlAdapter.TaskXmlAdapter;
 @MappedSuperclass
 @XmlRootElement(name="ModelWithTask")
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class ModelWithTask extends Model {
+public abstract class ModelWithTask extends Model implements Serializable{
+	
+	private static final long serialVersionUID = -1900907417980591161L;
 	
 	@XmlJavaTypeAdapter(TaskXmlAdapter.class)
 	@OneToOne

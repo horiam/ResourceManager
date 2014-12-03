@@ -1,19 +1,10 @@
 package org.horiam.ResourceManager.jms;
 
-
-import java.util.UUID;
-
 import javax.annotation.Resource;
-import javax.ejb.EJB;
 import javax.ejb.embeddable.EJBContainer;
-import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
-import javax.jms.Destination;
 import javax.jms.JMSException;
-import javax.jms.MessageConsumer;
-import javax.jms.MessageProducer;
 import javax.jms.Queue;
-import javax.jms.Session;
 import javax.jms.TextMessage;
 import javax.naming.NamingException;
 
@@ -21,14 +12,13 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+public class TestJMS1 {
 
-public class TestJMSClientTest {
+	@Resource
+    private ConnectionFactory connectionFactory;    
+	@Resource(name ="jms/TestQueue")
+    private Queue testQueue;
 
-    @Resource
-    private ConnectionFactory connectionFactory;
-    @EJB
-    private TestJMSClient client;
-   
     private EJBContainer container;
     
     @Before
@@ -37,18 +27,23 @@ public class TestJMSClientTest {
     	container.getContext().bind("inject", this);
     }
     
-    @After 
+    @After
     public void after() {
     	container.close();
     }
     
     @Test
-    public void testUsers() throws JMSException, NamingException  {    	
-    	System.out.println("\nTest JMS Listener in TestJMSClientTest...\n");
+    public void test() throws JMSException  {
+    	System.out.println("\nTest JMS Listener in TestJMS1...\n");
+    
+    	JmsClient client = new JmsClient(connectionFactory, testQueue);
+    	client.init();
     	
-    	client.send("ping");
-    	String message = client.receive();
+    	TextMessage sendMessage = client.getSession().createTextMessage("ping");
+    	client.sendMessage(sendMessage);
+    
+    	TextMessage receivedMessage = (TextMessage) client.receiveMessage(2000);
         
-        System.out.println("\n message="+message+"\n"); 
-    } 
+        System.out.println("\n message=" + receivedMessage + "\n"); 
+    }
 }

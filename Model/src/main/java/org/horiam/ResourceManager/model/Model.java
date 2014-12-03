@@ -19,6 +19,7 @@
 
 package org.horiam.ResourceManager.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -34,8 +35,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 @MappedSuperclass
-public abstract class Model { // TODO rename it RecordModel
+public abstract class Model implements Serializable { // TODO rename it RecordModel
 
+
+	private static final long serialVersionUID = 7196486256060530794L;
+	
 	@Id
 	private String id;
     @Column(name="DATE_CREATED")
