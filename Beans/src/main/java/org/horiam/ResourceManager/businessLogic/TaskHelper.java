@@ -19,6 +19,7 @@
 
 package org.horiam.ResourceManager.businessLogic;
 
+import java.lang.annotation.Annotation;
 import java.util.UUID;
 
 import javax.ejb.Asynchronous;
@@ -27,6 +28,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.enterprise.event.Event;
+import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 
 import org.horiam.ResourceManager.businessLogic.TaskType;
@@ -135,7 +137,8 @@ public class TaskHelper {
 			Task task = tasks.get(taskId);
 			event.fire(task);
 		} catch (RecordNotFoundException e) {
-			// TODO log
+			System.out.println(e.getMessage());
 		}		
 	}
+	
 }

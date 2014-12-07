@@ -103,10 +103,11 @@ public abstract class ModelWithTask extends Model implements Serializable{
 			if (cast.getTask() != null) 
 				castTaskId = cast.getTask().getId();
 
-			return new EqualsBuilder().appendSuper(super.equals(other))
+			boolean builder = new EqualsBuilder().appendSuper(super.equals(other))
 									  .append(booked, cast.isBooked()) 
 									  .append(taskId, castTaskId)
 									  .isEquals();
+			return builder;
 		}
 		return false;
 	}

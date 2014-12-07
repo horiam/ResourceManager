@@ -17,25 +17,23 @@
  * limitations under the License.
  */
 
-package org.horiam.ResourceManager.exceptions;
+package org.horiam.ResourceManager.jms;
 
-import javax.ejb.ApplicationException;
+import javax.ejb.Asynchronous;
+import javax.ejb.Singleton;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
 
-@ApplicationException
-public class RecordNotFoundException extends Exception { // TODO rename it RecordNotFoundException
+import org.horiam.ResourceManager.model.Task;
 
-	private static final long serialVersionUID = 4106113723005876617L;
+@Singleton
+public class TaskEventLauncher {
+	@Inject 
+	Event<Task> event;
 	
-	public RecordNotFoundException(String message) {
-		super(message);
+	@Asynchronous
+	public void fireEvent(Task task) {
+		event.fire(task);
 	}
 	
-	public RecordNotFoundException(Throwable throwable) {
-		super(throwable);
-	}
-
-	public RecordNotFoundException(String message, Throwable throwable) {
-		super(message, throwable);
-	}
-
 }

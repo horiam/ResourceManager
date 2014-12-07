@@ -46,30 +46,7 @@ public class TestTaskExecutor  {
 	@EJB
 	protected TaskExecutor executor;
 	
-	/*
-	@BeforeClass
-	public static void setup() throws NamingException {
-		
-		Properties properties = new Properties();	
-				
-		properties.put("myDatabase", "new://Resource?type=DataSource");
-		properties.put("myDatabase.JdbcDriver", "org.h2.Driver");
-		properties.put("myDatabase.JdbcUrl", "jdbc:h2:mem:StorageManagerStore");
 
-		setupContainer(properties);
-		
-		userDao = (UserDao) lookup("java:global/Beans/UserDao!" + UserDao.class.getName());
-		resourceDao = (ResourceDao) lookup("java:global/Beans/ResourceDao!" + ResourceDao.class.getName());
-		taskDao = (TaskDao) lookup("java:global/Beans/TaskDao!" + TaskDao.class.getName());
-		taskHelper = (TaskHelper) lookup("java:global/Beans/TaskHelper!" + TaskHelper.class.getName());
-	}
-	
-	@AfterClass
-	public static void stop() {
-		closeContainer();
-	}
-	*/
-	
 	protected EJBContainer container;
 	
 	@Before

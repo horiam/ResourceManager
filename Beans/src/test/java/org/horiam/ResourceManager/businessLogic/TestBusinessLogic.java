@@ -19,6 +19,7 @@
 
 package org.horiam.ResourceManager.businessLogic;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -28,6 +29,8 @@ import java.util.Properties;
 
 import javax.ejb.EJB;
 import javax.ejb.embeddable.EJBContainer;
+import javax.enterprise.event.Observes;
+import javax.enterprise.event.TransactionPhase;
 import javax.naming.Context;
 import javax.naming.NamingException;
 
@@ -72,27 +75,9 @@ public class TestBusinessLogic  {
 	protected Allocator allocator;
 	@EJB
 	protected Booking booking;
-	
-	/*
-	@BeforeClass
-	public static void setup() throws NamingException {
-		
-		Properties properties = new Properties();
-		properties.put("myDatabase", "new://Resource?type=DataSource");
-		properties.put("myDatabase.JdbcDriver", "org.h2.Driver");
-		properties.put("myDatabase.JdbcUrl", "jdbc:h2:mem:StorageManagerStore");
-		setupContainer(properties);
-		
-		userDao = (UserDao) lookup("java:global/Beans/UserDao!" + UserDao.class.getName());
-		resourceDao = (ResourceDao) lookup("java:global/Beans/ResourceDao!" + ResourceDao.class.getName());
-		taskDao = (TaskDao) lookup("java:global/Beans/TaskDao!" + TaskDao.class.getName());		
-	}
-	
-	@AfterClass
-	public static void stop() {
-		closeContainer();
-	}
-	*/
+	@EJB
+	private TaskEventObserver eventObserver;
+
 	protected EJBContainer container;
 	
 	@Before
@@ -124,8 +109,6 @@ public class TestBusinessLogic  {
 			ResourceUnrecoverableException, UserUnrecoverableException, RecordNotFoundException {		
 		System.out.println("\nTest Allocator EJB...\n");
 		
-		//Allocator allocator = (Allocator) lookup("java:global/Beans/Allocator!" + Allocator.class.getName());
-		
 		allocator.attachUser(userId, resourceId);
 		
 		User user = userDao.get(userId);
@@ -144,10 +127,8 @@ public class TestBusinessLogic  {
 	}
 	
 	@Test
-	public void bTest() throws NamingException, RecordNotFoundException {		
+	public void bTest() throws NamingException, RecordNotFoundException, InterruptedException {		
 		System.out.println("\nTest TaskHelper EJB...\n");
-		
-		//taskHelper = (TaskHelper) lookup("java:global/Beans/TaskHelper!" + TaskHelper.class.getName());
 		
 		Task task = taskHelper.createTask(TaskType.allocateResourceForUser);		
 		assertTrue("Tasks must be in the DAO", task.equals(taskDao.get(task.getId())));
@@ -169,6 +150,13 @@ public class TestBusinessLogic  {
 		assertTrue("Task must be succedeed", (task.getStatus() == Task.Status.SUCCEEDED));
 		assertTrue("Message must be the same", message.equals(task.getMessage()));		
 		
+		// test events
+		taskHelper.fireEvent(task.getId());
+		// is assync so we wait a bit
+		Thread.sleep(3000);
+		assertNotNull("Event must be observed", eventObserver.getObservedTask());
+		assertTrue("Must be equal", task.equals(eventObserver.getObservedTask()));
+
 		//clean
 		taskDao.remove(task.getId());
 		
@@ -182,8 +170,6 @@ public class TestBusinessLogic  {
 	@Test
 	public void cTest() throws NamingException, RecordNotFoundException, RecoverableException {		
 		System.out.println("\nTest Booking EJB...\n");		
-		
-		//Booking booking = (Booking) lookup("java:global/Beans/Booking!" + Booking.class.getName());
 		
 		User user = userDao.get(userId);
 		assertNull("User must not have any task", user.getTask());

@@ -82,9 +82,9 @@ public abstract class Model implements Serializable { // TODO rename it RecordMo
 		
 		if (this.getClass().equals(other.getClass())) {
 			Model cast = (Model) other;
-			return new EqualsBuilder().append(id, cast.getId()) 
-									  .append(date, cast.getDate())
+			boolean builder = new EqualsBuilder().append(id, cast.getId()) 
 									  .isEquals();
+			return builder;
 		}
 		return false;
 	}

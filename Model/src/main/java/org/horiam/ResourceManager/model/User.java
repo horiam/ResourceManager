@@ -94,9 +94,10 @@ public class User extends ModelWithTask implements Serializable {
 			if (cast.getResource() != null) 
 				castResourceId = cast.getResource().getId();
 
-			return new EqualsBuilder().appendSuper(super.equals(other))
+			boolean builder = new EqualsBuilder().appendSuper(super.equals(other))
 									  .append(resourceId, castResourceId)
 									  .isEquals();
+			return builder;
 		}
 		return false;
 	}
