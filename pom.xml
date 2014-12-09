@@ -16,6 +16,7 @@
     <module>MockServices</module>
     <module>JMS</module>
     <module>JMSClient</module>
+    <module>Soapful-Beans-IT</module>
   </modules>
   <profiles>
     <profile>

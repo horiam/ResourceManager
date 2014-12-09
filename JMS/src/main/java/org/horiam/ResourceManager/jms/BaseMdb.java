@@ -60,6 +60,8 @@ public abstract class BaseMdb implements MessageListener {
 	
 	@PreDestroy 
 	protected void preDestroy() throws JMSException {
+		if (replyProducer != null)
+			replyProducer.close();
 		if (session != null) 
 			session.close();
         if (connection != null) 
