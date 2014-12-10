@@ -12,8 +12,10 @@ import java.net.URL;
 import java.util.List;
 
 import javax.xml.namespace.QName;
+import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
 
+import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.horiam.ResourceManager.model.Resource;
 import org.horiam.ResourceManager.model.Task;
 import org.horiam.ResourceManager.model.User;
@@ -21,40 +23,41 @@ import org.horiam.ResourceManager.soap.ResourceManagerFault;
 import org.horiam.ResourceManager.soap.ResourceSEI;
 import org.horiam.ResourceManager.soap.TaskSEI;
 import org.horiam.ResourceManager.soap.UserSEI;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class SoapIT {
 
-	private final static String deploy = "http://localhost:8081/Soapful/"; 
+	private final static String deploy = "http://localhost:8081/Soapful/webservices/"; 
+
+
+	private Object createClient(Class clazz, String wsName, String user, String pass) {
+		JaxWsProxyFactoryBean clientFactory = new JaxWsProxyFactoryBean();
+    	clientFactory.setAddress(deploy + wsName); 
+    	clientFactory.setServiceClass(clazz); 
+    	clientFactory.setUsername(user); 
+    	clientFactory.setPassword(pass); 
+    	return clientFactory.create();  
+	}
 	
 	@Test
-    public void testUsersWS() throws URISyntaxException, MalformedURLException, 
+    public void testUsers() throws URISyntaxException, MalformedURLException, 
     										ResourceManagerFault {    	
     	System.out.println("\nTest UsersWS on URL=" + deploy + "...\n");
     	
-    	Authenticator.setDefault(new Authenticator() {
-			protected PasswordAuthentication getPasswordAuthentication() {
-				return new PasswordAuthentication("admin", "super".toCharArray());
-			}
-		});
-    	  	
-    	URL wsdlURL = new URL(deploy + "webservices/UserWS?wsdl");    
-    	QName serviceQName =  new QName("http://ResourceManager/wsdl", "UserWS");
-    	
-    	Service service = Service.create(wsdlURL, serviceQName);
-    	UserSEI port = service.getPort(UserSEI.class);
+    	UserSEI port = (UserSEI) createClient(UserSEI.class, "UserWS", "admin", "super");
+    
     	
     	assertFalse("Must not exist", port.exists("UnknownUser"));
-    	/*  	
+/*	
     	boolean hasException = false;
-    	try { // TODO
+    	try {
 			port.get("UnknownUser");
 		} catch (ResourceManagerFault e) {
-			System.out.println("Exception type="+e.getClass());
 			hasException = true;
 		}
     	assertTrue("Must have exception", hasException);
-    	*/
+  */	  	
      	String user1id = "user1";
      	User user1 = new User(user1id);
     	port.createOrUpdate(user1id, user1);
@@ -92,63 +95,62 @@ public class SoapIT {
     	*/
     }
     
-	/*
-	
     @Test
-    public void testResourceWS() throws URISyntaxException, MalformedURLException, 
+    public void testResource() throws URISyntaxException, MalformedURLException, 
     										ResourceManagerFault {    	
     	System.out.println("\nTest ResourceWS on URL=" + deploy + "...\n");
     	
-    	URL wsdlURL = new URL(deploy + "webservices/ResourceWS?wsdl");    
-    	QName serviceQName =  new QName("http://ResourceManager/wsdl", "ResourceWS");
+       	ResourceSEI port = (ResourceSEI) createClient(ResourceSEI.class, "ResourceWS", "admin", "super");
     	
-    	Service service = Service.create(wsdlURL, serviceQName);
-    	ResourceSEI port = service.getPort(ResourceSEI.class);
-    	
+
     	assertFalse("Must not exist", port.exists("UnknownResource"));
-    	
+    /*	
     	boolean hasException = false;
     	try { // TODO
 			port.get("UnknownResource");
 		} catch (ResourceManagerFault e) {
-			System.out.println("Exception type="+e.getClass());
 			hasException = true;
 		}
     	assertTrue("Must have exception", hasException);
+    	*/
+   		String resource1id = "resource1";
+    	Resource resource1 = new Resource(resource1id);
+    	port.createOrUpdate(resource1id, resource1);
+    	assertTrue("Must exist", port.exists(resource1id));
     	
-    	Resource resource = port.get(ResourceMockService.initialResourceIds[0]);
-    	assertTrue("Must be eaual", ResourceMockService.initialResources[0].equals(resource));
+    	String resource2id = "resource2";
+    	Resource resource2 = new Resource(resource2id);
+    	port.createOrUpdate(resource2id, resource2);
+    	assertTrue("Must exist", port.exists(resource2id));
     	
-    	assertTrue("Must exist", port.exists(ResourceMockService.initialResourceIds[0])); 
+    	
+    	Resource resource = port.get(resource1id);
+    	assertTrue("Must be eaual", resource1.equals(resource));
     	
     	List<Resource> resourceList = port.list();
-    	assertEquals("Must this length", resourceList.size(), ResourceMockService.initialResources.length); 
+    	assertEquals("Must this length", resourceList.size(), 2); 
     	for (Resource resourceIt : resourceList)
     		assertTrue("Must be a Resource", resourceIt instanceof Resource); 
     	
-    	String newResourceId = "NewResource";
-    	port.createOrUpdate(newResourceId, new Resource(newResourceId));
-    	assertTrue("Must exist", port.exists(newResourceId));
+    	port.delete(resource1id);
+    	assertFalse("Must not exist", port.exists(resource1id));
     	
-    	port.delete("NewResource");
-    	assertFalse("Must not exist", port.exists("NewResource"));
-    	
-    	Task taskRemove = port.removeResource(ResourceMockService.initialResourceIds[0]);
-    	assertEquals("Must be type", taskRemove.getType(), "removeResource"); 
+
     }
-    
+    /*
     @Test
-    public void testTaskWS() throws URISyntaxException, MalformedURLException, 
+    public void testTask() throws URISyntaxException, MalformedURLException, 
     										ResourceManagerFault {    	
     	System.out.println("\nTest TaskWS on URL=" + deploy + "...\n");
     	
     	URL wsdlURL = new URL(deploy + "webservices/TaskWS?wsdl");    
-    	QName serviceQName =  new QName("http://ResourceManager/wsdl", "TaskWS");
+    	QName serviceQName =  new QName("http://ResourceManagerNS/Task", "TaskWS");
     	
     	Service service = Service.create(wsdlURL, serviceQName);
     	TaskSEI port = service.getPort(TaskSEI.class);
     	
     	assertFalse("Must not exist", port.exists("UnknownTask"));
+    	
     	
     	boolean hasException = false;
     	try { // TODO
@@ -158,6 +160,7 @@ public class SoapIT {
 			hasException = true;
 		}
     	assertTrue("Must have exception", hasException);
+    	
     	
     	Task task = port.get(TaskMockService.initialTaskIds[0]);
     	assertTrue("Must be eaual", TaskMockService.initialTasks[0].equals(task));
@@ -171,7 +174,9 @@ public class SoapIT {
     	
     	port.delete(TaskMockService.initialTaskIds[1]);
     	assertFalse("Must not exist", port.exists(TaskMockService.initialTaskIds[1]));
+    	
+    	Task taskRemove = port.removeResource(ResourceMockService.initialResourceIds[0]);
+    	assertEquals("Must be type", taskRemove.getType(), "removeResource"); 
     }
-
-    */
+	*/
 }
