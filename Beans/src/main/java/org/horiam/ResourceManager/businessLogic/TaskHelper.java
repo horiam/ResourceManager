@@ -58,6 +58,10 @@ public class TaskHelper {
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public Task setUser(String id, String userId) throws RecordNotFoundException {
 		Task task = tasks.get(id);		
+		return setUser(userId, task);
+	}
+	
+	private Task setUser(String userId, Task task) throws RecordNotFoundException {
 		try {
 			User user = users.get(userId);
 			task.setUser(user);
@@ -79,6 +83,12 @@ public class TaskHelper {
 			failed(task, e.getMessage(), false);
 			throw e;
 		}			
+	}
+	
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public Task createTaskForUser(String userId, TaskType type) throws RecordNotFoundException {
+		Task task = createTask(type);
+		return setUser(userId, task);
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)

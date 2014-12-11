@@ -52,6 +52,7 @@
 
 						<properties>
 							<cargo.servlet.port>8081</cargo.servlet.port>
+							<cargo.jvmargs>-DmyDatabase=new://Resource?type=DataSource -DmyDatabase.JdbcDriver=org.h2.Driver -DmyDatabase.JdbcUrl=jdbc:h2:mem:StorageManagerStore</cargo.jvmargs>							
 						</properties>
 
 					</configuration>

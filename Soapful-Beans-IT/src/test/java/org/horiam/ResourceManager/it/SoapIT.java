@@ -15,6 +15,8 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
 
+import org.apache.cxf.interceptor.LoggingInInterceptor;
+import org.apache.cxf.interceptor.LoggingOutInterceptor;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.horiam.ResourceManager.model.Resource;
 import org.horiam.ResourceManager.model.Task;
@@ -24,6 +26,7 @@ import org.horiam.ResourceManager.soap.ResourceSEI;
 import org.horiam.ResourceManager.soap.TaskSEI;
 import org.horiam.ResourceManager.soap.UserSEI;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class SoapIT {
@@ -36,10 +39,13 @@ public class SoapIT {
     	clientFactory.setAddress(deploy + wsName); 
     	clientFactory.setServiceClass(clazz); 
     	clientFactory.setUsername(user); 
-    	clientFactory.setPassword(pass); 
+    	clientFactory.setPassword(pass);
+    	clientFactory.getInInterceptors().add(new LoggingInInterceptor());
+    	clientFactory.getInInterceptors().add(new LoggingOutInterceptor());
     	return clientFactory.create();  
 	}
 	
+	@Ignore
 	@Test
     public void testUsers() throws URISyntaxException, MalformedURLException, 
     										ResourceManagerFault {    	
@@ -85,6 +91,7 @@ public class SoapIT {
     	
     }
     
+	@Ignore
     @Test
     public void testResource() throws URISyntaxException, MalformedURLException, 
     										ResourceManagerFault {    	
@@ -130,7 +137,7 @@ public class SoapIT {
     	
     }
     
-    @Test
+    @Test(timeout = 30000)
     public void testTask() throws URISyntaxException, MalformedURLException, 
     										ResourceManagerFault {    	
     	System.out.println("\nTest TaskWS on URL=" + deploy + "...\n");
@@ -142,7 +149,7 @@ public class SoapIT {
        	ResourceSEI resourceWS = (ResourceSEI) createClient(ResourceSEI.class, "ResourceWS", "admin", "super");
 
     	assertFalse("Must not exist", port.exists("UnknownTask"));
-    	
+    /*	
     	boolean hasException = false;
     	try { 
 			port.get("UnknownTask");
@@ -150,7 +157,7 @@ public class SoapIT {
 			hasException = true;
 		}
     	assertTrue("Must have exception", hasException);
-    
+    */
     	
     	String user1id = "user1";
      	User user1 = new User(user1id);
@@ -171,8 +178,8 @@ public class SoapIT {
     	
     	/*
     	 *  allocateUser User1
-    	 *  wait Task
     	 *  check Task
+    	 *  wait Task
     	 *  check that Resource1 allocated to User1
     	 *  
     	 *  allocate User2
@@ -196,6 +203,21 @@ public class SoapIT {
     	 *  
     	 */
     	
+    	Task allocateUser1Task = userWS.allocateUser(user1id);
+    	assertEquals("Must be type", allocateUser1Task.getType(), "allocateResourceForUser");
+    	assertEquals("Must be the same id", allocateUser1Task.getUser().getId(), user1id);
+
+    	while (allocateUser1Task.getStatus() == Task.Status.PROCESSING)
+    		allocateUser1Task = port.get(allocateUser1Task.getId());
+
+    	assertEquals("Must be SUCCEEDED", allocateUser1Task.getStatus(), Task.Status.SUCCEEDED);
+    	assertEquals("Must have this Resource", allocateUser1Task.getResource().getId(), resource1id);
+    	
+    	user1 = userWS.get(user1id);
+    	assertEquals("Must have this Resource", user1.getResource().getId(), resource1id);
+    	resource1 = resourceWS.get(resource1id);
+    	assertEquals("Must have this User", resource1.getUser().getId(), user1id);
+    	
     	/*
     	
     	Task taskAllocate = port.allocateUser(user1id);
@@ -216,7 +238,7 @@ public class SoapIT {
     	port.createOrUpdate(resource2id, resource2);
     	assertTrue("Must exist", port.exists(resource2id));
     	*/
-    	
+    /*	
     	Task task = port.get(TaskMockService.initialTaskIds[0]);
     	assertTrue("Must be eaual", TaskMockService.initialTasks[0].equals(task));
     	
@@ -232,6 +254,7 @@ public class SoapIT {
     	
     	Task taskRemove = port.removeResource(ResourceMockService.initialResourceIds[0]);
     	assertEquals("Must be type", taskRemove.getType(), "removeResource"); 
+    */
     }
 	
 }

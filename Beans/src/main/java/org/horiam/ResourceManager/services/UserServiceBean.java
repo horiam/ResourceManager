@@ -136,9 +136,9 @@ public class UserServiceBean implements UserService {
 		
 		//if (isUserAuthorised(id)) {
 		
-			Task task = taskHelper.createTask(TaskType.allocateResourceForUser);
-			taskHelper.setUser(task.getId(), id);
-									
+//			Task task = taskHelper.createTask(TaskType.allocateResourceForUser);
+//			task = taskHelper.setUser(task.getId(), id);
+			Task task = taskHelper.createTaskForUser(id, TaskType.allocateResourceForUser);
 			Future<Void> future = async.executeTask(task.getId());				
 			return task; 
 		//} 		
