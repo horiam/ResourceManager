@@ -35,7 +35,7 @@ import org.horiam.ResourceManager.soap.ResourceSEI;
 
 @Stateless // TODO
 @WebService(serviceName = "ResourceWS",		
-targetNamespace = "http://ResourceManager/wsdl",
+targetNamespace = "http://ResourceManagerNS/Resources",
 endpointInterface = "org.horiam.ResourceManager.soap.ResourceSEI")
 public class ResourceWS implements ResourceSEI {
 	

@@ -31,7 +31,7 @@ public class SoapIT {
 	private final static String deploy = "http://localhost:8081/Soapful/webservices/"; 
 
 
-	private Object createClient(Class clazz, String wsName, String user, String pass) {
+	private Object createClient(Class<?> clazz, String wsName, String user, String pass) {
 		JaxWsProxyFactoryBean clientFactory = new JaxWsProxyFactoryBean();
     	clientFactory.setAddress(deploy + wsName); 
     	clientFactory.setServiceClass(clazz); 
@@ -49,7 +49,7 @@ public class SoapIT {
     
     	
     	assertFalse("Must not exist", port.exists("UnknownUser"));
-/*	
+	
     	boolean hasException = false;
     	try {
 			port.get("UnknownUser");
@@ -57,7 +57,7 @@ public class SoapIT {
 			hasException = true;
 		}
     	assertTrue("Must have exception", hasException);
-  */	  	
+	  	
      	String user1id = "user1";
      	User user1 = new User(user1id);
     	port.createOrUpdate(user1id, user1);
@@ -75,24 +75,14 @@ public class SoapIT {
     	assertEquals("Must this length", userList.size(), 2); 
     	for (User userIt : userList)
     		assertTrue("Must be a User", userIt instanceof User); 
-    	   	
+    	
+    	port.delete(user1id);
+    	assertFalse("Must not exist", port.exists(user1id));
+      	
     	port.delete(user2id);
     	assertFalse("Must not exist", port.exists(user2id));
    
-    	/*
     	
-    	Task taskAllocate = port.allocateUser(user1id);
-    	assertEquals("Must be type", taskAllocate.getType(), "allocateResourceForUser");
-    	// TODO WAIT and check if task is complete
-    	Task taskDeallocate = port.deallocateUser(user1id);
-    	assertEquals("Must be type", taskDeallocate.getType(), "deallocateUser");
-    	// TODO WAIT and check if task is complete
-    	Task taskRemove = port.removeUser(user1id);
-    	assertEquals("Must be type", taskRemove.getType(), "removeUser");  
-    	// TODO WAIT and check if task is complete
-    	assertFalse("Must not exist", port.exists(user1id));
-    	
-    	*/
     }
     
     @Test
@@ -104,7 +94,7 @@ public class SoapIT {
     	
 
     	assertFalse("Must not exist", port.exists("UnknownResource"));
-    /*	
+   	
     	boolean hasException = false;
     	try { // TODO
 			port.get("UnknownResource");
@@ -112,7 +102,7 @@ public class SoapIT {
 			hasException = true;
 		}
     	assertTrue("Must have exception", hasException);
-    	*/
+    	
    		String resource1id = "resource1";
     	Resource resource1 = new Resource(resource1id);
     	port.createOrUpdate(resource1id, resource1);
@@ -135,32 +125,97 @@ public class SoapIT {
     	port.delete(resource1id);
     	assertFalse("Must not exist", port.exists(resource1id));
     	
-
+    	port.delete(resource2id);
+    	assertFalse("Must not exist", port.exists(resource2id));
+    	
     }
-    /*
+    
     @Test
     public void testTask() throws URISyntaxException, MalformedURLException, 
     										ResourceManagerFault {    	
     	System.out.println("\nTest TaskWS on URL=" + deploy + "...\n");
     	
-    	URL wsdlURL = new URL(deploy + "webservices/TaskWS?wsdl");    
-    	QName serviceQName =  new QName("http://ResourceManagerNS/Task", "TaskWS");
+    	TaskSEI port = (TaskSEI) createClient(TaskSEI.class, "TaskWS", "admin", "super"); 
     	
-    	Service service = Service.create(wsdlURL, serviceQName);
-    	TaskSEI port = service.getPort(TaskSEI.class);
+    	UserSEI userWS = (UserSEI) createClient(UserSEI.class, "UserWS", "admin", "super");
     	
+       	ResourceSEI resourceWS = (ResourceSEI) createClient(ResourceSEI.class, "ResourceWS", "admin", "super");
+
     	assertFalse("Must not exist", port.exists("UnknownTask"));
     	
-    	
     	boolean hasException = false;
-    	try { // TODO
+    	try { 
 			port.get("UnknownTask");
 		} catch (ResourceManagerFault e) {
-			System.out.println("Exception type="+e.getClass());
 			hasException = true;
 		}
     	assertTrue("Must have exception", hasException);
+    
     	
+    	String user1id = "user1";
+     	User user1 = new User(user1id);
+    	userWS.createOrUpdate(user1id, user1);
+    	assertTrue("Must exist", userWS.exists(user1id));
+
+     	String user2id = "user2";
+     	User user2 = new User(user2id);
+    	userWS.createOrUpdate(user2id, user2);
+    	assertTrue("Must exist", userWS.exists(user2id));
+    
+    	
+    	// Populate with Users and Resources
+    	String resource1id = "resource1";
+    	Resource resource1 = new Resource(resource1id);
+    	resourceWS.createOrUpdate(resource1id, resource1);
+    	assertTrue("Must exist", resourceWS.exists(resource1id));
+    	
+    	/*
+    	 *  allocateUser User1
+    	 *  wait Task
+    	 *  check Task
+    	 *  check that Resource1 allocated to User1
+    	 *  
+    	 *  allocate User2
+    	 *  wait Task 
+    	 *  check Task : must be failed
+    	 *  check User2 and Resource1 must be untouched
+    	 *  
+    	 *  remove User1
+    	 *  wait Task
+    	 *  check Task 
+    	 *  check User1 does not exist
+    	 *  check that Resource1 exists and free
+    	 *  
+    	 *  allocate User2
+    	 *  wait Task
+    	 *  check Resource1 associated with User1
+    	 *  
+    	 *  list Tasks
+    	 *  exists Tasks
+    	 *  remove all Tasks 
+    	 *  
+    	 */
+    	
+    	/*
+    	
+    	Task taskAllocate = port.allocateUser(user1id);
+    	assertEquals("Must be type", taskAllocate.getType(), "allocateResourceForUser");
+    	// TODO WAIT and check if task is complete
+    	Task taskDeallocate = port.deallocateUser(user1id);
+    	assertEquals("Must be type", taskDeallocate.getType(), "deallocateUser");
+    	// TODO WAIT and check if task is complete
+    	Task taskRemove = port.removeUser(user1id);
+    	assertEquals("Must be type", taskRemove.getType(), "removeUser");  
+    	// TODO WAIT and check if task is complete
+    	assertFalse("Must not exist", port.exists(user1id));
+    	
+    	*/
+    /*	
+    	String resource2id = "resource2";
+    	Resource resource2 = new Resource(resource2id);
+    	port.createOrUpdate(resource2id, resource2);
+    	assertTrue("Must exist", port.exists(resource2id));
+    	*/
     	
     	Task task = port.get(TaskMockService.initialTaskIds[0]);
     	assertTrue("Must be eaual", TaskMockService.initialTasks[0].equals(task));
@@ -178,5 +233,5 @@ public class SoapIT {
     	Task taskRemove = port.removeResource(ResourceMockService.initialResourceIds[0]);
     	assertEquals("Must be type", taskRemove.getType(), "removeResource"); 
     }
-	*/
+	
 }

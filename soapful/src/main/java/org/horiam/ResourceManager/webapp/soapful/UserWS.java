@@ -36,7 +36,7 @@ import org.horiam.ResourceManager.soap.UserSEI;
 
 @Stateless // TODO
 @WebService(serviceName = "UserWS",		
-targetNamespace = "http://ResourceManager/wsdl",
+targetNamespace = "http://ResourceManagerNS/Users",
 endpointInterface = "org.horiam.ResourceManager.soap.UserSEI")
 public class UserWS implements UserSEI  {
 	

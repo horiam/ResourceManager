@@ -25,7 +25,7 @@ import javax.jws.WebService;
 
 import org.horiam.ResourceManager.model.Task;
 
-@WebService(targetNamespace = "http://ResourceManager/wsdl")
+@WebService(targetNamespace = "http://ResourceManagerNS/Tasks")
 public interface TaskSEI {
 
 	abstract List<Task> list();

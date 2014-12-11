@@ -34,7 +34,7 @@ import org.horiam.ResourceManager.soap.TaskSEI;
 
 @Stateless // TODO
 @WebService(serviceName = "TaskWS",		
-targetNamespace = "http://ResourceManager/wsdl",
+targetNamespace = "http://ResourceManagerNS/Tasks",
 endpointInterface = "org.horiam.ResourceManager.soap.TaskSEI")
 public class TaskWS implements TaskSEI {
 

@@ -70,7 +70,7 @@ public class WebServiceTest {
     	System.out.println("\nTest UsersWS on URL=" + deployUrl.toString() + "...\n");	
     	  	
     	URL wsdlURL = new URL(deployUrl.toString() + "webservices/UserWS?wsdl");    
-    	QName serviceQName =  new QName("http://ResourceManager/wsdl", "UserWS");
+    	QName serviceQName =  new QName("http://ResourceManagerNS/Users", "UserWS");
     	
     	Service service = Service.create(wsdlURL, serviceQName);
     	UserSEI port = service.getPort(UserSEI.class);
@@ -121,7 +121,7 @@ public class WebServiceTest {
     	System.out.println("\nTest ResourceWS on URL=" + deployUrl.toString() + "...\n");
     	
     	URL wsdlURL = new URL(deployUrl.toString() + "webservices/ResourceWS?wsdl");    
-    	QName serviceQName =  new QName("http://ResourceManager/wsdl", "ResourceWS");
+    	QName serviceQName =  new QName("http://ResourceManagerNS/Resources", "ResourceWS");
     	
     	Service service = Service.create(wsdlURL, serviceQName);
     	ResourceSEI port = service.getPort(ResourceSEI.class);
@@ -164,7 +164,7 @@ public class WebServiceTest {
     	System.out.println("\nTest TaskWS on URL=" + deployUrl.toString() + "...\n");
     	
     	URL wsdlURL = new URL(deployUrl.toString() + "webservices/TaskWS?wsdl");    
-    	QName serviceQName =  new QName("http://ResourceManager/wsdl", "TaskWS");
+    	QName serviceQName =  new QName("http://ResourceManagerNS/Tasks", "TaskWS");
     	
     	Service service = Service.create(wsdlURL, serviceQName);
     	TaskSEI port = service.getPort(TaskSEI.class);

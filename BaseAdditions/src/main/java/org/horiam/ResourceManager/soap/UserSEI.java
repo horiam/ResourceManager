@@ -21,6 +21,7 @@ package org.horiam.ResourceManager.soap;
 
 import java.util.List;
 
+import javax.jws.WebMethod;
 import javax.jws.WebService;
 
 import org.horiam.ResourceManager.exceptions.AuthorisationException;
@@ -28,7 +29,7 @@ import org.horiam.ResourceManager.exceptions.RecordNotFoundException;
 import org.horiam.ResourceManager.model.Task;
 import org.horiam.ResourceManager.model.User;
 
-@WebService(targetNamespace = "http://ResourceManager/wsdl")
+@WebService(targetNamespace = "http://ResourceManagerNS/Users")
 public interface UserSEI {
 
 	public abstract List<User> list();
