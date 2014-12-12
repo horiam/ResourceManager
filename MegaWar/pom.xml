@@ -7,10 +7,12 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<groupId>org.horiam.ResourceManager</groupId>
-	<artifactId>Soapful-Beans-IT</artifactId>
-	<name>Soapful-Beans-IT</name>
+	<artifactId>MegaWar</artifactId>
+	<packaging>war</packaging>
+	<name>MegaWar</name>
 
 	<build>
+		<finalName>ResourceManager</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -38,9 +40,9 @@
 						</zipUrlInstaller>
 						<dependencies>
 							<dependency>
-							<groupId>com.h2database</groupId>
-							<artifactId>h2</artifactId>
-							</dependency> 
+								<groupId>com.h2database</groupId>
+								<artifactId>h2</artifactId>
+							</dependency>
 						</dependencies>
 					</container>
 
@@ -59,21 +61,13 @@
 						<properties>
 							<cargo.servlet.port>8081</cargo.servlet.port>
 							<cargo.datasource.datasource.h2>
-               				 cargo.datasource.jndi=jdbc/myDatabase|
-                			 cargo.datasource.driver=org.h2.Driver|
-                			 cargo.datasource.url=jdbc:h2:mem:StorageManagerStore
+								cargo.datasource.jndi=jdbc/myDatabase|
+								cargo.datasource.driver=org.h2.Driver|
+								cargo.datasource.url=jdbc:h2:mem:StorageManagerStore
 							</cargo.datasource.datasource.h2>
 						</properties>
 
 					</configuration>
-
-					<deployables>
-						<deployable>
-							<groupId>org.horiam.ResourceManager.webapp</groupId>
-							<artifactId>Soapful</artifactId>
-							<type>war</type>
-						</deployable>
-					</deployables>
 				</configuration>
 
 				<executions>
@@ -95,11 +89,24 @@
 			</plugin>
 		</plugins>
 	</build>
+
 	<dependencies>
+		<dependency>
+			<groupId>org.horiam.ResourceManager</groupId>
+			<artifactId>Beans</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.horiam.ResourceManager.webapp</groupId>
+			<artifactId>Soapful</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
 			<version>1.4.182</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -107,19 +114,7 @@
 			<version>4.11</version>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.horiam.ResourceManager.webapp</groupId>
-			<artifactId>Soapful</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-			<type>war</type>
-		</dependency>
-		<dependency>
-			<groupId>org.horiam.ResourceManager</groupId>
-			<artifactId>BaseAdditions</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
+			<dependency>
 			<groupId>org.apache.cxf</groupId>
 			<artifactId>cxf-rt-frontend-jaxws</artifactId>
 			<version>3.0.2</version>
@@ -130,6 +125,16 @@
 			<artifactId>cxf-rt-transports-http</artifactId>
 			<version>3.0.2</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.horiam.ResourceManager</groupId>
+			<artifactId>JMS</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.horiam.ResourceManager.webapp</groupId>
+			<artifactId>Restful</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 </project>

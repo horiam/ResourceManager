@@ -11,7 +11,6 @@ public class TaskEventObserver {
 	private Task observedTask = null;
 	
 	public void eventObserver(@Observes Task task) {
-		System.out.println("\n eventObserver \n");
 		this.setObservedTask(task);
 	}
 

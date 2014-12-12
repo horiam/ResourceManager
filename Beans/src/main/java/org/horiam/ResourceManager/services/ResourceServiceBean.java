@@ -54,32 +54,21 @@ public class ResourceServiceBean implements ResourceService {
 	private UserService userService;
 
 	
-	/* (non-Javadoc)
-	 * @see org.horiam.ResourceManager.services.ResourceService#exists(java.lang.String)
-	 */
 	@Override
 	@RolesAllowed(value = { "Admin", "User" })
 	public boolean exists(String id) {
 		return resources.exists(id);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.horiam.ResourceManager.services.ResourceService#get(java.lang.String)
-	 */
 	@Override
 	@Interceptors(UserHolderAuthorisationInterceptor.class)
 	@RolesAllowed(value = { "Admin", "User" })
 	public Resource get(String id) throws RecordNotFoundException {
 
 		Resource resource = resources.get(id);		
-		//if (userService.isUserAuthorised(resource.getUser())) 
-			return resource;		
-		//return null;
+		return resource;		
 	}
 
-	/* (non-Javadoc)
-	 * @see org.horiam.ResourceManager.services.ResourceService#createOrUpdate(java.lang.String, org.horiam.ResourceManager.model.Resource)
-	 */
 	@Override
 	@RolesAllowed(value = { "Admin" })
 	public void createOrUpdate(String id, Resource resource) {
@@ -93,34 +82,23 @@ public class ResourceServiceBean implements ResourceService {
 			resources.create(resource);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.horiam.ResourceManager.services.ResourceService#list()
-	 */
 	@Override
 	@RolesAllowed(value = { "Admin" })
 	public List<Resource> list() {
 		return resources.list();
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.horiam.ResourceManager.services.ResourceService#delete(java.lang.String)
-	 */
 	@Override
 	@RolesAllowed(value = { "Admin" })
 	public void delete(String id) {
 		resources.remove(id);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.horiam.ResourceManager.services.ResourceService#removeResource(java.lang.String)
-	 */
 	@Override
 	@RolesAllowed(value = { "Admin" })
 	public Task removeResource(String id) throws RecordNotFoundException {
 
-		Task task = taskHelper.createTask(TaskType.removeResource);
-		taskHelper.setResource(task.getId(), id);
-
+		Task task = taskHelper.createTaskForResource(id, TaskType.removeResource);
 		Future<Void> future = async.executeTask(task.getId());
 		return task;
 	}

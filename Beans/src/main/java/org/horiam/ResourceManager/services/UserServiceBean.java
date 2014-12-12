@@ -57,9 +57,6 @@ public class UserServiceBean implements UserService {
 	private TaskExecutor async;
 	
 	
-	/* (non-Javadoc)
-	 * @see org.horiam.ResourceManager.services.UserService#list()
-	 */
 	@Override
 	@RolesAllowed(value = {"Admin"})
 	public List<User> list() {
@@ -67,9 +64,7 @@ public class UserServiceBean implements UserService {
 	}
 	
 	////////////////////////////////////////////////////////////////////////////
-	/* (non-Javadoc)
-	 * @see org.horiam.ResourceManager.services.UserService#exists(java.lang.String)
-	 */
+
 	@Override
 	@Interceptors(ActionOnUserAuthorisationInterceptor.class)
 	@RolesAllowed(value = {"Admin", "User"})	
@@ -78,14 +73,12 @@ public class UserServiceBean implements UserService {
 	}
 
 	////////////////////////////////////////////////////////////////////////////
-	/* (non-Javadoc)
-	 * @see org.horiam.ResourceManager.services.UserService#createOrUpdate(java.lang.String, org.horiam.ResourceManager.model.User)
-	 */
+	
 	@Override
 	@Interceptors(ActionOnUserAuthorisationInterceptor.class)
 	@RolesAllowed(value = {"Admin", "User"})	
 	public void createOrUpdate(String id, User user) {		
-		//if (isUserAuthorised(id) && isUserAuthorised(user.getId())) {
+		
 		if (id.equals(user.getId())) {
 			// clean input User
 			user.removeResource();
@@ -99,25 +92,17 @@ public class UserServiceBean implements UserService {
 	}
 
 	////////////////////////////////////////////////////////////////////////////
-	/* (non-Javadoc)
-	 * @see org.horiam.ResourceManager.services.UserService#get(java.lang.String)
-	 */
+	
 	@Override
 	@Interceptors(ActionOnUserAuthorisationInterceptor.class)
 	@RolesAllowed(value = {"Admin", "User"})		
 	public User get(String id) throws RecordNotFoundException {
 		
-		//if (isUserAuthorised(id))
-			return users.get(id);
-		
-		//return null;
+		return users.get(id);
 	}
 
 	////////////////////////////////////////////////////////////////////////////
 
-	/* (non-Javadoc)
-	 * @see org.horiam.ResourceManager.services.UserService#delete(java.lang.String)
-	 */
 	@Override
 	@RolesAllowed(value = {"Admin"})
 	public void delete(String id) {
@@ -126,92 +111,39 @@ public class UserServiceBean implements UserService {
 	}
 		
 	////////////////////////////////////////////////////////////////////////////
-	/* (non-Javadoc)
-	 * @see org.horiam.ResourceManager.services.UserService#allocateUser(java.lang.String)
-	 */
+	
 	@Override
 	@Interceptors(ActionOnUserAuthorisationInterceptor.class)
 	@RolesAllowed(value = {"Admin", "User"})
 	public Task allocateUser(String id) throws RecordNotFoundException {
 		
-		//if (isUserAuthorised(id)) {
-		
-//			Task task = taskHelper.createTask(TaskType.allocateResourceForUser);
-//			task = taskHelper.setUser(task.getId(), id);
-			Task task = taskHelper.createTaskForUser(id, TaskType.allocateResourceForUser);
-			Future<Void> future = async.executeTask(task.getId());				
-			return task; 
-		//} 		
-		//return null;
+		Task task = taskHelper.createTaskForUser(id, TaskType.allocateResourceForUser);
+		Future<Void> future = async.executeTask(task.getId());
+		return task;
 	}
 		
 	////////////////////////////////////////////////////////////////////////////
-	/* (non-Javadoc)
-	 * @see org.horiam.ResourceManager.services.UserService#deallocateUser(java.lang.String)
-	 */
+
 	@Override
 	@Interceptors(ActionOnUserAuthorisationInterceptor.class)
 	@RolesAllowed(value = {"Admin", "User"})
 	public Task deallocateUser(String id) throws RecordNotFoundException {
 		
-		//if (isUserAuthorised(id)) {
-			
-			Task task = taskHelper.createTask(TaskType.deallocateUser);
-			taskHelper.setUser(task.getId(), id);
-			
-			Future<Void> future = async.executeTask(task.getId());				
-			return task; 
-		//} 		
-		//return null;
+		Task task = taskHelper.createTaskForUser(id, TaskType.deallocateUser);
+		Future<Void> future = async.executeTask(task.getId());
+		return task;
 	}
 		
 	////////////////////////////////////////////////////////////////////////////
-	/* (non-Javadoc)
-	 * @see org.horiam.ResourceManager.services.UserService#removeUser(java.lang.String)
-	 */
+
 	@Override
 	@Interceptors(ActionOnUserAuthorisationInterceptor.class)
 	@RolesAllowed(value = {"Admin", "User"})
 	public Task removeUser(String id) throws RecordNotFoundException {
 		
-		//if (isUserAuthorised(id)) {
-		
-			Task task = taskHelper.createTask(TaskType.removeUser);
-			taskHelper.setUser(task.getId(), id);
-					
-			Future<Void> future = async.executeTask(task.getId());
-			return task;  
-		//} 		
-		//return null;
+		Task task = taskHelper.createTaskForUser(id, TaskType.removeUser);
+		Future<Void> future = async.executeTask(task.getId());
+		return task;  
 	}
 	
-	////////////////////////////////////////////////////////////////////////////
-/*	
-	public boolean isUserAuthorised(String id) {
-		
-		if (context.isCallerInRole("Admin"))
-			return true;
-		
-		String callerUsername = context.getCallerPrincipal().getName();
-		
-		if (callerUsername.equals(id))
-			return true;
-		
-		return false;
-	}
-	
-	public boolean isUserAuthorised(User user) {
-		
-		if (context.isCallerInRole("Admin"))
-			return true;
-		
-		String callerUsername = context.getCallerPrincipal().getName();
-				
-		if (user != null && callerUsername.equals(user.getId()))
-			return true;
-		
-		return false;
-	}
-*/
-			
 }

@@ -10,7 +10,6 @@
   <groupId>org.horiam.ResourceManager.webapp</groupId>
   <artifactId>Restful</artifactId>
   <name>restful</name>
-  <packaging>war</packaging>
   
   <properties>
     <tomee.version>1.7.1</tomee.version>
@@ -88,11 +87,6 @@
     	<artifactId>Services</artifactId>
     	<version>0.0.1-SNAPSHOT</version>
     </dependency>  
-    <dependency>
-    	<groupId>org.horiam.ResourceManager</groupId>
-    	<artifactId>Beans</artifactId>
-    	<version>0.0.1-SNAPSHOT</version>
-    </dependency>
    </dependencies>
  
 </project>

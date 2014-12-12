@@ -5,19 +5,10 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.net.Authenticator;
 import java.net.MalformedURLException;
-import java.net.PasswordAuthentication;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.List;
 
-import javax.xml.namespace.QName;
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.Service;
-
-import org.apache.cxf.interceptor.LoggingInInterceptor;
-import org.apache.cxf.interceptor.LoggingOutInterceptor;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.horiam.ResourceManager.model.Resource;
 import org.horiam.ResourceManager.model.Task;
@@ -26,13 +17,12 @@ import org.horiam.ResourceManager.soap.ResourceManagerFault;
 import org.horiam.ResourceManager.soap.ResourceSEI;
 import org.horiam.ResourceManager.soap.TaskSEI;
 import org.horiam.ResourceManager.soap.UserSEI;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
+
 
 public class SoapIT {
 
-	private final static String deploy = "http://localhost:8081/Soapful/webservices/"; 
+	private final static String deploy = "http://localhost:8081/ResourceManager/webservices/"; 
 
 
 	private Object createClient(Class<?> clazz, String wsName, String user, String pass) {

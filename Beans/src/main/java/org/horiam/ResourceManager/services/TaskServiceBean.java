@@ -52,41 +52,27 @@ public class TaskServiceBean implements TaskService {
 	private UserService userService;
 	
 
-	/* (non-Javadoc)
-	 * @see org.horiam.ResourceManager.services.TaskService#list()
-	 */
 	@Override
 	@RolesAllowed(value = { "Admin" })
 	public List<Task> list() {
 		return tasks.list();
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.horiam.ResourceManager.services.TaskService#exists(java.lang.String)
-	 */
 	@Override
 	@RolesAllowed(value = { "Admin", "User" })
 	public boolean exists(String id) {
 		return tasks.exists(id);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.horiam.ResourceManager.services.TaskService#get(java.lang.String)
-	 */
 	@Override
 	@Interceptors(UserHolderAuthorisationInterceptor.class)
 	@RolesAllowed(value = { "Admin", "User" })
 	public Task get(String id) throws RecordNotFoundException {
 
 		Task task = tasks.get(id);		
-		//if (userService.isUserAuthorised(task.getUser()))
-			return task;		
-		//return null;
+		return task;		
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.horiam.ResourceManager.services.TaskService#delete(java.lang.String)
-	 */
 	@Override
 	@RolesAllowed(value = { "Admin" })
 	public void delete(String id) {

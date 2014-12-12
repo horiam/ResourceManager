@@ -16,7 +16,7 @@
     <module>MockServices</module>
     <module>JMS</module>
     <module>JMSClient</module>
-    <module>Soapful-Beans-IT</module>
+    <module>MegaWar</module>
   </modules>
   <profiles>
     <profile>
@@ -30,7 +30,6 @@
       <id>examples-modules</id>
       <modules>
 	    <module>jerseyRestClient</module>
-	     <module>saopClient</module>
 	     <module>MockExample</module>
       </modules>
     </profile>
