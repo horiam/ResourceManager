@@ -82,7 +82,7 @@ public class SoapIT {
     }
     
     @Test
-    public void testResource() throws URISyntaxException, MalformedURLException, 
+    public void testResources() throws URISyntaxException, MalformedURLException, 
     										ResourceManagerFault {    	
     	System.out.println("\nTest ResourceWS on URL=" + deploy + "...\n");
     	
@@ -126,7 +126,7 @@ public class SoapIT {
     }
     
     @Test(timeout = 30000)
-    public void testTask() throws URISyntaxException, MalformedURLException, 
+    public void testTasks() throws URISyntaxException, MalformedURLException, 
     										ResourceManagerFault {    	
     	System.out.println("\nTest TaskWS on URL=" + deploy + "...\n");
     	

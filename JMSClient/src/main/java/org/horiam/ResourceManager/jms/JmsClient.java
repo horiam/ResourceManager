@@ -65,7 +65,7 @@ public class JmsClient {
 		responseConsumer = session.createConsumer(myQueue);
     }
     
-    protected void close() throws JMSException {
+    public void close() throws JMSException {
     	if (requestProducer != null)
     		requestProducer.close();
     	if (responseConsumer != null)
@@ -92,13 +92,13 @@ public class JmsClient {
 		this.requestQueue = requestQueue;
 	}
 	
-	protected void sendMessage(Message message) throws JMSException {
+	public void sendMessage(Message message) throws JMSException {
 		message.setJMSReplyTo(myQueue);
         message.setJMSCorrelationID(UUID.randomUUID().toString());
         requestProducer.send(message);
 	}
 	
-	protected Message receiveMessage(int timeout) throws JMSException {
+	public Message receiveMessage(int timeout) throws JMSException {
 		return responseConsumer.receive(timeout);  
 	}
 }

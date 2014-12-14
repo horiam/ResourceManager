@@ -25,7 +25,6 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ejb.EJB;
 import javax.ejb.embeddable.EJBContainer;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
@@ -40,11 +39,10 @@ import org.horiam.ResourceManager.mock.UserMockService;
 import org.horiam.ResourceManager.model.Resource;
 import org.horiam.ResourceManager.model.Task;
 import org.horiam.ResourceManager.model.User;
-import org.horiam.ResourceManager.services.UserService;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
+
 
 public class TestMdbs {
 

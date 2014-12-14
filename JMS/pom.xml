@@ -89,6 +89,7 @@
     	<groupId>org.horiam.ResourceManager</groupId>
     	<artifactId>JMSClient</artifactId>
     	<version>0.0.1-SNAPSHOT</version>
+        <scope>test</scope>
     </dependency>
   </dependencies> 
   </project>

@@ -23,6 +23,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.security.RunAs;
 import javax.ejb.EJB;
 import javax.ejb.MessageDriven;
 import javax.ejb.ActivationConfigProperty;
@@ -33,6 +34,7 @@ import org.horiam.ResourceManager.exceptions.RecordNotFoundException;
 import org.horiam.ResourceManager.model.Resource;
 import org.horiam.ResourceManager.services.ResourceService;
 
+@RunAs("Admin")
 @MessageDriven
 (activationConfig = {
         @ActivationConfigProperty(propertyName = "destinationType",  
