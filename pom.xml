@@ -11,8 +11,8 @@
     <module>BaseAdditions</module>
     <module>Services</module>
     <module>Beans</module>
-    <module>restful</module>    
-    <module>soapful</module>  
+    <module>Restful</module>    
+    <module>Soapful</module>  
     <module>MockServices</module>
     <module>JMS</module>
     <module>JMSClient</module>
