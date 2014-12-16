@@ -23,6 +23,8 @@ import org.horiam.ResourceManager.model.Resource;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MockResource extends Resource {
 
+
+	private static final long serialVersionUID = -4458004865420639752L;
 	private int mockWaitTime;
 	
 

@@ -28,7 +28,7 @@ import javax.ejb.embeddable.EJBContainer;
 import javax.naming.Context;
 import javax.naming.NamingException;
 
-import org.horiam.ResourceManager.businessLogic.AlloctionDriver;
+import org.horiam.ResourceManager.businessLogic.AllocationDriver;
 import org.horiam.ResourceManager.model.Resource;
 import org.horiam.ResourceManager.model.Task;
 import org.horiam.ResourceManager.model.User;
@@ -67,8 +67,8 @@ public class TestClassFinder {
 		
 		assertTrue("Should return a subclass", User.class.isAssignableFrom(classFinder.getUserClass()));
 		assertTrue("Should return a subclass", Resource.class.isAssignableFrom(classFinder.getResourceClass()));
-		assertTrue("Should return a subclass", AlloctionDriver.class.isAssignableFrom(classFinder.getAllocatorDriverClass()));
-		assertTrue("Should be an instance of/sublclass", (classFinder.getAllocateDriverInstance() instanceof AlloctionDriver));
+		assertTrue("Should return a subclass", AllocationDriver.class.isAssignableFrom(classFinder.getAllocatorDriverClass()));
+		assertTrue("Should be an instance of/sublclass", (classFinder.getAllocateDriverInstance() instanceof AllocationDriver));
 		// TODO test class lookup
 	}
 }

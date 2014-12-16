@@ -37,7 +37,7 @@ import org.horiam.ResourceManager.model.Resource;
 @Stateless
 public class Allocator {
 	
-	private AlloctionDriver driver;
+	private AllocationDriver driver;
 	@EJB
 	private ClassFinder classFinder;
 	@EJB

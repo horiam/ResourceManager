@@ -17,8 +17,9 @@ import org.horiam.ResourceManager.model.User;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MockUser extends User {
 
+	private static final long serialVersionUID = 7690634891351160854L;
+	private String email;
 	private String address;
-	private int age;
 	
 	
 	public String getAddress() {
@@ -29,11 +30,11 @@ public class MockUser extends User {
 		this.address = address;
 	}
 	
-	public int getAge() {
-		return age;
+	public String getEmail() {
+		return email;
 	}
-	
-	public void setAge(int age) {
-		this.age = age;
+
+	public void setEmail(String email) {
+		this.email = email;
 	}		
 }

@@ -23,10 +23,12 @@ import java.lang.reflect.InvocationTargetException;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
+
 import static javax.ejb.LockType.READ;
+
 import javax.ejb.Lock;
 
-import org.horiam.ResourceManager.businessLogic.AlloctionDriver;
+import org.horiam.ResourceManager.businessLogic.AllocationDriver;
 import org.horiam.ResourceManager.model.Resource;
 import org.horiam.ResourceManager.model.User;
 
@@ -37,17 +39,19 @@ public class ClassFinder {
 
 	private Class<? extends User> userClass;
 	private Class<? extends Resource> resourceClass;
-	private Class<? extends AlloctionDriver> allocatorDriverClass;
+	private Class<? extends AllocationDriver> allocatorDriverClass;
 	
 	
 	@PostConstruct
 	protected void postConstruct() {
-		// TODO scan and load here
-		// java.util.ServiceLoader
-		// https://github.com/apache/tomee/blob/6def611d7eacb58f0b6d322bd4e18f8a1bdee949/container/openejb-core/src/main/java/org/apache/openejb/core/security/jaas/ServiceProviderLoginModule.java
+		
+		Class<? extends User> userExt =  User.class;
+		Class<? extends Resource> resourceExt =  Resource.class;
+		Class<? extends AllocationDriver> allocExt =  AllocationDriver.class;
+		
 		setUserClass(User.class);
 		setResourceClass(Resource.class);
-		setAllocatorDriverClass(AlloctionDriver.class);
+		setAllocatorDriverClass(AllocationDriver.class);
 	}
 
 	public Class<? extends User> getUserClass() {
@@ -66,15 +70,15 @@ public class ClassFinder {
 		this.resourceClass = resourceClass;
 	}
 
-	public Class<? extends AlloctionDriver> getAllocatorDriverClass() {
+	public Class<? extends AllocationDriver> getAllocatorDriverClass() {
 		return allocatorDriverClass;
 	}
 
-	public void setAllocatorDriverClass(Class<? extends AlloctionDriver> allocatorDriverClass) {
+	public void setAllocatorDriverClass(Class<? extends AllocationDriver> allocatorDriverClass) {
 		this.allocatorDriverClass = allocatorDriverClass;
 	}	
 	
-	public AlloctionDriver getAllocateDriverInstance() throws Exception {
+	public AllocationDriver getAllocateDriverInstance() throws Exception {
 		try {
 			return getAllocatorDriverClass().getConstructor().newInstance();
 		} catch (InstantiationException | IllegalAccessException
