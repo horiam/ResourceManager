@@ -32,7 +32,7 @@ import org.horiam.ResourceManager.soap.MessageHolderBean;
 import org.horiam.ResourceManager.soap.ResourceManagerFault;
 import org.horiam.ResourceManager.soap.TaskSEI;
 
-@Stateless // TODO
+@Stateless 
 @WebService(serviceName = "TaskWS",		
 targetNamespace = "http://ResourceManagerNS/Tasks",
 endpointInterface = "org.horiam.ResourceManager.soap.TaskSEI")

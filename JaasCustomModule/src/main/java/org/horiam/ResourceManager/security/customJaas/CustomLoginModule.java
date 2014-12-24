@@ -134,7 +134,7 @@ public class CustomLoginModule implements LoginModule {
 	private boolean isLocallyValid(String userName, String password) {
 		
 		if (localLogins == null) {		
-			String filename = "E:\\temp\\logins.txt"; // TODO 
+			String filename = "/tmp/logins.txt"; 
 			loadLocalLogins(filename);
 		}
 				

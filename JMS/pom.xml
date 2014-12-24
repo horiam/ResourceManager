@@ -27,10 +27,6 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>2.17</version>
         <configuration>
-          <!--we don't need Beans to run tests -->
-          <classpathDependencyExcludes>
-            <classpathDependencyExclude>org.horiam.ResourceManager:Beans</classpathDependencyExclude>
-          </classpathDependencyExcludes>
         </configuration>
       </plugin>
  
@@ -57,11 +53,6 @@
     	<version>0.0.1-SNAPSHOT</version>
     </dependency> 
     <dependency>
-    	<groupId>org.horiam.ResourceManager</groupId>
-    	<artifactId>Beans</artifactId>
-    	<version>0.0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
     	<groupId>javax</groupId>
     	<artifactId>javaee-web-api</artifactId>
     	<version>7.0</version>
@@ -82,7 +73,9 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>5.0.0-SNAPSHOT</version>
+      <!-- Problem with version 5.0.0-SNAPSHOT -->
+		<!--       <version>5.0.0-SNAPSHOT</version> -->
+		<version>4.7.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>

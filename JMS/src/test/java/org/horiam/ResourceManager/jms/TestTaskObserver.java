@@ -59,7 +59,8 @@ public class TestTaskObserver {
     
     @After
     public void after() {
-    	container.close();
+    	if (container != null)
+    		container.close();
     }
     
     @Test 

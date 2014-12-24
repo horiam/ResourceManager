@@ -53,7 +53,6 @@ public class Booking {
 	public User reserveUser(String taskId, String userId) throws RecoverableException, RecordNotFoundException {
 					
 		Task task = tasks.get(taskId);
-		//String userId = task.getUser().getId(); // TODO throws ex
 		User user = users.getLock(userId);
 		
 		if (task.equals(user.getTask()))
@@ -90,7 +89,6 @@ public class Booking {
 	public Resource reserveResource(String taskId, String resourceId) throws RecoverableException, RecordNotFoundException {
 
 		Task task = tasks.get(taskId);
-		//String resourceId = task.getResource().getId(); // TODO throws ex
 		Resource resource = resources.getLock(resourceId);
 		
 		if (task.equals(resource.getTask()))

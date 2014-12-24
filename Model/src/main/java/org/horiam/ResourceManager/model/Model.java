@@ -35,7 +35,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 @MappedSuperclass
-public abstract class Model implements Serializable { // TODO rename it RecordModel
+public abstract class Model implements Serializable { 
 
 
 	private static final long serialVersionUID = 7196486256060530794L;

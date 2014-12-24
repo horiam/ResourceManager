@@ -26,7 +26,6 @@ import static org.junit.Assert.assertTrue;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Collection;
 import java.util.List;
 
 import javax.xml.namespace.QName;
@@ -76,16 +75,15 @@ public class WebServiceTest {
     	UserSEI port = service.getPort(UserSEI.class);
     	
     	assertFalse("Must not exist", port.exists("UnknownUser"));
-    	/*  	
+
     	boolean hasException = false;
-    	try { // TODO
+    	try { 
 			port.get("UnknownUser");
 		} catch (ResourceManagerFault e) {
 			System.out.println("Exception type="+e.getClass());
 			hasException = true;
 		}
     	assertTrue("Must have exception", hasException);
-    	*/
     	   	
     	User user = port.get(UserMockService.initialUserIds[0]);
     	assertTrue("Must be eaual", UserMockService.initialUsers[0].equals(user)); 
@@ -127,16 +125,16 @@ public class WebServiceTest {
     	ResourceSEI port = service.getPort(ResourceSEI.class);
     	
     	assertFalse("Must not exist", port.exists("UnknownResource"));
-	   	/*
+
     	boolean hasException = false;
-    	try { // TODO
+    	try { 
 			port.get("UnknownResource");
 		} catch (ResourceManagerFault e) {
 			System.out.println("Exception type="+e.getClass());
 			hasException = true;
 		}
     	assertTrue("Must have exception", hasException);
-    	*/
+
     	Resource resource = port.get(ResourceMockService.initialResourceIds[0]);
     	assertTrue("Must be eaual", ResourceMockService.initialResources[0].equals(resource));
     	
@@ -170,16 +168,16 @@ public class WebServiceTest {
     	TaskSEI port = service.getPort(TaskSEI.class);
     	
     	assertFalse("Must not exist", port.exists("UnknownTask"));
-    	/*
+
     	boolean hasException = false;
-    	try { // TODO
+    	try { 
 			port.get("UnknownTask");
 		} catch (ResourceManagerFault e) {
 			System.out.println("Exception type="+e.getClass());
 			hasException = true;
 		}
     	assertTrue("Must have exception", hasException);
-    	*/
+
     	Task task = port.get(TaskMockService.initialTaskIds[0]);
     	assertTrue("Must be eaual", TaskMockService.initialTasks[0].equals(task));
     	

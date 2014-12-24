@@ -19,7 +19,11 @@
 
 package org.horiam.ResourceManager.dao;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
+import java.util.Properties;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
@@ -37,23 +41,56 @@ import org.horiam.ResourceManager.model.User;
 @Lock(READ)
 public class ClassFinder {
 
+	private static final String PROPFILENAME = "ResourceManager.properties";
+
 	private Class<? extends User> userClass;
 	private Class<? extends Resource> resourceClass;
 	private Class<? extends AllocationDriver> allocatorDriverClass;
+	private Properties properties = null;
 	
 	
 	@PostConstruct
 	protected void postConstruct() {
-		
-		Class<? extends User> userExt =  User.class;
-		Class<? extends Resource> resourceExt =  Resource.class;
-		Class<? extends AllocationDriver> allocExt =  AllocationDriver.class;
-		
-		setUserClass(User.class);
-		setResourceClass(Resource.class);
-		setAllocatorDriverClass(AllocationDriver.class);
+			
+		setUserClass(findClass(User.class));
+		setResourceClass(findClass(Resource.class));
+		setAllocatorDriverClass(findClass(AllocationDriver.class));
 	}
 
+	private <C> Class<? extends C> findClass(Class<C> clazz) {
+
+		try {
+			if (properties == null) {
+				URL url = ClassLoader.getSystemResource(PROPFILENAME);
+				if (url != null) {
+					InputStream is = url.openStream();
+					properties = new Properties();
+					properties.load(is);
+					is.close();
+				}
+			}	
+
+			if (properties != null) {
+				String canonicalName = properties.getProperty(clazz
+						.getCanonicalName());
+				System.out.println("ClassFinder: found " + canonicalName);
+				if (canonicalName != null && canonicalName.isEmpty() == false) {
+					Class<?> found = Class.forName(canonicalName);
+					System.out.println("ClassFinder: will use class "
+							+ found.getCanonicalName());
+					return (Class<? extends C>) found;
+				}
+			}	
+			
+		} catch (ClassNotFoundException e) {
+			//TODO trace
+		} catch (IOException e) {
+			//TODO trace
+		}
+		
+		System.out.println("ClassFinder: will use default class "+ clazz.getCanonicalName());
+		return clazz;
+	}
 	public Class<? extends User> getUserClass() {
 		return userClass;
 	}

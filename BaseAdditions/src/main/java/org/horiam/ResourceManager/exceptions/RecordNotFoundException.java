@@ -22,7 +22,7 @@ package org.horiam.ResourceManager.exceptions;
 import javax.ejb.ApplicationException;
 
 @ApplicationException
-public class RecordNotFoundException extends Exception { // TODO rename it RecordNotFoundException
+public class RecordNotFoundException extends Exception { 
 
 	private static final long serialVersionUID = 4106113723005876617L;
 	

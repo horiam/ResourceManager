@@ -65,7 +65,8 @@ public class TestMdbs {
     
     @After
     public void after() {
-    	container.close();
+    	if (container != null)
+    		container.close();
     }
     
     @Test

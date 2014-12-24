@@ -63,12 +63,10 @@ public class TestClassFinder {
 	@Test
 	public void testClassFinder() throws Exception {
 		System.out.println("\nTest ClassFinder EJB...\n");
-		//ClassFinder classFinder = (ClassFinder) lookup("java:global/Beans/ClassFinder!" + ClassFinder.class.getName());
 		
 		assertTrue("Should return a subclass", User.class.isAssignableFrom(classFinder.getUserClass()));
 		assertTrue("Should return a subclass", Resource.class.isAssignableFrom(classFinder.getResourceClass()));
 		assertTrue("Should return a subclass", AllocationDriver.class.isAssignableFrom(classFinder.getAllocatorDriverClass()));
 		assertTrue("Should be an instance of/sublclass", (classFinder.getAllocateDriverInstance() instanceof AllocationDriver));
-		// TODO test class lookup
 	}
 }

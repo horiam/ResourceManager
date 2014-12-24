@@ -40,7 +40,6 @@ import org.horiam.ResourceManager.model.XmlAdapter.ResourceXmlAdapter;
 
 @Entity
 @Table(name = "USER")
-@NamedQuery(name = "User.getAll", query = "SELECT a FROM User a")
 @XmlRootElement(name="User")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class User extends ModelWithTask implements Serializable {

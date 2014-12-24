@@ -43,10 +43,6 @@ import org.horiam.ResourceManager.model.XmlAdapter.UserXmlAdapter;
 @Entity
 @Table(name = "TASK")
 @XmlRootElement(name="Task")
-@NamedQueries({
-@NamedQuery(name = "Task.getAll", query = "SELECT a FROM Task a"),
-@NamedQuery(name = "Task.deleteOlderThan", query = "DELETE FROM Task a WHERE a.date < :since")
-})
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Task extends Model implements UserHolder, Serializable {
 	

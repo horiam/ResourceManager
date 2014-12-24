@@ -21,12 +21,6 @@ import org.horiam.ResourceManager.model.XmlAdapter.UserXmlAdapter;
 
 @Entity
 @Table(name = "RESOURCE")
-@NamedQueries({
-@NamedQuery(name="Resource.getAll", query="SELECT a FROM Resource a"),
-@NamedQuery(name="Resource.getAllFree", query="SELECT a FROM Resource a WHERE"
-									   +" a.user IS NULL"
-									   +" AND a.booked = FALSE")
-})
 @XmlRootElement(name="Resource")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Resource extends ModelWithTask implements UserHolder, Serializable {

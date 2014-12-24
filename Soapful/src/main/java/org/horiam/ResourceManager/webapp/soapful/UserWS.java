@@ -34,7 +34,7 @@ import org.horiam.ResourceManager.soap.MessageHolderBean;
 import org.horiam.ResourceManager.soap.ResourceManagerFault;
 import org.horiam.ResourceManager.soap.UserSEI;
 
-@Stateless // TODO
+@Stateless 
 @WebService(serviceName = "UserWS",		
 targetNamespace = "http://ResourceManagerNS/Users",
 endpointInterface = "org.horiam.ResourceManager.soap.UserSEI")
