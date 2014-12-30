@@ -25,10 +25,14 @@ import javax.ejb.Stateless;
 import org.horiam.ResourceManager.model.Task;
 
 @Stateless
-public class TaskDao extends Dao<Task> {	
+public class TaskDao extends Dao<Task> {
+	
+	protected static final String CLASS_NAME = TaskDao.class.getName();
 	
 	@PostConstruct
 	public void postConstruct() {
+		log.entering(CLASS_NAME, "postConstruct");
 		setEntityClass(Task.class);
+		log.exiting(CLASS_NAME, "postConstruct");
 	}	
 }

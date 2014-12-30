@@ -42,6 +42,8 @@ import org.horiam.ResourceManager.services.TaskService;
         @ActivationConfigProperty(propertyName = "destination",  
                 				 propertyValue = "jms/tasksQueue")})
 public class TasksMdb extends BaseMdb implements MessageListener {
+	
+	protected static final String CLASS_NAME = TasksMdb.class.getName();
 
 	@EJB
 	private TaskService taskService;
@@ -49,14 +51,21 @@ public class TasksMdb extends BaseMdb implements MessageListener {
 	@Override
 	public Serializable createResponseObject(String recvText) throws AuthorisationException,
 																	RecordNotFoundException {
+		log.entering(CLASS_NAME, "createResponseObject", new Object[] { recvText });
+
+		Serializable ret; 
+
 		if (recvText == null || recvText.isEmpty()) {
 			List<Task> tasksList = taskService.list();
 			ArrayList<Task> serialisable = new ArrayList<Task>();
 			serialisable.addAll(tasksList);
-			return serialisable;
+			ret = serialisable;
 		} else {
-			return taskService.get(recvText);
+			ret =  taskService.get(recvText);
 		}
+		
+		log.exiting(CLASS_NAME, "createResponseObject", ret);
+		return ret;
 	}
 
 }

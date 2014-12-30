@@ -19,6 +19,9 @@
 
 package org.horiam.ResourceManager.jms;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
@@ -41,6 +44,9 @@ import org.horiam.ResourceManager.model.Task;
 @Stateless
 public class TaskObserver {
 	
+	private static final String CLASS_NAME = TaskObserver.class.getName();
+	private static final Logger log = Logger.getLogger(CLASS_NAME);
+	
 	@Resource
     private ConnectionFactory connectionFactory;    	
 	@Resource(name = "jms/tasksTopic")
@@ -51,29 +57,34 @@ public class TaskObserver {
 
 	@PostConstruct
 	public void postConstruct() throws JMSException {
-	
+		log.entering(CLASS_NAME, "postConstruct");
 		connection = connectionFactory.createConnection();
 		connection.start();
 		session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 		producer = session.createProducer(topic);
 		producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
+		log.exiting(CLASS_NAME, "postConstruct");
 	}
 	
 	@PreDestroy
 	public void preDestroy() throws JMSException {
+		log.entering(CLASS_NAME, "preDestroy");
 		producer.close();
 		if (session != null) 
 			session.close();
         if (connection != null) 
         	connection.close();
+        log.exiting(CLASS_NAME, "preDestroy");
 	}
 	
 	public void handleEvent(@Observes(during = TransactionPhase.AFTER_COMPLETION) Task task) {
+		log.entering(CLASS_NAME, "handleEvent", new Object[] { task });
 		try {
 			ObjectMessage message = session.createObjectMessage(task);
 			producer.send(message);
 		} catch (JMSException e) {
-			e.printStackTrace(); //TODO log
+			log.log(Level.SEVERE, e.getMessage(), e);
 		}
+		log.exiting(CLASS_NAME, "handleEvent");
 	}
 }

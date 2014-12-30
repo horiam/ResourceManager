@@ -21,6 +21,8 @@ package org.horiam.ResourceManager.webapp.restful;
 
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.ejb.EJB;
 import javax.ws.rs.DELETE;
@@ -38,6 +40,9 @@ import org.horiam.ResourceManager.model.Task;
 
 @Path("tasks")
 public class TasksResource {
+	
+	private static final String CLASS_NAME = TasksResource.class.getName();
+	private static final Logger log = Logger.getLogger(CLASS_NAME);
 
 	@EJB
 	private TaskService taskService;
@@ -46,27 +51,35 @@ public class TasksResource {
 	@GET
 	@Produces({ MediaType.TEXT_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public List<Task> getTasks() {
-		
-		return taskService.list();
+		log.entering(CLASS_NAME, "getTasks");
+		List<Task> ret = taskService.list();
+		log.exiting(CLASS_NAME, "getTasks", ret);
+		return ret;
 	}
 			
 	@Path("{id}")
 	@GET
 	@Produces({ MediaType.TEXT_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response getTask(@PathParam("id") String id) {
-		
+		log.entering(CLASS_NAME, "getTask", new Object[] { id });
+		Response ret = null; 
 		try {	
-			return Response.ok(taskService.get(id)).build();			
+			ret = Response.ok(taskService.get(id)).build();			
 		} catch (RecordNotFoundException ex) {
-			return Response.status(404).build();
+			log.log(Level.FINEST, ex.getMessage(), ex);
+			ret = Response.status(404).build();
 		}
+		log.exiting(CLASS_NAME, "getTask", ret);
+		return ret;
 	}	
 	
 	@Path("{id}")
 	@DELETE
 	public Response deleteTask(@PathParam("id") String id) {
-		
+		log.entering(CLASS_NAME, "deleteTask", new Object[] { id });
 		taskService.delete(id);	
-		return Response.ok().build();
+		Response ret = Response.ok().build();
+		log.exiting(CLASS_NAME, "deleteTask", ret);
+		return ret;
 	}		
 }

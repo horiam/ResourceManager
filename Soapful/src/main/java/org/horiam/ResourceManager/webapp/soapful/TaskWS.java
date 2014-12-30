@@ -20,6 +20,8 @@
 package org.horiam.ResourceManager.webapp.soapful;
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -38,42 +40,47 @@ targetNamespace = "http://ResourceManagerNS/Tasks",
 endpointInterface = "org.horiam.ResourceManager.soap.TaskSEI")
 public class TaskWS implements TaskSEI {
 
+	private static final String CLASS_NAME = TaskWS.class.getName();
+	private static final Logger log = Logger.getLogger(CLASS_NAME);
+
 	@EJB
 	private TaskService taskService;
 
-	/* (non-Javadoc)
-	 * @see org.horiam.ResourceManager.webapp.soapful.TaskSEI#list()
-	 */
 	@Override
 	public List<Task> list() {
-		return taskService.list();
+		log.entering(CLASS_NAME, "list");
+		List<Task> ret = taskService.list();
+		log.exiting(CLASS_NAME, "list", ret);
+		return ret;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.horiam.ResourceManager.webapp.soapful.TaskSEI#exists(java.lang.String)
-	 */
 	@Override
 	public boolean exists(String id) {
-		return taskService.exists(id);
+		log.entering(CLASS_NAME, "exists", new Object[] { id });
+		boolean ret = taskService.exists(id);
+		log.exiting(CLASS_NAME, "exists", ret);
+		return ret;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.horiam.ResourceManager.webapp.soapful.TaskSEI#get(java.lang.String)
-	 */
 	@Override
 	public Task get(String id) throws ResourceManagerFault {
+		log.entering(CLASS_NAME, "get", new Object[] { id });
 		try {
-			return taskService.get(id);
-		} catch (RecordNotFoundException e) {
-			throw new ResourceManagerFault(e.getMessage(), new MessageHolderBean());
+			Task ret = taskService.get(id);
+			log.exiting(CLASS_NAME, "get", ret);
+			return ret;
+		} catch (RecordNotFoundException e) {			
+			log.log(Level.FINEST, e.getMessage(), e);
+			ResourceManagerFault rmf = new ResourceManagerFault(e.getMessage(), new MessageHolderBean());
+			log.throwing(CLASS_NAME, "get", rmf);
+			throw rmf;
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.horiam.ResourceManager.webapp.soapful.TaskSEI#delete(java.lang.String)
-	 */
 	@Override
 	public void delete(String id) {
+		log.entering(CLASS_NAME, "delete", new Object[] { id });
 		taskService.delete(id);
+		log.exiting(CLASS_NAME, "delete");
 	}	
 }

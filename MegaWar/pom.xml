@@ -59,15 +59,18 @@
 					<configuration>
 						<type>standalone</type>
 						<home>${project.build.directory}/tomee1x</home>
-
 						<configfiles>
 							<configfile>
 								<file>${project.basedir}/src/test/resources/tomcat-users.xml</file>
 								<todir>conf</todir>
 								<overwrite>true</overwrite>
 							</configfile>
+							<configfile>
+								<file>${project.basedir}/src/test/resources/logging.properties</file>
+								<todir>conf</todir>
+								<overwrite>true</overwrite>
+							</configfile>
 						</configfiles>
-
 						<properties>
 							<cargo.servlet.port>8081</cargo.servlet.port>
 							<cargo.datasource.datasource.h2>
@@ -75,8 +78,8 @@
 								cargo.datasource.driver=org.h2.Driver|
 								cargo.datasource.url=jdbc:h2:mem:StorageManagerStore
 							</cargo.datasource.datasource.h2>
+<!-- 							<cargo.jvmargs>-Djava.util.logging.config.file="${project.build.directory}/tomee1x/conf/logging.properties" -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager</cargo.jvmargs> -->
 						</properties>
-
 					</configuration>
 				</configuration>
 

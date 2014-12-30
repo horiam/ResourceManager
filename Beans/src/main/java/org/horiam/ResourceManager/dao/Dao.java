@@ -20,6 +20,7 @@
 package org.horiam.ResourceManager.dao;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
@@ -28,67 +29,101 @@ import javax.persistence.Query;
 
 import org.horiam.ResourceManager.exceptions.RecordNotFoundException;
 
-
 public abstract class Dao<E> {
 
+	protected static final String CLASS_NAME = Dao.class.getName();
+	protected static final Logger log = Logger.getLogger(CLASS_NAME);
+
 	protected Class<? extends E> entityClass;
-		
+
 	@PersistenceContext
 	protected EntityManager em;
-	
-	
+
 	protected void setEntityClass(Class<? extends E> entityClass) {
+		log.entering(CLASS_NAME, "setEntityClass", new Object[] { entityClass });
 		this.entityClass = entityClass;
+		log.exiting(CLASS_NAME, "setEntityClass");
 	}
-	
+
 	public void create(E entity) {
-		em.persist(entity);		
+		log.entering(CLASS_NAME, "create", new Object[] { entity });
+		em.persist(entity);
+		log.exiting(CLASS_NAME, "create");
 	}
 
 	public boolean exists(String id) {
+		log.entering(CLASS_NAME, "exists", new Object[] { id });
+
 		E entity = em.find(entityClass, id);
-		if (entity != null)
-			return true;
-		
-		return false;
+		boolean ret = (entity != null);
+
+		log.exiting(CLASS_NAME, "exists", ret);
+		return ret;
 	}
 
 	public E get(String id) throws RecordNotFoundException {
+		log.entering(CLASS_NAME, "get", new Object[] { id });
+
 		E entity = em.find(entityClass, id);
-		if (entity == null)
-			throw new RecordNotFoundException(entityClass.getSimpleName() + " " + id + " was not found");
-		
+		if (entity == null) {
+			RecordNotFoundException rnfe = new RecordNotFoundException(
+					entityClass.getSimpleName() + " " + id + " was not found");
+			
+			log.throwing(CLASS_NAME, "get", rnfe);
+			throw rnfe;
+		}
+
+		log.exiting(CLASS_NAME, "get", entity);
 		return entity;
 	}
 
-	public E getLock(String id) throws RecordNotFoundException {		
+	public E getLock(String id) throws RecordNotFoundException {
+		log.entering(CLASS_NAME, "getLock", new Object[] { id });
+
 		E entity = em.find(entityClass, id, LockModeType.OPTIMISTIC);
-		if (entity == null)
-			throw new RecordNotFoundException(entityClass.getSimpleName() + " " + id + " was not found");
+		if (entity == null) {
+			RecordNotFoundException rnfe = new RecordNotFoundException(
+					entityClass.getSimpleName() + " " + id + " was not found");
+			log.throwing(CLASS_NAME, "getLock", rnfe);
+			throw rnfe;
+		}
 		
+		log.exiting(CLASS_NAME, "getLock", entity);
 		return entity;
 	}
 
-	public E update(E entity) {		
-		return em.merge(entity);
+	public E update(E entity) {
+		log.entering(CLASS_NAME, "update", new Object[] { entity });
+		E ret = em.merge(entity);
+		log.exiting(CLASS_NAME, "update", ret);
+		return ret;
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<E> list() {		
-		Query query = em.createQuery("SELECT a FROM " + entityClass.getSimpleName() + " a", entityClass);
-		return query.getResultList();
+	public List<E> list() {
+		log.entering(CLASS_NAME, "list");
+
+		Query query = em.createQuery(
+				"SELECT a FROM " + entityClass.getSimpleName() + " a",
+				entityClass);
+		List<E> ret = query.getResultList();
+		
+		log.exiting(CLASS_NAME, "list", ret);
+		return ret;
 	}
 
-	public void remove(String id) {	
-
-		E entity =  em.find(entityClass, id);
+	public void remove(String id) {
+		log.entering(CLASS_NAME, "remove", new Object[] { id });
+		E entity = em.find(entityClass, id);
 		if (entity != null)
 			em.remove(entity);
+		log.exiting(CLASS_NAME, "remove");
 	}
-	
+
 	public void clear() {
-		
+		log.entering(CLASS_NAME, "clear");
 		for (E entity : list())
 			em.remove(entity);
+		log.exiting(CLASS_NAME, "clear");
 	}
 }

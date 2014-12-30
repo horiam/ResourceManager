@@ -19,6 +19,8 @@
 
 package org.horiam.ResourceManager.businessLogic;
 
+import java.util.logging.Logger;
+
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -37,6 +39,9 @@ import org.horiam.ResourceManager.model.Resource;
 @Stateless
 public class Allocator {
 	
+	private static final String CLASS_NAME = Allocator.class.getName();
+	private static final Logger log = Logger.getLogger(CLASS_NAME);
+	
 	private AllocationDriver driver;
 	@EJB
 	private ClassFinder classFinder;
@@ -48,14 +53,17 @@ public class Allocator {
 	
 	@PostConstruct
 	public void postConstruct() throws Exception {
+		log.entering(CLASS_NAME, "postConstruct", new Object[] {});
 		driver = classFinder.getAllocateDriverInstance();
+		log.exiting(CLASS_NAME, "postConstruct");
 	}
 	
 	public void attachUser(String userId, String resourceId) 
 			throws InterruptedException, UnrecoverableException, 
 			ResourceUnrecoverableException, UserUnrecoverableException, 
 			RecordNotFoundException {
-		
+		log.entering(CLASS_NAME, "attachUser", new Object[] { userId, resourceId });	
+
 		User user = users.getLock(userId);
 		Resource resource = resources.get(resourceId);
 		
@@ -64,6 +72,8 @@ public class Allocator {
 		resource.setUser(user);
 		user.setResource(resource);
 		users.update(user);
+		
+		log.exiting(CLASS_NAME, "attachUser");
 	}
 		
 	public void detachUser(String userId) 
@@ -71,6 +81,8 @@ public class Allocator {
 			ResourceUnrecoverableException, UserUnrecoverableException, 
 			RecordNotFoundException {
 		
+		log.entering(CLASS_NAME, "detachUser", new Object[] { userId });
+
 		User user = users.getLock(userId);	
 		Resource resource = user.getResource();
 		
@@ -78,5 +90,7 @@ public class Allocator {
 		
 		user.removeResource();
 		users.update(user);					
+		
+		log.exiting(CLASS_NAME, "detachUser");
 	}	
 }

@@ -31,21 +31,29 @@ import org.horiam.ResourceManager.model.User;
 @Stateless
 public class UserDao extends Dao<User> {
 	
+	protected static final String CLASS_NAME = UserDao.class.getName();
+
 	@EJB
 	protected ClassFinder classFinder;
 	
 	
 	@PostConstruct
 	public void postConstruct() {
+		log.entering(CLASS_NAME, "postConstruct");
 		setEntityClass(classFinder.getUserClass());
+		log.exiting(CLASS_NAME, "postConstruct");
 	}	
 
 	public User setResource(String userId, String resourceId) throws RecordNotFoundException {
-		
+		log.entering(CLASS_NAME, "setResource", new Object[] { userId, resourceId });
+
 		User user = get(userId);		
 		Resource storage = em.find(classFinder.getResourceClass(), resourceId);
 		storage.setUser(user);
 		user.setResource(storage);
-		return em.merge(user);
+		
+		User ret = em.merge(user);
+		log.exiting(CLASS_NAME, "setResource", ret);
+		return ret;
 	}
 }

@@ -21,6 +21,8 @@ package org.horiam.ResourceManager.businessLogic;
 
 
 import java.util.concurrent.Future;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
@@ -52,6 +54,9 @@ import org.horiam.ResourceManager.model.Resource;
 @TransactionManagement(value=TransactionManagementType.BEAN)
 public class TaskExecutor {
 			
+	private static final String CLASS_NAME = TaskExecutor.class.getName();
+	private static final Logger log = Logger.getLogger(CLASS_NAME);
+
 	@javax.annotation.Resource
 	private UserTransaction transaction;
 	@EJB
@@ -71,7 +76,8 @@ public class TaskExecutor {
 	
 	@Asynchronous
 	public Future<Void> executeTask(String taskId) {
-		
+		log.entering(CLASS_NAME, "executeTask", new Object[] { taskId });
+
 		try {						
 			try {
 				
@@ -100,33 +106,34 @@ public class TaskExecutor {
 					
 					default  :  throw new UnrecoverableException("Unknown type of Task for " + taskId);				
 				}
-							
+						
+				log.exiting(CLASS_NAME, "executeTask");
 				return new AsyncResult<Void>(null);
 												
 			} catch (InterruptedException ie) {
-				
+				log.log(Level.SEVERE, ie.getMessage(), ie);
 				Thread.interrupted();
-				ie.printStackTrace();
 				failed(taskId, false, ie.getLocalizedMessage());
 				
 			} catch (ResourceUnrecoverableException ue) {
-	
+				log.log(Level.SEVERE, ue.getMessage(), ue);
 				bookingService.freeUserWithTask(taskId); 
 				failed(taskId, true, ue.getLocalizedMessage());
 						
 			} catch (UserUnrecoverableException ue) {	
-				
+				log.log(Level.SEVERE, ue.getMessage(), ue);
 				bookingService.freeResourceWithTask(taskId);
 				failed(taskId, false, ue.getLocalizedMessage());
 				
 			} catch (HeuristicRollbackException | RollbackException | RecoverableException oe) {
-				
+				log.log(Level.WARNING, oe.getMessage(), oe);
 				failed(taskId, true, oe.getLocalizedMessage());
 	
 			} catch (HeuristicMixedException | NotSupportedException | SystemException 
 					| IllegalStateException | SecurityException | UnrecoverableException 
 					| RecordNotFoundException re) {
 				
+				log.log(Level.SEVERE, re.getMessage(), re);
 				re.printStackTrace();
 				failed(taskId, false, re.getLocalizedMessage());			
 				
@@ -139,8 +146,10 @@ public class TaskExecutor {
 			}
 		
 		} catch  (RecordNotFoundException e) { // for the catches
-			e.printStackTrace();
+			log.log(Level.SEVERE, e.getMessage(), e);
 		}
+		
+		log.exiting(CLASS_NAME, "executeTask");
 		return new AsyncResult<Void>(null);
 	}
 	
@@ -153,6 +162,8 @@ public class TaskExecutor {
 			UnrecoverableException, ResourceUnrecoverableException, UserUnrecoverableException, 
 			RecordNotFoundException {
 								
+			log.entering(CLASS_NAME, "attachUser", new Object[] { taskId });
+
 			/* 1st transaction */				
 			transaction.begin();
 			
@@ -179,7 +190,6 @@ public class TaskExecutor {
 				bookingService.freeResource(resourceId);
 								
 			} else {
-								
 				message = "User "+ userId + " has already a Resource " + user.getResource();				
 			}
 			
@@ -187,22 +197,26 @@ public class TaskExecutor {
 			taskHelper.succeeded(taskId, message);
 			
 			/* end 2nd transaction */
-			
 			transaction.commit();													
+
+			log.exiting(CLASS_NAME, "attachUser");
 	}	
 	
 	////////////////////////////////////////////////////////////////////////////
 	
 	private void failed(String taskId, boolean retryable, String message) {
-		
+		log.entering(CLASS_NAME, "failed", new Object[] { taskId, retryable, message });
+
 		try {
 			taskHelper.failed(taskId, message, retryable); // CMT 
 			transaction.rollback();
 		} catch (IllegalStateException | SecurityException | SystemException e) {
-			e.printStackTrace();
+			log.log(Level.SEVERE, e.getMessage(), e);
 		} catch (RecordNotFoundException e) {
-			e.printStackTrace();
+			log.log(Level.SEVERE, e.getMessage(), e);
 		}
+		
+		log.exiting(CLASS_NAME, "failed");
 	}
 	
 	////////////////////////////////////////////////////////////////////////////
@@ -213,6 +227,8 @@ public class TaskExecutor {
 			HeuristicRollbackException, RollbackException, InterruptedException, 
 			UnrecoverableException, ResourceUnrecoverableException, UserUnrecoverableException, 
 			RecordNotFoundException {
+
+			log.entering(CLASS_NAME, "detachUser", new Object[] { taskId });
 
 			/* 1st transaction */			
 			transaction.begin();
@@ -242,7 +258,6 @@ public class TaskExecutor {
 				bookingService.freeResource(resource.getId());
 								
 			} else {
-				
 				message = "User "+ userId + " has no Resource";
 			}
 			
@@ -250,6 +265,8 @@ public class TaskExecutor {
 			taskHelper.succeeded(taskId, message);
 			
 			transaction.commit();
+			
+			log.exiting(CLASS_NAME, "detachUser");
 	}	
 	
 	////////////////////////////////////////////////////////////////////////////
@@ -260,6 +277,8 @@ public class TaskExecutor {
 			HeuristicRollbackException, RollbackException, InterruptedException, 
 			UnrecoverableException, ResourceUnrecoverableException, UserUnrecoverableException, 
 			RecordNotFoundException {
+		
+			log.entering(CLASS_NAME, "removeUser", new Object[] { taskId });
 
 			/* 1st transaction */				
 			transaction.begin();
@@ -289,7 +308,6 @@ public class TaskExecutor {
 				bookingService.freeResource(resource.getId());
 				
 			} else {
-				
 				message = "User "+ userId + " has no Resource";
 			}
 			
@@ -297,6 +315,8 @@ public class TaskExecutor {
 			taskHelper.succeeded(taskId, message);
 					
 			transaction.commit();
+			
+			log.exiting(CLASS_NAME, "removeUser");
 	}
 	
 	////////////////////////////////////////////////////////////////////////////
@@ -307,6 +327,8 @@ public class TaskExecutor {
 			HeuristicRollbackException, RollbackException, InterruptedException, 
 			UnrecoverableException, ResourceUnrecoverableException, UserUnrecoverableException, 
 			RecordNotFoundException {		
+		
+			log.entering(CLASS_NAME, "removeResource", new Object[] { taskId });
 
 			/* 1st transaction */				
 			transaction.begin();
@@ -335,7 +357,6 @@ public class TaskExecutor {
 				bookingService.freeUser(user.getId());
 				
 			} else {
-				
 				message = "Resource "+ Resource.getId() + " has no User";
 			}
 			
@@ -343,5 +364,7 @@ public class TaskExecutor {
 			taskHelper.succeeded(taskId, message);
 					
 			transaction.commit();
+			
+			log.exiting(CLASS_NAME, "removeResource");
 	}
 }

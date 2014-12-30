@@ -19,6 +19,8 @@
 
 package org.horiam.ResourceManager.authorisation;
 
+import java.util.logging.Logger;
+
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.InvocationContext;
 
@@ -26,20 +28,28 @@ import org.horiam.ResourceManager.exceptions.AuthorisationException;
 import org.horiam.ResourceManager.model.UserHolder;
 
 public class UserHolderAuthorisationInterceptor extends UserAuthorisation {
+	
+	private static final String CLASS_NAME = UserHolderAuthorisationInterceptor.class.getName();
+	private static final Logger log = Logger.getLogger(CLASS_NAME);
 
 	@AroundInvoke
 	public Object intercept(InvocationContext invocationCxt) throws AuthorisationException, Exception {
-		
+		log.entering(CLASS_NAME, "intercept", new Object[] { invocationCxt });
 		
 		UserHolder userHolder = (UserHolder) invocationCxt.proceed();
 		
 		if (isCallerAdmin() 
 				|| (userHolder.hasUser() && isUserAuthorised(userHolder.getUser().getId()))) {
 
-				return userHolder;
+				Object ret = userHolder;
+				log.exiting(CLASS_NAME, "intercept", ret);
+				return ret;
 		}
 
-		throw new AuthorisationException("User is not authorised to access this object");		
+		AuthorisationException ae =	new AuthorisationException("User is not authorised to access this object");		
+		
+		log.throwing(CLASS_NAME, "intercept", ae);
+		throw ae;
 	}
 		
 }

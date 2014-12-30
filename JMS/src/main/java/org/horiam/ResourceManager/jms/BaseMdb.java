@@ -20,6 +20,8 @@
 package org.horiam.ResourceManager.jms;
 
 import java.io.Serializable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -41,6 +43,9 @@ import org.horiam.ResourceManager.exceptions.AuthorisationException;
 import org.horiam.ResourceManager.exceptions.RecordNotFoundException;
 
 public abstract class BaseMdb implements MessageListener {
+	
+	protected static final String CLASS_NAME = BaseMdb.class.getName();
+	protected static final Logger log = Logger.getLogger(CLASS_NAME);
 
 	@Resource
     private ConnectionFactory connectionFactory;
@@ -50,27 +55,32 @@ public abstract class BaseMdb implements MessageListener {
 
 	@PostConstruct
 	protected void postConstruct() throws JMSException {
-		
+		log.entering(CLASS_NAME, "postConstruct");
 		connection = connectionFactory.createConnection();
 		connection.start();
 		session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 		replyProducer = session.createProducer(null);
 		replyProducer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);				
+		log.exiting(CLASS_NAME, "postConstruct");
 	}
 	
 	@PreDestroy 
 	protected void preDestroy() throws JMSException {
+		log.entering(CLASS_NAME, "preDestroy");
 		if (replyProducer != null)
 			replyProducer.close();
 		if (session != null) 
 			session.close();
         if (connection != null) 
         	connection.close();
+        log.exiting(CLASS_NAME, "preDestroy");
 	}
 	
 	@Override
 	public void onMessage(Message message) {
-		 try {
+		log.entering(CLASS_NAME, "onMessage", new Object[] { message });
+
+		try {
 			ObjectMessage response = session.createObjectMessage();
 			Serializable responseObj;
 			boolean succeeded = false;
@@ -81,6 +91,7 @@ public abstract class BaseMdb implements MessageListener {
 					responseObj = createResponseObject(recvText);
 					succeeded = true;
 				} catch (Throwable t) {
+					log.log(Level.WARNING, t.getMessage(), t);
 					responseObj = t;
 				}
 			} else {
@@ -91,8 +102,10 @@ public abstract class BaseMdb implements MessageListener {
 			response.setJMSCorrelationID(message.getJMSCorrelationID());
 			replyProducer.send(message.getJMSReplyTo(), response);
 		} catch (JMSException e) {
-			e.printStackTrace();
-		}		 
+			log.log(Level.SEVERE, e.getMessage(), e);
+		}
+
+		log.exiting(CLASS_NAME, "onMessage");
 	}
 	
 	abstract public Serializable createResponseObject(String recvText) throws AuthorisationException,

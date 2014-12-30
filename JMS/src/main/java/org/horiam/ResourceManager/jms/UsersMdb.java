@@ -43,20 +43,29 @@ import org.horiam.ResourceManager.services.UserService;
                 				 propertyValue = "jms/usersQueue")})
 public class UsersMdb extends BaseMdb implements MessageListener {
 
+	protected static final String CLASS_NAME = UsersMdb.class.getName();
+
 	@EJB
 	private UserService userService;
 	
 	@Override
 	public Serializable createResponseObject(String recvText) throws AuthorisationException,
 																	RecordNotFoundException {
+		log.entering(CLASS_NAME, "createResponseObject", new Object[] { recvText });
+
+		Serializable ret; 
+
 		if (recvText == null || recvText.isEmpty()) {
 			List<User> usersList = userService.list();
 			ArrayList<User> serialisable = new ArrayList<User>();
 			serialisable.addAll(usersList);
-			return serialisable;
+			ret = serialisable;
 		} else {
-			return userService.get(recvText);
+			ret =userService.get(recvText);
 		}
+		
+		log.exiting(CLASS_NAME, "createResponseObject", ret);
+		return ret;
 	}
 
 }

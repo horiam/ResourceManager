@@ -94,4 +94,8 @@ public abstract class Model implements Serializable {
 									       .append(date)
 									       .toHashCode();
 	}
+	
+	public String toString() {
+		return getId();
+	}
 }

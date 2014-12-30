@@ -31,20 +31,29 @@ import org.horiam.ResourceManager.model.Resource;
 @Stateless
 public class ResourceDao extends Dao<Resource> {
 
+	protected static final String CLASS_NAME = ResourceDao.class.getName();
+
 	@EJB
 	protected ClassFinder classFinder;
 	
 	
 	@PostConstruct
 	public void postConstruct() {
+		log.entering(CLASS_NAME, "postConstruct");
 		setEntityClass(classFinder.getResourceClass());
+		log.exiting(CLASS_NAME, "postConstruct");
 	}
 
 
 	@SuppressWarnings("unchecked")
 	public List<Resource> listFree() {	
+		log.entering(CLASS_NAME, "listFree");
 		Query query = em.createQuery("SELECT a FROM " + entityClass.getSimpleName() + " a WHERE"
 									   + " a.user IS NULL AND a.booked = FALSE", entityClass);
-		return query.getResultList();
+
+		List<Resource> ret = query.getResultList();
+
+		log.exiting(CLASS_NAME, "listFree", ret);
+		return ret;
 	}
 }

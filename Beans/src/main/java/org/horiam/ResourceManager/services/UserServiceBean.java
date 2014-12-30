@@ -22,6 +22,7 @@ package org.horiam.ResourceManager.services;
 
 import java.util.List;
 import java.util.concurrent.Future;
+import java.util.logging.Logger;
 
 import javax.annotation.Resource;
 import javax.annotation.security.DeclareRoles;
@@ -29,8 +30,6 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.horiam.ResourceManager.authorisation.ActionOnUserAuthorisationInterceptor;
@@ -43,9 +42,13 @@ import org.horiam.ResourceManager.model.Task;
 import org.horiam.ResourceManager.model.User;
 
 
+
 @DeclareRoles(value = {"Admin", "User"})
 @Stateless
 public class UserServiceBean implements UserService {
+	
+	private static final String CLASS_NAME = UserServiceBean.class.getName();
+	private static final Logger log = Logger.getLogger(CLASS_NAME);
 	
 	@Resource 
 	private SessionContext context;
@@ -60,7 +63,10 @@ public class UserServiceBean implements UserService {
 	@Override
 	@RolesAllowed(value = {"Admin"})
 	public List<User> list() {
-		return users.list();
+		log.entering(CLASS_NAME, "list", new Object[] {});
+		List<User> ret = users.list();
+		log.exiting(CLASS_NAME, "list", ret);
+		return ret;
 	}
 	
 	////////////////////////////////////////////////////////////////////////////
@@ -69,7 +75,10 @@ public class UserServiceBean implements UserService {
 	@Interceptors(ActionOnUserAuthorisationInterceptor.class)
 	@RolesAllowed(value = {"Admin", "User"})	
 	public boolean exists(String id) {
-		return users.exists(id);
+		log.entering(CLASS_NAME, "exists", new Object[] { id });
+		boolean ret = users.exists(id);
+		log.exiting(CLASS_NAME, "exists", ret);
+		return ret;
 	}
 
 	////////////////////////////////////////////////////////////////////////////
@@ -78,7 +87,7 @@ public class UserServiceBean implements UserService {
 	@Interceptors(ActionOnUserAuthorisationInterceptor.class)
 	@RolesAllowed(value = {"Admin", "User"})	
 	public void createOrUpdate(String id, User user) {		
-		
+		log.entering(CLASS_NAME, "createOrUpdate", new Object[] { id, user });
 		if (id.equals(user.getId())) {
 			// clean input User
 			user.removeResource();
@@ -89,6 +98,7 @@ public class UserServiceBean implements UserService {
 			else
 				users.create(user);
 		} 
+		log.exiting(CLASS_NAME, "createOrUpdate");
 	}
 
 	////////////////////////////////////////////////////////////////////////////
@@ -97,8 +107,10 @@ public class UserServiceBean implements UserService {
 	@Interceptors(ActionOnUserAuthorisationInterceptor.class)
 	@RolesAllowed(value = {"Admin", "User"})		
 	public User get(String id) throws RecordNotFoundException {
-		
-		return users.get(id);
+		log.entering(CLASS_NAME, "get", new Object[] { id });
+		User ret = users.get(id);
+		log.exiting(CLASS_NAME, "get", ret);
+		return ret;
 	}
 
 	////////////////////////////////////////////////////////////////////////////
@@ -106,8 +118,9 @@ public class UserServiceBean implements UserService {
 	@Override
 	@RolesAllowed(value = {"Admin"})
 	public void delete(String id) {
-		
+		log.entering(CLASS_NAME, "delete", new Object[] { id });
 		users.remove(id);
+		log.exiting(CLASS_NAME, "delete");
 	}
 		
 	////////////////////////////////////////////////////////////////////////////
@@ -116,9 +129,10 @@ public class UserServiceBean implements UserService {
 	@Interceptors(ActionOnUserAuthorisationInterceptor.class)
 	@RolesAllowed(value = {"Admin", "User"})
 	public Task allocateUser(String id) throws RecordNotFoundException {
-		
+		log.entering(CLASS_NAME, "allocateUser", new Object[] { id });
 		Task task = taskHelper.createTaskForUser(id, TaskType.allocateResourceForUser);
 		Future<Void> future = async.executeTask(task.getId());
+		log.exiting(CLASS_NAME, "allocateUser", task);
 		return task;
 	}
 		
@@ -128,9 +142,10 @@ public class UserServiceBean implements UserService {
 	@Interceptors(ActionOnUserAuthorisationInterceptor.class)
 	@RolesAllowed(value = {"Admin", "User"})
 	public Task deallocateUser(String id) throws RecordNotFoundException {
-		
+		log.entering(CLASS_NAME, "deallocateUser", new Object[] { id });
 		Task task = taskHelper.createTaskForUser(id, TaskType.deallocateUser);
 		Future<Void> future = async.executeTask(task.getId());
+		log.exiting(CLASS_NAME, "deallocateUser", task);
 		return task;
 	}
 		
@@ -140,10 +155,10 @@ public class UserServiceBean implements UserService {
 	@Interceptors(ActionOnUserAuthorisationInterceptor.class)
 	@RolesAllowed(value = {"Admin", "User"})
 	public Task removeUser(String id) throws RecordNotFoundException {
-		
+		log.entering(CLASS_NAME, "removeUser", new Object[] { id });
 		Task task = taskHelper.createTaskForUser(id, TaskType.removeUser);
 		Future<Void> future = async.executeTask(task.getId());
+		log.exiting(CLASS_NAME, "removeUser", task);
 		return task;  
 	}
-	
 }

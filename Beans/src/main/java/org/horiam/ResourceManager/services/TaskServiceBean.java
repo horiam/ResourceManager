@@ -20,6 +20,7 @@
 package org.horiam.ResourceManager.services;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -42,6 +43,9 @@ import org.horiam.ResourceManager.model.Task;
 @Stateless
 public class TaskServiceBean implements TaskService {
 	
+	private static final String CLASS_NAME = TaskServiceBean.class.getName();
+	private static final Logger log = Logger.getLogger(CLASS_NAME);
+	
 	@EJB
 	private TaskDao tasks;
 	@EJB
@@ -55,27 +59,36 @@ public class TaskServiceBean implements TaskService {
 	@Override
 	@RolesAllowed(value = { "Admin" })
 	public List<Task> list() {
-		return tasks.list();
+		log.entering(CLASS_NAME, "list", new Object[] {});
+		List<Task> ret = tasks.list();
+		log.exiting(CLASS_NAME, "list", ret);
+		return ret;
 	}
 	
 	@Override
 	@RolesAllowed(value = { "Admin", "User" })
 	public boolean exists(String id) {
-		return tasks.exists(id);
+		log.entering(CLASS_NAME, "exists", new Object[] { id });
+		boolean ret = tasks.exists(id);
+		log.exiting(CLASS_NAME, "exists", ret);
+		return ret;
 	}
 	
 	@Override
 	@Interceptors(UserHolderAuthorisationInterceptor.class)
 	@RolesAllowed(value = { "Admin", "User" })
 	public Task get(String id) throws RecordNotFoundException {
-
-		Task task = tasks.get(id);		
-		return task;		
+		log.entering(CLASS_NAME, "get", new Object[] { id });
+		Task ret = tasks.get(id);		
+		log.exiting(CLASS_NAME, "get", ret);
+		return ret;
 	}
 	
 	@Override
 	@RolesAllowed(value = { "Admin" })
 	public void delete(String id) {
+		log.entering(CLASS_NAME, "delete", new Object[] { id });
 		tasks.remove(id);
+		log.exiting(CLASS_NAME, "delete");
 	}	
 }

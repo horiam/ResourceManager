@@ -42,6 +42,8 @@ import org.horiam.ResourceManager.services.ResourceService;
         @ActivationConfigProperty(propertyName = "destination",  
                 				 propertyValue = "jms/resourcesQueue")})
 public class ResourcesMdb extends BaseMdb implements MessageListener {
+	
+	protected static final String CLASS_NAME = ResourcesMdb.class.getName();
 
 	@EJB
 	private ResourceService resourceService;
@@ -49,14 +51,21 @@ public class ResourcesMdb extends BaseMdb implements MessageListener {
 	@Override
 	public Serializable createResponseObject(String recvText) throws AuthorisationException,
 																	RecordNotFoundException {
+		log.entering(CLASS_NAME, "createResponseObject", new Object[] { recvText });
+
+		Serializable ret;
+		
 		if (recvText == null || recvText.isEmpty()) {
 			List<Resource> resourecesList = resourceService.list();
 			ArrayList<Resource> serialisable = new ArrayList<Resource>();
 			serialisable.addAll(resourecesList);
-			return serialisable;
+			ret =  serialisable;
 		} else {
-			return resourceService.get(recvText);
+			ret = resourceService.get(recvText);
 		}
+		
+		log.exiting(CLASS_NAME, "createResponseObject", ret);
+		return ret;
 	}
 
 }

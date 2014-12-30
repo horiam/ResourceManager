@@ -24,6 +24,8 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
@@ -40,6 +42,9 @@ import org.horiam.ResourceManager.model.User;
 @Singleton
 @Lock(READ)
 public class ClassFinder {
+	
+	private static final String CLASS_NAME = ClassFinder.class.getName();
+	private static final Logger log = Logger.getLogger(CLASS_NAME);
 
 	private static final String PROPFILENAME = "ResourceManager.properties";
 
@@ -51,14 +56,15 @@ public class ClassFinder {
 	
 	@PostConstruct
 	protected void postConstruct() {
-			
+		log.entering(CLASS_NAME, "postConstruct", new Object[] {});	
 		setUserClass(findClass(User.class));
 		setResourceClass(findClass(Resource.class));
 		setAllocatorDriverClass(findClass(AllocationDriver.class));
+		log.exiting(CLASS_NAME, "postConstruct");
 	}
 
 	private <C> Class<? extends C> findClass(Class<C> clazz) {
-
+		log.entering(CLASS_NAME, "findClass", new Object[] { clazz });
 		try {
 			if (properties == null) {
 				URL url = ClassLoader.getSystemResource(PROPFILENAME);
@@ -73,29 +79,29 @@ public class ClassFinder {
 			if (properties != null) {
 				String canonicalName = properties.getProperty(clazz
 						.getCanonicalName());
-				System.out.println("ClassFinder: found " + canonicalName);
 				if (canonicalName != null && canonicalName.isEmpty() == false) {
 					Class<?> found = Class.forName(canonicalName);
-					System.out.println("ClassFinder: will use class "
-							+ found.getCanonicalName());
+					log.config("Will use class " + found.getCanonicalName());
+					log.exiting(CLASS_NAME, "findClass");
 					return (Class<? extends C>) found;
 				}
 			}	
 			
 		} catch (ClassNotFoundException e) {
-			//TODO trace
+			log.log(Level.WARNING, e.getMessage(), e);
 		} catch (IOException e) {
-			//TODO trace
+			log.log(Level.WARNING, e.getMessage(), e);
 		}
 		
-		System.out.println("ClassFinder: will use default class "+ clazz.getCanonicalName());
+		log.config("Will use default class "+ clazz.getCanonicalName());
+		log.exiting(CLASS_NAME, "findClass");
 		return clazz;
 	}
 	public Class<? extends User> getUserClass() {
 		return userClass;
 	}
 
-	public void setUserClass(Class<? extends User> userClass) {
+	private void setUserClass(Class<? extends User> userClass) {
 		this.userClass = userClass;
 	}
 
@@ -103,7 +109,7 @@ public class ClassFinder {
 		return resourceClass;
 	}
 
-	public void setResourceClass(Class<? extends Resource> resourceClass) {
+	private void setResourceClass(Class<? extends Resource> resourceClass) {
 		this.resourceClass = resourceClass;
 	}
 
@@ -111,16 +117,18 @@ public class ClassFinder {
 		return allocatorDriverClass;
 	}
 
-	public void setAllocatorDriverClass(Class<? extends AllocationDriver> allocatorDriverClass) {
+	private void setAllocatorDriverClass(Class<? extends AllocationDriver> allocatorDriverClass) {
 		this.allocatorDriverClass = allocatorDriverClass;
 	}	
 	
 	public AllocationDriver getAllocateDriverInstance() throws Exception {
+		log.entering(CLASS_NAME, "getAllocateDriverInstance");
 		try {
 			return getAllocatorDriverClass().getConstructor().newInstance();
 		} catch (InstantiationException | IllegalAccessException
 				| IllegalArgumentException | InvocationTargetException
 				| NoSuchMethodException | SecurityException e) {
+			log.throwing(CLASS_NAME, "getAllocateDriverInstance", e);
 			throw new Exception(e);
 		}
 	}

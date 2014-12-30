@@ -19,21 +19,35 @@
 
 package org.horiam.ResourceManager.authorisation;
 
+import java.util.logging.Logger;
+
 import javax.annotation.Resource;
 import javax.ejb.SessionContext;
 
 public abstract class UserAuthorisation {
 
+	private static final String CLASS_NAME = UserAuthorisation.class.getName();
+	private static final Logger log = Logger.getLogger(CLASS_NAME);
+	
 	@Resource 
 	private SessionContext sessionCtx; 
 	
 	protected boolean isCallerAdmin() {
-		return sessionCtx.isCallerInRole("Admin");
+		log.entering(CLASS_NAME, "isCallerAdmin");
+		
+		boolean ret = sessionCtx.isCallerInRole("Admin");
+		
+		log.exiting(CLASS_NAME, "isCallerAdmin", ret);
+		return ret;
 	}
 	
 	protected boolean isUserAuthorised(String id) {
-		
+		log.entering(CLASS_NAME, "isUserAuthorised", new Object[] { id });
+
 		String callerUsername = sessionCtx.getCallerPrincipal().getName();		
-		return callerUsername.equals(id);
+		
+		boolean ret = callerUsername.equals(id);
+		log.exiting(CLASS_NAME, "isUserAuthorised", ret);
+		return ret;
 	}
 }

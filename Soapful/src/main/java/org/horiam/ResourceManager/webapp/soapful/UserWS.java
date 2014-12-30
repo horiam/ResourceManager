@@ -20,6 +20,8 @@
 package org.horiam.ResourceManager.webapp.soapful;
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -40,87 +42,100 @@ targetNamespace = "http://ResourceManagerNS/Users",
 endpointInterface = "org.horiam.ResourceManager.soap.UserSEI")
 public class UserWS implements UserSEI  {
 	
+	private static final String CLASS_NAME = UserWS.class.getName();
+	private static final Logger log = Logger.getLogger(CLASS_NAME);
+	
 	@EJB
 	private UserService userService;
 	
 
-	/* (non-Javadoc)
-	 * @see org.horiam.ResourceManager.webapp.soapful.UserSEI#list()
-	 */
 	@Override
 	public List<User> list() {
-		return userService.list();
+		log.entering(CLASS_NAME, "list");
+		List<User> ret = userService.list();
+		log.exiting(CLASS_NAME, "list", ret);
+		return ret;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.horiam.ResourceManager.webapp.soapful.UserSEI#exists(java.lang.String)
-	 */
 	@Override
 	public boolean exists(String id) {
-		return userService.exists(id);
+		log.entering(CLASS_NAME, "exists", new Object[] { id });
+		boolean ret = userService.exists(id);
+		log.exiting(CLASS_NAME, "exists", ret);
+		return ret;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.horiam.ResourceManager.webapp.soapful.UserSEI#createOrUpdate(java.lang.String, org.horiam.ResourceManager.model.User)
-	 */
 	@Override
 	public void createOrUpdate(String id, User user) {
+		log.entering(CLASS_NAME, "createOrUpdate", new Object[] { id, user });
 		userService.createOrUpdate(id, user);
+		log.exiting(CLASS_NAME, "createOrUpdate");
 	}
 
-	/* (non-Javadoc)
-	 * @see org.horiam.ResourceManager.webapp.soapful.UserSEI#get(java.lang.String)
-	 */
 	@Override
 	public User get(String id) throws ResourceManagerFault {
+		log.entering(CLASS_NAME, "get", new Object[] { id });
 		try {
-			return userService.get(id);
+			User ret = userService.get(id);
+			log.exiting(CLASS_NAME, "get", ret);
+			return ret;
 		} catch (AuthorisationException | RecordNotFoundException e) {
-			throw new ResourceManagerFault(e.getMessage(), new MessageHolderBean());
+			log.log(Level.FINEST, e.getMessage(), e);
+			ResourceManagerFault rmf = new ResourceManagerFault(e.getMessage(), new MessageHolderBean());
+			log.throwing(CLASS_NAME, "get", rmf);
+			throw rmf;
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.horiam.ResourceManager.webapp.soapful.UserSEI#delete(java.lang.String)
-	 */
 	@Override
 	public void delete(String id) {
+		log.entering(CLASS_NAME, "delete", new Object[] { id });
 		userService.delete(id);
+		log.exiting(CLASS_NAME, "delete");
 	}
 
-	/* (non-Javadoc)
-	 * @see org.horiam.ResourceManager.webapp.soapful.UserSEI#allocateUser(java.lang.String)
-	 */
 	@Override
 	public Task allocateUser(String id) throws ResourceManagerFault {
+		log.entering(CLASS_NAME, "allocateUser", new Object[] { id });
 		try {
-			return userService.allocateUser(id);
+			Task ret = userService.allocateUser(id);
+			log.exiting(CLASS_NAME, "allocateUser", ret);
+			return ret;
 		} catch (RecordNotFoundException e) {
-			throw new ResourceManagerFault(e.getMessage(), new MessageHolderBean());
+			log.log(Level.FINEST, e.getMessage(), e);
+			ResourceManagerFault rmf = new ResourceManagerFault(e.getMessage(), new MessageHolderBean());
+			log.throwing(CLASS_NAME, "get", rmf);
+			throw rmf;
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.horiam.ResourceManager.webapp.soapful.UserSEI#deallocateUser(java.lang.String)
-	 */
 	@Override
 	public Task deallocateUser(String id) throws ResourceManagerFault {
+		log.entering(CLASS_NAME, "deallocateUser", new Object[] { id });
 		try {
-			return userService.deallocateUser(id);
+			Task ret = userService.deallocateUser(id);
+			log.exiting(CLASS_NAME, "deallocateUser", ret);
+			return ret;
 		} catch (RecordNotFoundException e) {
-			throw new ResourceManagerFault(e.getMessage(), new MessageHolderBean());
+			log.log(Level.FINEST, e.getMessage(), e);
+			ResourceManagerFault rmf = new ResourceManagerFault(e.getMessage(), new MessageHolderBean());
+			log.throwing(CLASS_NAME, "get", rmf);
+			throw rmf;
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.horiam.ResourceManager.webapp.soapful.UserSEI#removeUser(java.lang.String)
-	 */
 	@Override
 	public Task removeUser(String id) throws ResourceManagerFault {
+		log.entering(CLASS_NAME, "removeUser", new Object[] { id });
 		try {
-			return userService.removeUser(id);
+			Task ret = userService.removeUser(id);
+			log.exiting(CLASS_NAME, "removeUser", ret);
+			return ret;
 		} catch (RecordNotFoundException e) {
-			throw new ResourceManagerFault(e.getMessage(), new MessageHolderBean());
+			log.log(Level.FINEST, e.getMessage(), e);
+			ResourceManagerFault rmf = new ResourceManagerFault(e.getMessage(), new MessageHolderBean());
+			log.throwing(CLASS_NAME, "get", rmf);
+			throw rmf;
 		}
 	}	
 }

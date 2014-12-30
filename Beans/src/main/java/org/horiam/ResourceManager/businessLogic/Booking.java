@@ -21,6 +21,7 @@ package org.horiam.ResourceManager.businessLogic;
 
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Logger;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -40,6 +41,9 @@ import org.horiam.ResourceManager.model.Resource;
 @Stateless
 public class Booking {
 	
+	private static final String CLASS_NAME = Booking.class.getName();
+	private static final Logger log = Logger.getLogger(CLASS_NAME);
+	
 	@EJB
 	private TaskDao tasks;
 	@EJB
@@ -51,7 +55,8 @@ public class Booking {
 	
 	
 	public User reserveUser(String taskId, String userId) throws RecoverableException, RecordNotFoundException {
-					
+		log.entering(CLASS_NAME, "reserveUser", new Object[] { taskId, userId });
+
 		Task task = tasks.get(taskId);
 		User user = users.getLock(userId);
 		
@@ -63,10 +68,14 @@ public class Booking {
 											+ user.getTask().getId());
 		user.setBooked(true);
 		user.setTask(task);
-		return users.update(user);			    
+		User ret = users.update(user);			    
+
+		log.exiting(CLASS_NAME, "reserveUser", ret);
+		return ret;
 	}	
 
 	public String reserveOneAvailableResource(String taskId) throws RecoverableException, RecordNotFoundException {
+		log.entering(CLASS_NAME, "reserveOneAvailableResource", new Object[] { taskId });
 
 		Task task = tasks.get(taskId);				
 		List<Resource> freeResources = resources.listFree();
@@ -83,10 +92,13 @@ public class Booking {
 		resource.setTask(task);
 		resource = resources.update(resource);
 
-		return resource.getId();
+		String ret = resource.getId();
+		log.exiting(CLASS_NAME, "reserveOneAvailableResource", ret);
+		return ret;
 	}
 
 	public Resource reserveResource(String taskId, String resourceId) throws RecoverableException, RecordNotFoundException {
+		log.entering(CLASS_NAME, "reserveResource", new Object[] { taskId, resourceId });
 
 		Task task = tasks.get(taskId);
 		Resource resource = resources.getLock(resourceId);
@@ -94,39 +106,61 @@ public class Booking {
 		if (task.equals(resource.getTask()))
 			return resource;
 
-		if (resource.isBooked())
-			throw new RecoverableException("Resource " + resource.getId() + " is booked");
-
+		if (resource.isBooked()) {
+			RecoverableException re = new RecoverableException("Resource " + resource.getId() + " is booked");
+			log.throwing(CLASS_NAME, "reserveResource", re);
+			throw re;
+		}
 		resource.setBooked(true);
 		resource.setTask(task);
-		return resources.update(resource);
+		
+		Resource ret = resources.update(resource);
+
+		log.exiting(CLASS_NAME, "reserveResource", ret);
+		return ret;
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
 	public User freeUserWithTask(String taskId) throws RecordNotFoundException { 
-		
+		log.entering(CLASS_NAME, "freeUserWithTask", new Object[] { taskId });
+
 		String userId = tasks.get(taskId).getUser().getId();
-		return freeUser(userId);
+		
+		User ret = freeUser(userId);
+		log.exiting(CLASS_NAME, "freeUserWithTask", ret);
+		return ret;
 	}
 		
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
 	public Resource freeResourceWithTask(String taskId) throws RecordNotFoundException { 
+		log.entering(CLASS_NAME, "freeResourceWithTask", new Object[] { taskId });
 		
 		String resourceId = tasks.get(taskId).getResource().getId();
-		return freeResource(resourceId);
+		
+		Resource ret = freeResource(resourceId);
+		log.exiting(CLASS_NAME, "freeResourceWithTask", ret);
+		return ret;
 	}	
 	
 	public User freeUser(String userId) throws RecordNotFoundException {
+		log.entering(CLASS_NAME, "freeUser", new Object[] { userId });
 
 		User user = users.get(userId);
 		user.setBooked(false);
-		return  users.update(user);	
+		
+		User ret = users.update(user);	
+		log.exiting(CLASS_NAME, "freeUser", ret);
+		return ret;
 	}
 
 	public Resource freeResource(String resourceId) throws RecordNotFoundException {
+		log.entering(CLASS_NAME, "freeResource", new Object[] { resourceId });
 
 		Resource resource = resources.get(resourceId);
 		resource.setBooked(false);
-		return resources.update(resource);
+
+		Resource ret = resources.update(resource); 
+		log.exiting(CLASS_NAME, "freeResource", ret);
+		return ret;
 	}
 }

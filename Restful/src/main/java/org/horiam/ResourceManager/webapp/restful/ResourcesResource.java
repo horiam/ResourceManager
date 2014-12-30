@@ -21,6 +21,8 @@ package org.horiam.ResourceManager.webapp.restful;
 
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.ejb.EJB;
 import javax.ws.rs.Consumes;
@@ -45,6 +47,9 @@ import org.horiam.ResourceManager.model.Resource;
 
 @Path("resources")
 public class ResourcesResource {
+	
+	private static final String CLASS_NAME = ResourcesResource.class.getName();
+	private static final Logger log = Logger.getLogger(CLASS_NAME);
 
 	@EJB
 	private ResourceService resourceService;
@@ -53,8 +58,10 @@ public class ResourcesResource {
 	@GET
 	@Produces({ MediaType.TEXT_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public List<Resource> getResources() {
-		
-		return resourceService.list();
+		log.entering(CLASS_NAME, "getResources");
+		List<Resource> ret = resourceService.list();
+		log.exiting(CLASS_NAME, "getResources", ret);
+		return ret;
 	}
 	
 	@Path("{id}")
@@ -63,47 +70,62 @@ public class ResourcesResource {
 	@Produces({ MediaType.TEXT_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response putResource(@Context UriInfo uriInfo, 
 					   			 @PathParam("id") String id, JAXBElement<? extends Resource> xml) {
-		
+		log.entering(CLASS_NAME, "putResource", new Object[] { uriInfo, id, xml });
 		Resource resource = xml.getValue();
 		resourceService.createOrUpdate(id, resource);		
-		return  Response.created(uriInfo.getAbsolutePath()).build();
+		Response ret = Response.created(uriInfo.getAbsolutePath()).build();
+		log.exiting(CLASS_NAME, "putResource", ret);
+		return ret;
 	}
 	
 	@Path("{id}")
 	@GET
 	@Produces({ MediaType.TEXT_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response getResource(@PathParam("id") String id) {
-			
+		log.entering(CLASS_NAME, "getResource", new Object[] { id });
+		Response ret; 
 		try {		
-			return Response.ok(resourceService.get(id)).build();
+			ret = Response.ok(resourceService.get(id)).build();
 		} catch (RecordNotFoundException ex) {
-			return Response.status(404).build();
+			log.log(Level.FINEST, ex.getMessage(), ex);
+			ret = Response.status(404).build();
 		}
+		log.exiting(CLASS_NAME, "getResource", ret);
+		return ret;
 	}	
 		
 	@Path("{id}")
 	@DELETE
 	public Response deleteResource(@PathParam("id") String id) {
-		
+		log.entering(CLASS_NAME, "deleteResource", new Object[] { id });
 		resourceService.delete(id);		
-		return Response.ok().build();
+		Response ret = Response.ok().build();
+		log.exiting(CLASS_NAME, "deleteResource", ret);
+		return ret;
 	}
 	
 	@Path("{id}")
 	@POST
 	@Produces({ MediaType.TEXT_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response postResourceAction(@PathParam("id") String id, @QueryParam("action") String action) {
-		
+		log.entering(CLASS_NAME, "postResourceAction", new Object[] { id, action });
+		Response ret = null; 
 		try {
 			if (action != null) {
 				switch (action) {			
-					case "remove" : return Response.ok(resourceService.removeResource(id)).build();	
-					default : 			
+					case "remove" : ret = Response.ok(resourceService.removeResource(id)).build();	
+					break;
+					default : ret = Response.status(400).build();
+					break;
 				}
+			} else {
+				ret = Response.status(400).build();
 			}
-			return Response.status(400).build();
 		} catch (RecordNotFoundException ex) {
-			return Response.status(404).build();
+			log.log(Level.FINEST, ex.getMessage(), ex);
+			ret = Response.status(404).build();
 		}		
+		log.exiting(CLASS_NAME, "postResourceAction", ret);
+		return ret;
 	}	
 }

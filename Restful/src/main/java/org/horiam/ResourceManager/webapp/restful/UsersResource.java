@@ -21,6 +21,8 @@ package org.horiam.ResourceManager.webapp.restful;
 
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.ejb.EJB;
 import javax.ws.rs.Consumes;
@@ -47,6 +49,9 @@ import org.horiam.ResourceManager.model.User;
 @Path("users")
 public class UsersResource {
 	
+	private static final String CLASS_NAME = UsersResource.class.getName();
+	private static final Logger log = Logger.getLogger(CLASS_NAME);
+	
 	@EJB
 	private UserService userService;
 	
@@ -54,7 +59,10 @@ public class UsersResource {
 	@GET
 	@Produces({ MediaType.TEXT_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public List<User> getUsers() {
-		return userService.list();
+		log.entering(CLASS_NAME, "getUsers");
+		List<User> ret = userService.list();
+		log.exiting(CLASS_NAME, "getUsers", ret);
+		return ret;
 	}
 		
 	@Path("{id}")
@@ -62,52 +70,70 @@ public class UsersResource {
 	@Consumes(MediaType.APPLICATION_XML)
 	public Response putUser(@Context UriInfo uriInfo, 
 							   @PathParam("id") String id, JAXBElement<? extends User> xml) {
-	
+		log.entering(CLASS_NAME, "putUser", new Object[] { uriInfo, id, xml });
 		User user = xml.getValue();
 		userService.createOrUpdate(id, user);
-		return  Response.created(uriInfo.getAbsolutePath()).build();
+		Response ret = Response.created(uriInfo.getAbsolutePath()).build();
+		log.exiting(CLASS_NAME, "putUser", ret);
+		return ret;
 	}
 	
 	@Path("{id}")
 	@POST
 	@Produces({ MediaType.TEXT_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response postUserAction(@PathParam("id") String id, @QueryParam("action") String action) {
-		
+		log.entering(CLASS_NAME, "postUserAction", new Object[] { id, action });
+		Response ret = null;
 		try {
 			if (action != null) {
 				switch (action) {				
-					case "allocate" : return Response.ok(userService.allocateUser(id)).build();		
-					case "deallocate" : return Response.ok(userService.deallocateUser(id)).build();	
-					case "remove" : return Response.ok(userService.removeUser(id)).build();	
-					default : 
+					case "allocate" : ret = Response.ok(userService.allocateUser(id)).build();		
+					break;
+					case "deallocate" : ret = Response.ok(userService.deallocateUser(id)).build();	
+					break;
+					case "remove" : ret = Response.ok(userService.removeUser(id)).build();	
+					break;
+					default : ret = Response.status(400).build();
+					break;
 				}								
+			} else {
+				ret = Response.status(400).build();
 			}
-			return Response.status(400).build();
 		} catch (RecordNotFoundException ex) {
-			return Response.status(404).build();
+			log.log(Level.FINEST, ex.getMessage(), ex);
+			ret = Response.status(404).build();
 		}
+		log.exiting(CLASS_NAME, "postUserAction", ret);
+		return ret;
 	}
 	
 	@Path("{id}")
 	@GET
 	@Produces({ MediaType.TEXT_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response getUser(@PathParam("id") String id) {
-		
+		log.entering(CLASS_NAME, "getUser", new Object[] { id });
+		Response ret = null;
 		try {
-			return Response.ok(userService.get(id)).build();
+			ret = Response.ok(userService.get(id)).build();
 		} catch (RecordNotFoundException ex) {
-			return Response.status(404).build();
+			log.log(Level.FINEST, ex.getMessage(), ex);
+			ret = Response.status(404).build();
 		} catch (AuthorisationException e) {			
-			return Response.status(401).build();
+			log.log(Level.FINEST, e.getMessage(), e);
+			ret = Response.status(404).build();
+			ret = Response.status(401).build();
 		}
+		log.exiting(CLASS_NAME, "getUser", ret);
+		return ret;
 	}	
 	
 	@Path("{id}")
 	@DELETE
 	public Response deleteUser(@PathParam("id") String id) {
-		
+		log.entering(CLASS_NAME, "deleteUser", new Object[] { id });
 		userService.delete(id);		
-		return Response.ok().build();
+		Response ret = Response.ok().build();
+		log.exiting(CLASS_NAME, "deleteUser", ret);
+		return ret;
 	}		
-
 }
