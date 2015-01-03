@@ -58,7 +58,7 @@ public class Allocator {
 		log.exiting(CLASS_NAME, "postConstruct");
 	}
 	
-	public void attachUser(String userId, String resourceId) 
+	public void allocateUser(String userId, String resourceId) 
 			throws InterruptedException, UnrecoverableException, 
 			ResourceUnrecoverableException, UserUnrecoverableException, 
 			RecordNotFoundException {
@@ -76,7 +76,7 @@ public class Allocator {
 		log.exiting(CLASS_NAME, "attachUser");
 	}
 		
-	public void detachUser(String userId) 
+	public void deallocateUser(String userId) 
 			throws InterruptedException, UnrecoverableException, 
 			ResourceUnrecoverableException, UserUnrecoverableException, 
 			RecordNotFoundException {

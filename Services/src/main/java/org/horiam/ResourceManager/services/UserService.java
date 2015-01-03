@@ -34,11 +34,12 @@ public interface UserService {
 	abstract List<User> list();
 	
 	////////////////////////////////////////////////////////////////////////////
-	abstract boolean exists(String id);
+	abstract boolean exists(String id) throws AuthorisationException;
 
 	////////////////////////////////////////////////////////////////////////////
 
-	abstract void createOrUpdate(String id, User user);
+	abstract void createOrUpdate(String id, User user) throws AuthorisationException,
+																RecordNotFoundException;
 
 	////////////////////////////////////////////////////////////////////////////
 
@@ -49,15 +50,18 @@ public interface UserService {
 
 	////////////////////////////////////////////////////////////////////////////
 
-	abstract Task allocateUser(String id) throws RecordNotFoundException;
+	abstract Task allocateUser(String id) throws AuthorisationException, 
+													RecordNotFoundException;
 
 	////////////////////////////////////////////////////////////////////////////
 
 
-	abstract Task deallocateUser(String id) throws RecordNotFoundException;
+	abstract Task deallocateUser(String id) throws AuthorisationException, 
+														RecordNotFoundException;
 
 	////////////////////////////////////////////////////////////////////////////
 
-	abstract Task removeUser(String id) throws RecordNotFoundException;
+	abstract Task removeUser(String id) throws AuthorisationException, 
+													RecordNotFoundException;
 
 }

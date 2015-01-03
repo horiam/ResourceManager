@@ -21,11 +21,8 @@ package org.horiam.ResourceManager.soap;
 
 import java.util.List;
 
-import javax.jws.WebMethod;
 import javax.jws.WebService;
 
-import org.horiam.ResourceManager.exceptions.AuthorisationException;
-import org.horiam.ResourceManager.exceptions.RecordNotFoundException;
 import org.horiam.ResourceManager.model.Task;
 import org.horiam.ResourceManager.model.User;
 
@@ -34,9 +31,9 @@ public interface UserSEI {
 
 	public abstract List<User> list();
 
-	public abstract boolean exists(String id);
+	public abstract boolean exists(String id) throws ResourceManagerFault;
 
-	public abstract void createOrUpdate(String id, User user);
+	public abstract void createOrUpdate(String id, User user) throws ResourceManagerFault;
 
 	public abstract User get(String id) throws ResourceManagerFault;
 

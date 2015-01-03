@@ -71,9 +71,18 @@ public class UsersResource {
 	public Response putUser(@Context UriInfo uriInfo, 
 							   @PathParam("id") String id, JAXBElement<? extends User> xml) {
 		log.entering(CLASS_NAME, "putUser", new Object[] { uriInfo, id, xml });
+		Response ret = null;
 		User user = xml.getValue();
-		userService.createOrUpdate(id, user);
-		Response ret = Response.created(uriInfo.getAbsolutePath()).build();
+		try {
+			userService.createOrUpdate(id, user);
+			ret = Response.created(uriInfo.getAbsolutePath()).build();
+		} catch (AuthorisationException e) {			
+			log.log(Level.FINEST, e.getMessage(), e);
+			ret = Response.status(401).build();
+		} catch (RecordNotFoundException ex) {
+			log.log(Level.FINEST, ex.getMessage(), ex);
+			ret = Response.status(404).build();
+		}
 		log.exiting(CLASS_NAME, "putUser", ret);
 		return ret;
 	}
@@ -99,6 +108,9 @@ public class UsersResource {
 			} else {
 				ret = Response.status(400).build();
 			}
+		} catch (AuthorisationException e) {			
+			log.log(Level.FINEST, e.getMessage(), e);
+			ret = Response.status(401).build();
 		} catch (RecordNotFoundException ex) {
 			log.log(Level.FINEST, ex.getMessage(), ex);
 			ret = Response.status(404).build();
@@ -120,7 +132,6 @@ public class UsersResource {
 			ret = Response.status(404).build();
 		} catch (AuthorisationException e) {			
 			log.log(Level.FINEST, e.getMessage(), e);
-			ret = Response.status(404).build();
 			ret = Response.status(401).build();
 		}
 		log.exiting(CLASS_NAME, "getUser", ret);

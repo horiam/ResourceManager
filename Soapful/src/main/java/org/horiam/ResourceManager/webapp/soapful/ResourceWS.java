@@ -27,6 +27,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.jws.WebService;
 
+import org.horiam.ResourceManager.exceptions.AuthorisationException;
 import org.horiam.ResourceManager.exceptions.RecordNotFoundException;
 import org.horiam.ResourceManager.model.Resource;
 import org.horiam.ResourceManager.model.Task;
@@ -62,9 +63,10 @@ public class ResourceWS implements ResourceSEI {
 			Resource ret = resourceService.get(id);
 			log.exiting(CLASS_NAME, "get", ret);
 			return ret;
-		} catch (RecordNotFoundException e) {
+		} catch (AuthorisationException | RecordNotFoundException e) {
 			log.log(Level.FINEST, e.getMessage(), e);
-			ResourceManagerFault rmf = new ResourceManagerFault(e.getMessage(), new MessageHolderBean());
+			ResourceManagerFault rmf = new ResourceManagerFault(e.getMessage(), 
+														new MessageHolderBean());
 			log.throwing(CLASS_NAME, "get", rmf);
 			throw rmf;
 		}
@@ -101,7 +103,8 @@ public class ResourceWS implements ResourceSEI {
 			return ret;
 		} catch (RecordNotFoundException e) {
 			log.log(Level.FINEST, e.getMessage(), e);
-			ResourceManagerFault rmf = new ResourceManagerFault(e.getMessage(), new MessageHolderBean());
+			ResourceManagerFault rmf = new ResourceManagerFault(e.getMessage(), 
+														new MessageHolderBean());
 			log.throwing(CLASS_NAME, "get", rmf);
 			throw rmf;
 		}

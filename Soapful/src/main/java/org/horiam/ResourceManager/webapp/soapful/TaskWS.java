@@ -27,6 +27,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.jws.WebService;
 
+import org.horiam.ResourceManager.exceptions.AuthorisationException;
 import org.horiam.ResourceManager.exceptions.RecordNotFoundException;
 import org.horiam.ResourceManager.model.Task;
 import org.horiam.ResourceManager.services.TaskService;
@@ -69,9 +70,10 @@ public class TaskWS implements TaskSEI {
 			Task ret = taskService.get(id);
 			log.exiting(CLASS_NAME, "get", ret);
 			return ret;
-		} catch (RecordNotFoundException e) {			
+		} catch (AuthorisationException | RecordNotFoundException e) {			
 			log.log(Level.FINEST, e.getMessage(), e);
-			ResourceManagerFault rmf = new ResourceManagerFault(e.getMessage(), new MessageHolderBean());
+			ResourceManagerFault rmf = new ResourceManagerFault(e.getMessage(), 
+														new MessageHolderBean());
 			log.throwing(CLASS_NAME, "get", rmf);
 			throw rmf;
 		}

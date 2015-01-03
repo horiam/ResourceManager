@@ -60,7 +60,7 @@ public class TaskExecutor {
 	@javax.annotation.Resource
 	private UserTransaction transaction;
 	@EJB
-	private Allocator attachService;
+	private Allocator allocateService;
 	@EJB
 	private Booking bookingService;
 	@EJB
@@ -185,7 +185,7 @@ public class TaskExecutor {
 				/* 2nd transaction */				
 				transaction.begin(); 
 				
-				attachService.attachUser(userId, resourceId); 
+				allocateService.allocateUser(userId, resourceId); 
 				
 				bookingService.freeResource(resourceId);
 								
@@ -253,7 +253,7 @@ public class TaskExecutor {
 				/* 2nd transaction */				
 				transaction.begin();
 				
-				attachService.detachUser(userId);
+				allocateService.deallocateUser(userId);
 				
 				bookingService.freeResource(resource.getId());
 								
@@ -303,7 +303,7 @@ public class TaskExecutor {
 				/* 2nd transaction */				
 				transaction.begin();
 				
-				attachService.detachUser(userId);	
+				allocateService.deallocateUser(userId);	
 				
 				bookingService.freeResource(resource.getId());
 				
@@ -352,7 +352,7 @@ public class TaskExecutor {
 				/* 2nd transaction */				
 				transaction.begin();
 				
-				attachService.detachUser(user.getId());	
+				allocateService.deallocateUser(user.getId());	
 				
 				bookingService.freeUser(user.getId());
 				

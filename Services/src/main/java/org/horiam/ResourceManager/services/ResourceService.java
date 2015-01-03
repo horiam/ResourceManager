@@ -25,6 +25,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import javax.interceptor.Interceptors;
 
+import org.horiam.ResourceManager.exceptions.AuthorisationException;
 import org.horiam.ResourceManager.exceptions.RecordNotFoundException;
 import org.horiam.ResourceManager.model.Resource;
 import org.horiam.ResourceManager.model.Task;
@@ -34,7 +35,8 @@ public interface ResourceService {
 
 	public abstract boolean exists(String id);
 
-	public abstract Resource get(String id) throws RecordNotFoundException;
+	public abstract Resource get(String id) throws AuthorisationException, 
+													RecordNotFoundException;
 
 	public abstract void createOrUpdate(String id, Resource resource);
 

@@ -34,6 +34,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.horiam.ResourceManager.services.TaskService;
+import org.horiam.ResourceManager.exceptions.AuthorisationException;
 import org.horiam.ResourceManager.exceptions.RecordNotFoundException;
 import org.horiam.ResourceManager.model.Task;
 
@@ -68,7 +69,10 @@ public class TasksResource {
 		} catch (RecordNotFoundException ex) {
 			log.log(Level.FINEST, ex.getMessage(), ex);
 			ret = Response.status(404).build();
-		}
+		} catch (AuthorisationException e) {			
+			log.log(Level.FINEST, e.getMessage(), e);
+			ret = Response.status(401).build();
+		} 
 		log.exiting(CLASS_NAME, "getTask", ret);
 		return ret;
 	}	

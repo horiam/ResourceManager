@@ -24,6 +24,7 @@ import java.util.List;
 import javax.annotation.security.RolesAllowed;
 import javax.interceptor.Interceptors;
 
+import org.horiam.ResourceManager.exceptions.AuthorisationException;
 import org.horiam.ResourceManager.exceptions.RecordNotFoundException;
 import org.horiam.ResourceManager.model.Task;
 
@@ -33,7 +34,8 @@ public interface TaskService {
 
 	public abstract boolean exists(String id);
 
-	public abstract Task get(String id) throws RecordNotFoundException;
+	public abstract Task get(String id) throws AuthorisationException, 
+												RecordNotFoundException;
 
 	public abstract void delete(String id);
 

@@ -41,6 +41,7 @@ import javax.ws.rs.core.UriInfo;
 import javax.xml.bind.JAXBElement;
 
 import org.horiam.ResourceManager.services.ResourceService;
+import org.horiam.ResourceManager.exceptions.AuthorisationException;
 import org.horiam.ResourceManager.exceptions.RecordNotFoundException;
 import org.horiam.ResourceManager.model.Resource;
 
@@ -86,6 +87,9 @@ public class ResourcesResource {
 		Response ret; 
 		try {		
 			ret = Response.ok(resourceService.get(id)).build();
+		} catch (AuthorisationException e) {			
+			log.log(Level.FINEST, e.getMessage(), e);
+			ret = Response.status(401).build();
 		} catch (RecordNotFoundException ex) {
 			log.log(Level.FINEST, ex.getMessage(), ex);
 			ret = Response.status(404).build();

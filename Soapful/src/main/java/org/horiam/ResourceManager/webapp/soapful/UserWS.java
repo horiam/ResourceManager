@@ -58,18 +58,34 @@ public class UserWS implements UserSEI  {
 	}
 
 	@Override
-	public boolean exists(String id) {
+	public boolean exists(String id) throws ResourceManagerFault {
 		log.entering(CLASS_NAME, "exists", new Object[] { id });
-		boolean ret = userService.exists(id);
-		log.exiting(CLASS_NAME, "exists", ret);
-		return ret;
+		try {
+			boolean ret = userService.exists(id);
+			log.exiting(CLASS_NAME, "exists", ret);
+			return ret;
+		} catch (AuthorisationException e) {
+			log.log(Level.FINEST, e.getMessage(), e);
+			ResourceManagerFault rmf = new ResourceManagerFault(e.getMessage(),
+														new MessageHolderBean());
+			log.throwing(CLASS_NAME, "get", rmf);
+			throw rmf;
+		}
 	}
 
 	@Override
-	public void createOrUpdate(String id, User user) {
+	public void createOrUpdate(String id, User user) throws ResourceManagerFault {
 		log.entering(CLASS_NAME, "createOrUpdate", new Object[] { id, user });
-		userService.createOrUpdate(id, user);
-		log.exiting(CLASS_NAME, "createOrUpdate");
+		try {
+			userService.createOrUpdate(id, user);
+			log.exiting(CLASS_NAME, "createOrUpdate");
+		} catch (AuthorisationException | RecordNotFoundException e) {
+			log.log(Level.FINEST, e.getMessage(), e);
+			ResourceManagerFault rmf = new ResourceManagerFault(e.getMessage(),
+					new MessageHolderBean());
+			log.throwing(CLASS_NAME, "get", rmf);
+			throw rmf;
+		}
 	}
 
 	@Override
@@ -81,7 +97,8 @@ public class UserWS implements UserSEI  {
 			return ret;
 		} catch (AuthorisationException | RecordNotFoundException e) {
 			log.log(Level.FINEST, e.getMessage(), e);
-			ResourceManagerFault rmf = new ResourceManagerFault(e.getMessage(), new MessageHolderBean());
+			ResourceManagerFault rmf = new ResourceManagerFault(e.getMessage(), 
+														new MessageHolderBean());
 			log.throwing(CLASS_NAME, "get", rmf);
 			throw rmf;
 		}
@@ -101,9 +118,10 @@ public class UserWS implements UserSEI  {
 			Task ret = userService.allocateUser(id);
 			log.exiting(CLASS_NAME, "allocateUser", ret);
 			return ret;
-		} catch (RecordNotFoundException e) {
+		} catch (AuthorisationException | RecordNotFoundException e) {
 			log.log(Level.FINEST, e.getMessage(), e);
-			ResourceManagerFault rmf = new ResourceManagerFault(e.getMessage(), new MessageHolderBean());
+			ResourceManagerFault rmf = new ResourceManagerFault(e.getMessage(), 
+														new MessageHolderBean());
 			log.throwing(CLASS_NAME, "get", rmf);
 			throw rmf;
 		}
@@ -116,9 +134,10 @@ public class UserWS implements UserSEI  {
 			Task ret = userService.deallocateUser(id);
 			log.exiting(CLASS_NAME, "deallocateUser", ret);
 			return ret;
-		} catch (RecordNotFoundException e) {
+		} catch (AuthorisationException | RecordNotFoundException e) {
 			log.log(Level.FINEST, e.getMessage(), e);
-			ResourceManagerFault rmf = new ResourceManagerFault(e.getMessage(), new MessageHolderBean());
+			ResourceManagerFault rmf = new ResourceManagerFault(e.getMessage(), 
+														new MessageHolderBean());
 			log.throwing(CLASS_NAME, "get", rmf);
 			throw rmf;
 		}
@@ -131,9 +150,10 @@ public class UserWS implements UserSEI  {
 			Task ret = userService.removeUser(id);
 			log.exiting(CLASS_NAME, "removeUser", ret);
 			return ret;
-		} catch (RecordNotFoundException e) {
+		} catch (AuthorisationException | RecordNotFoundException e) {
 			log.log(Level.FINEST, e.getMessage(), e);
-			ResourceManagerFault rmf = new ResourceManagerFault(e.getMessage(), new MessageHolderBean());
+			ResourceManagerFault rmf = new ResourceManagerFault(e.getMessage(), 
+														new MessageHolderBean());
 			log.throwing(CLASS_NAME, "get", rmf);
 			throw rmf;
 		}

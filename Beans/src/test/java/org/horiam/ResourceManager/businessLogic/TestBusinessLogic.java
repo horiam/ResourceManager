@@ -109,7 +109,7 @@ public class TestBusinessLogic  {
 			ResourceUnrecoverableException, UserUnrecoverableException, RecordNotFoundException {		
 		System.out.println("\nTest Allocator EJB...\n");
 		
-		allocator.attachUser(userId, resourceId);
+		allocator.allocateUser(userId, resourceId);
 		
 		User user = userDao.get(userId);
 		Resource resource = resourceDao.get(resourceId);
@@ -117,7 +117,7 @@ public class TestBusinessLogic  {
 		assertTrue("User must have this resource", user.getResource().equals(resource));
 		assertTrue("Resource must have this user", resource.getUser().equals(user));
 		
-		allocator.detachUser(userId);
+		allocator.deallocateUser(userId);
 		
 		user = userDao.get(userId);
 		resource = resourceDao.get(resourceId);
